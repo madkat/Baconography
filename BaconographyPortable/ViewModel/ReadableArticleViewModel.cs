@@ -107,7 +107,7 @@ namespace BaconographyPortable.ViewModel
                 }
                 if (articleContentsBuilder.Length > 0)
                 {
-                    target.Add(new ReadableArticleParagraph { Text = articleContentsBuilder.ToString() + "\n\n"});
+                    target.Add(new ReadableArticleParagraph { Text = articleContentsBuilder.ToString()});
                 }
             }
             var nextPageUrl = MultiPageUtils.FindNextPageLink(SgmlDomBuilder.GetBody(SgmlDomBuilder.BuildDocument(page)), url);
