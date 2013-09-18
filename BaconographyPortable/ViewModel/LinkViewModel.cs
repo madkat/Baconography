@@ -45,6 +45,7 @@ namespace BaconographyPortable.ViewModel
             ShowPreview = new RelayCommand(() => IsPreviewShown = !IsPreviewShown);
 			ShowExtendedOptions = new RelayCommand(() => IsExtendedOptionsShown = !IsExtendedOptionsShown);
             WasStreamed = wasStreamed ?? false;
+			AuthorFlairText = _linkThing.Data.AuthorFlairText;
 
             ContentIsFocused = !WasStreamed;
 
@@ -131,6 +132,16 @@ namespace BaconographyPortable.ViewModel
                 return AuthorFlairKind.None;
             }
         }
+
+		public string AuthorFlairText { get; set; }
+
+		public bool HasAuthorFlair
+		{
+			get
+			{
+				return (!String.IsNullOrWhiteSpace(AuthorFlairText));
+			}
+		}
 
         public string Author
         {
