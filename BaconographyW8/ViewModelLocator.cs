@@ -32,6 +32,7 @@ namespace BaconographyW8
                 ServiceLocator.Current.GetInstance<ContentPreferencesViewModel>();
                 ServiceLocator.Current.GetInstance<RedditPickerViewModel>();
                 ServiceLocator.Current.GetInstance<SearchQueryViewModel>();
+				ServiceLocator.Current.GetInstance<MainViewModel>();
                 SimpleIoc.Default.Register<IDynamicViewLocator>(() => _baconProvider.GetService<IDynamicViewLocator>());
             }
         }
@@ -56,6 +57,7 @@ namespace BaconographyW8
             SimpleIoc.Default.Register<VisitedLinkConverter>();
             SimpleIoc.Default.Register<VisitedMainLinkConverter>();
             SimpleIoc.Default.Register<PreviewDataConverter>();
+			SimpleIoc.Default.Register<MainViewModel>();
             
 
             if (DesignMode.DesignModeEnabled)
@@ -186,5 +188,13 @@ namespace BaconographyW8
                 return ServiceLocator.Current.GetInstance<RedditPickerViewModel>();
             }
         }
+
+		public MainViewModel Main
+		{
+			get
+			{
+				return ServiceLocator.Current.GetInstance<MainViewModel>();
+			}
+		}
     }
 }

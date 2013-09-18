@@ -204,6 +204,9 @@ namespace BaconographyW8.Common
         /// <see cref="SessionState"/>.</returns>
         public static Dictionary<String, Object> SessionStateForFrame(Frame frame)
         {
+			if (frame == null)
+				return null;
+
             var frameState = (Dictionary<String, Object>)frame.GetValue(FrameSessionStateProperty);
 
             if (frameState == null)

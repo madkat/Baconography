@@ -147,6 +147,20 @@ namespace BaconographyPortable.ViewModel
             }
         }
 
+		private bool _selected = false;
+		public bool Selected
+		{
+			get
+			{
+				return _selected;
+			}
+			set
+			{
+				_selected = value;
+				RaisePropertyChanged("Selected");
+			}
+		}
+
 		public bool Pinned
 		{
 			get

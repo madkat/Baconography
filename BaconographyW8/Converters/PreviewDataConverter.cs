@@ -8,6 +8,7 @@ using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Messaging;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -43,9 +44,9 @@ namespace BaconographyW8.Converters
         {
             throw new NotImplementedException();
         }
+
         public class PreviewImageViewModelWrapper : ViewModelBase
         {
-            List<Tuple<string, string>> _finishedImages;
             Dictionary<int, ImageSource> _imageSources;
             ISystemServices _systemServices;
             public PreviewImageViewModelWrapper(Task<IEnumerable<Tuple<string, string>>> imagesTask, ISystemServices systemServices)
@@ -95,6 +96,7 @@ namespace BaconographyW8.Converters
                     }
                 }
 
+				RaisePropertyChanged("FinishedImages");
 
                 if (hasGifs)
                 {
@@ -129,6 +131,15 @@ namespace BaconographyW8.Converters
                 }
             }
 
+			private List<Tuple<string, string>> _finishedImages = new List<Tuple<string,string>>();
+			public List<Tuple<string, string>> FinishedImages
+			{
+				get
+				{
+					return _finishedImages;
+				}
+			}
+
             public int AlbumSize
             {
                 get
@@ -152,6 +163,14 @@ namespace BaconographyW8.Converters
                     return _finishedImages != null && _finishedImages.Count > _currentPosition ? _finishedImages[_currentPosition].Item1 : "";
                 }
             }
+
+			public bool HasTitle
+			{
+				get
+				{
+					return !String.IsNullOrWhiteSpace(Title);
+				}
+			}
 
             public object ImageSource
             {
@@ -208,6 +227,8 @@ namespace BaconographyW8.Converters
 
             public RelayCommand MoveBack { get; set; }
             public RelayCommand MoveForward { get; set; }
+
+			
         }
     }
 }

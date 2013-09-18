@@ -26,13 +26,38 @@ namespace BaconographyW8.View
     /// </summary>
     public sealed partial class RedditView : BaconographyW8.Common.LayoutAwarePage
     {
-        SelectSubredditMessage _selectedSubredditMessage;
-        double _scrollOffset;
+
+		SelectSubredditMessage _selectedSubredditMessage;
+		public SelectSubredditMessage SubredditInfo
+		{
+			get
+			{
+				return _selectedSubredditMessage;
+			}
+			set
+			{
+				_selectedSubredditMessage = value;
+				Messenger.Default.Send<SelectSubredditMessage>(_selectedSubredditMessage);
+			}
+		}
+
+		public double ScrollOffset
+		{
+			get;
+			set;
+		}
 
         public RedditView()
         {
             this.InitializeComponent();
+			Messenger.Default.Register<SelectSubredditMessage>(this, OnSubredditChanged);
         }
+
+		private async void OnSubredditChanged(SelectSubredditMessage message)
+		{
+			OnRefresh(this, null);
+		}
+
 
         public static DependencyObject GetScrollViewer(DependencyObject o)
         {
@@ -70,7 +95,7 @@ namespace BaconographyW8.View
         {
             if (pageState != null && pageState.ContainsKey("ScrollOffset"))
             {
-                _scrollOffset = pageState["ScrollOffset"] as Nullable<double> ?? 0.0;
+				ScrollOffset = pageState["ScrollOffset"] as Nullable<double> ?? 0.0;
 
                 linksView.Loaded += linksView_Loaded;
             }
@@ -119,12 +144,26 @@ namespace BaconographyW8.View
             }
         }
 
+		public void SetLinksLoadedEvent()
+		{
+            linksView.Loaded += linksView_Loaded;
+		}
+
         void linksView_Loaded(object sender, RoutedEventArgs e)
         {
             var scrollViewer = GetScrollViewer(linksView) as ScrollViewer;
-            scrollViewer.ScrollToVerticalOffset(_scrollOffset);
+			scrollViewer.ScrollToVerticalOffset(ScrollOffset);
             linksView.Loaded -= linksView_Loaded;
         }
+
+		public void UpdateScrollOffset()
+		{
+			var scrollViewer = GetScrollViewer(linksView) as ScrollViewer;
+			if (scrollViewer != null)
+			{
+				ScrollOffset = scrollViewer.VerticalOffset;
+			}
+		}
 
         /// <summary>
         /// Preserves state associated with this page in case the application is suspended or the
@@ -138,8 +177,8 @@ namespace BaconographyW8.View
             var scrollViewer = GetScrollViewer(linksView) as ScrollViewer;
             if (scrollViewer != null)
             {
-                _scrollOffset = scrollViewer.VerticalOffset;
-                pageState["ScrollOffset"] = _scrollOffset;
+				ScrollOffset = scrollViewer.VerticalOffset;
+				pageState["ScrollOffset"] = ScrollOffset;
             }
         }
 
@@ -150,7 +189,7 @@ namespace BaconographyW8.View
             App.SetSearchKeyboard(true);
         }
 
-        protected override void OnNavigatedFrom(NavigationEventArgs e)
+		protected override void OnNavigatedFrom(NavigationEventArgs e)
         {
             if (_redditPickerFlyout != null)
                 _redditPickerFlyout.IsOpen = false;
@@ -176,7 +215,7 @@ namespace BaconographyW8.View
         private void OnRefresh(object sender, RoutedEventArgs e)
         {
             var scrollViewer = GetScrollViewer(linksView) as ScrollViewer;
-            _scrollOffset = 0;
+			ScrollOffset = 0;
             scrollViewer.ScrollToVerticalOffset(0);
         }
     }

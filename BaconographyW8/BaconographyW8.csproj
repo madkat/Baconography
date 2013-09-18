@@ -128,10 +128,13 @@
     <Compile Include="Converters\BooleanVisibilityConverter.cs" />
     <Compile Include="Converters\ColorBrightnessConverter.cs" />
     <Compile Include="Converters\ColorContrastConverter.cs" />
+    <Compile Include="Converters\ValueConverterGroup.cs" />
+    <Compile Include="Converters\ObjectComparisonConverter.cs" />
     <Compile Include="Converters\DepthColorConverter.cs" />
     <Compile Include="Converters\DepthMarginConverter.cs" />
     <Compile Include="Converters\ExtendedCommentConverter.cs" />
     <Compile Include="Converters\InvertBooleanConverter.cs" />
+    <Compile Include="Converters\LinkGlyphConverter.cs" />
     <Compile Include="Converters\MarkdownConverter.cs" />
     <Compile Include="Converters\PortableAsyncCollectionConverter.cs" />
     <Compile Include="Converters\PreviewDataConverter.cs" />
@@ -142,6 +145,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="StaticCommands.cs" />
     <Compile Include="ViewModelLocator.cs" />
+    <Compile Include="ViewModel\MainViewModel.cs" />
     <Compile Include="View\AboutUserView.xaml.cs">
       <DependentUpon>AboutUserView.xaml</DependentUpon>
     </Compile>
@@ -156,6 +160,12 @@
     </Compile>
     <Compile Include="View\ContentPreferencesView.xaml.cs">
       <DependentUpon>ContentPreferencesView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\NavigationView.xaml.cs">
+      <DependentUpon>NavigationView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\MainView.xaml.cs">
+      <DependentUpon>MainView.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\ExtendedCommentView.xaml.cs">
       <DependentUpon>ExtendedCommentView.xaml</DependentUpon>
@@ -285,6 +295,14 @@
     <Page Include="View\ContentPreferencesView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\NavigationView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View\MainView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="View\ExtendedCommentView.xaml">
       <SubType>Designer</SubType>

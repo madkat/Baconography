@@ -26,6 +26,8 @@
     <converters:PortableAsyncCollectionConverter x:Key="portableAsyncCollectionConverter"/>
     <converters:DepthMarginConverter x:Key="depthMarginConverter" />
     <converters:DepthColorConverter x:Key="depthColorConverter" />
+    <converters:LinkGlyphConverter x:Key="linkGlyphConverter" />
+    <converters:ObjectComparisonConverter x:Key="objectComparisonConverter" />
     <common:TypedTemplateSelector x:Key="typedTemplateSelector"
                                  DefaultTemplateKey="Default"/>
 
