@@ -1,4 +1,5 @@
-﻿using BaconographyPortable.Messages;
+﻿using BaconographyPortable.Common;
+using BaconographyPortable.Messages;
 using BaconographyPortable.Services;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
@@ -173,23 +174,7 @@ namespace BaconographyPortable.ViewModel
                     if (string.IsNullOrWhiteSpace(LinkId))
                         return null;
 
-                    var viewModelContextService = ServiceLocator.Current.GetInstance<IViewModelContextService>();
-                    var firstRedditViewModel = viewModelContextService.ContextStack.FirstOrDefault(context => context is RedditViewModel) as RedditViewModel;
-                    if (firstRedditViewModel != null)
-                    {
-                        for (int i = 0; i < firstRedditViewModel.Links.Count; i++)
-                        {
-                            var linkViewModel = firstRedditViewModel.Links[i] as LinkViewModel;
-                            if (linkViewModel != null)
-                            {
-                                if (linkViewModel.LinkThing.Data.Id == LinkId)
-                                {
-                                    _parentLink = linkViewModel;
-                                    break;
-                                }
-                            }
-                        }
-                    }
+                    _parentLink = StreamViewUtility.FindSelfFromLink(LinkId) as LinkViewModel;
                 }
 
                 return _parentLink;

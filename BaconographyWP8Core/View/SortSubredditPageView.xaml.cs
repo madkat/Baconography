@@ -145,6 +145,7 @@ namespace BaconographyWP8.View
 
 		private void GotoButton_Tap(object sender, System.Windows.Input.GestureEventArgs e)
 		{
+            Messenger.Default.Send<ReorderSubredditMessage>(new ReorderSubredditMessage());
 			var button = sender as Button;
 			var subreddit = button.DataContext as TypedThing<Subreddit>;
 			if (subreddit == null && button.DataContext is AboutSubredditViewModel)

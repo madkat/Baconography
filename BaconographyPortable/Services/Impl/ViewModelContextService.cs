@@ -51,7 +51,23 @@ namespace BaconographyPortable.Services.Impl
         {
             lock (this)
             {
-                _contextStack = new Stack<ViewModelBase>(_contextStack.Where(vm => vm != viewModel));
+                try
+                {
+                    _contextStack = new Stack<ViewModelBase>(_contextStack.TakeWhile(vm => vm != viewModel).Concat(_contextStack.SkipWhile(vm => vm != viewModel).Skip(1)));
+                }
+                catch
+                {
+                    _contextStack.Clear();
+                }
+            }
+        }
+
+
+        public void ClearViewModelContext()
+        {
+            lock (this)
+            {
+                _contextStack.Clear();
             }
         }
     }

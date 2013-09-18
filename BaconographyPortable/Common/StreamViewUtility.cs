@@ -14,6 +14,86 @@ namespace BaconographyPortable.Common
 {
     public class StreamViewUtility
     {
+        public static ViewModelBase FindSelfFromLink(string link)
+        {
+            var viewModelContextService = ServiceLocator.Current.GetInstance<IViewModelContextService>();
+            var contexts = viewModelContextService.ContextStack.OfType<RedditViewModel>().Distinct().ToList();
+            foreach (var vm in viewModelContextService.ContextStack.OfType<RedditViewModel>().Distinct())
+            {
+                for (int i = 0; i < vm.Links.Count; i++)
+                {
+                    var linkViewModel = vm.Links[i] as LinkViewModel;
+                    if (linkViewModel != null)
+                    {
+                        if (linkViewModel.LinkThing.Data.Id == link)
+                        {
+                            return linkViewModel;
+                        }
+                    }
+                }
+            }
+
+            var mainViewModel = viewModelContextService.ContextStack.OfType<IRedditViewModelCollection>().FirstOrDefault();
+            if (contexts.Count == 0 && mainViewModel != null)
+            {
+                foreach (var vm in mainViewModel.RedditViewModels)
+                {
+                    for (int i = 0; i < vm.Links.Count; i++)
+                    {
+                        var linkViewModel = vm.Links[i] as LinkViewModel;
+                        if (linkViewModel != null)
+                        {
+                            if (linkViewModel.LinkThing.Data.Id == link)
+                            {
+                                return linkViewModel;
+                            }
+                        }
+                    }
+                }
+            }
+            return null;
+        }
+
+        public static RedditViewModel FindContainerFromLink(LinkViewModel link)
+        {
+            var viewModelContextService = ServiceLocator.Current.GetInstance<IViewModelContextService>();
+            var contexts = viewModelContextService.ContextStack.OfType<RedditViewModel>().Distinct().ToList();
+            foreach (var vm in viewModelContextService.ContextStack.OfType<RedditViewModel>().Distinct())
+            {
+                for (int i = 0; i < vm.Links.Count; i++)
+                {
+                    var linkViewModel = vm.Links[i] as LinkViewModel;
+                    if (linkViewModel != null)
+                    {
+                        if (linkViewModel.LinkThing.Data.Id == link.LinkThing.Data.Id)
+                        {
+                            return vm;
+                        }
+                    }
+                }
+            }
+
+            var mainViewModel = viewModelContextService.ContextStack.OfType<IRedditViewModelCollection>().FirstOrDefault();
+            if (contexts.Count == 0 && mainViewModel != null)
+            {
+                foreach (var vm in mainViewModel.RedditViewModels)
+                {
+                    for (int i = 0; i < vm.Links.Count; i++)
+                    {
+                        var linkViewModel = vm.Links[i] as LinkViewModel;
+                        if (linkViewModel != null)
+                        {
+                            if (linkViewModel.LinkThing.Data.Id == link.LinkThing.Data.Id)
+                            {
+                                return vm;
+                            }
+                        }
+                    }
+                }
+            }
+            return null;
+        }
+
         public static void RepositionContextScroll(LinkViewModel parentLink)
         {
             var viewModelContextService = ServiceLocator.Current.GetInstance<IViewModelContextService>();
@@ -28,8 +108,7 @@ namespace BaconographyPortable.Common
         {
             if (parentLink != null)
             {
-                var viewModelContextService = ServiceLocator.Current.GetInstance<IViewModelContextService>();
-                var firstRedditViewModel = viewModelContextService.ContextStack.FirstOrDefault(context => context is RedditViewModel) as RedditViewModel;
+                var firstRedditViewModel = FindContainerFromLink(parentLink);
                 if (firstRedditViewModel != null)
                 {
                     RepositionContextScroll(parentLink);
@@ -64,7 +143,7 @@ namespace BaconographyPortable.Common
             if (parentLink != null)
             {
                 var viewModelContextService = ServiceLocator.Current.GetInstance<IViewModelContextService>();
-                var firstRedditViewModel = viewModelContextService.ContextStack.FirstOrDefault(context => context is RedditViewModel) as RedditViewModel;
+                var firstRedditViewModel = FindContainerFromLink(parentLink);
                 if (firstRedditViewModel != null)
                 {
                     RepositionContextScroll(parentLink);

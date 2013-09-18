@@ -57,8 +57,6 @@ namespace BaconographyWP8.Common
 
                 base.OnLoadingPivotItem(item);
 
-                _viewModelContextService.PushViewModelContext(item.DataContext as ViewModelBase);
-
                 if (item.Content is RedditView)
                 {
                     return;
@@ -104,9 +102,6 @@ namespace BaconographyWP8.Common
                 if (e.Item == null)
                     return;
 
-                if (e.Item.DataContext is ViewModelBase)
-                    _viewModelContextService.PopViewModelContext(e.Item.DataContext as ViewModelBase);
-
                 //if we didnt finish loading we dont need to make a new writable bitmap
                 if (!(e.Item.Content is Image) && e.Item.Content is UIElement)
                 {
@@ -144,6 +139,26 @@ namespace BaconographyWP8.Common
         {
             base.OnUnloadingPivotItem(e);
             await RealUnloadingItem(e);
+        }
+
+        protected override void OnLoadedPivotItem(PivotItem item)
+        {
+            _viewModelContextService.PushViewModelContext(item.DataContext as ViewModelBase);
+            base.OnLoadedPivotItem(item);
+        }
+
+        protected override void OnUnloadedPivotItem(PivotItemEventArgs e)
+        {
+            if (e.Item == null)
+            {
+                _viewModelContextService.ClearViewModelContext();
+                return;
+            }
+
+            if (e.Item.DataContext is ViewModelBase)
+                _viewModelContextService.PopViewModelContext(e.Item.DataContext as ViewModelBase);
+
+            base.OnUnloadedPivotItem(e);
         }
 
     }
