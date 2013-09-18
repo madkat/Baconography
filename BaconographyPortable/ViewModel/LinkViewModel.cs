@@ -388,7 +388,7 @@ namespace BaconographyPortable.ViewModel
             }
 		}
 
-        private static void NavigateToCommentsImpl(LinkViewModel vm)
+        private static async void NavigateToCommentsImpl(LinkViewModel vm)
         {
             if (vm.IsExtendedOptionsShown)
                 vm.IsExtendedOptionsShown = false;
@@ -396,7 +396,10 @@ namespace BaconographyPortable.ViewModel
             if (vm == null || vm._linkThing == null || vm._linkThing.Data == null || string.IsNullOrWhiteSpace(vm._linkThing.Data.Url))
                 vm._baconProvider.GetService<INotificationService>().CreateNotification("Invalid link data, please PM /u/hippiehunter with details");
             else
+            {
+                await vm._baconProvider.GetService<IOfflineService>().StoreHistory(vm._linkThing.Data.Permalink);
                 vm._navigationService.Navigate(vm._dynamicViewLocator.CommentsView, new SelectCommentTreeMessage { LinkThing = vm._linkThing });
+            }
         }
 
         private static void GotoLinkImpl(LinkViewModel vm)

@@ -143,7 +143,8 @@ namespace Baconography.NeutralServices
                                 string fileLine;
                                 while ((fileLine = fileStream.ReadLine()) != null)
                                 {
-                                    _clickHistory.Add(fileLine);
+                                    if (!_clickHistory.Contains(fileLine))
+                                        _clickHistory.Add(fileLine);
                                     if (_terminateSource.IsCancellationRequested)
                                         return;
                                 }

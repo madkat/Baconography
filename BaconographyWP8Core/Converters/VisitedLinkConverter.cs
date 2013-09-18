@@ -1,4 +1,5 @@
 ﻿using BaconographyPortable.Services;
+using BaconographyPortable.ViewModel;
 using BaconographyWP8Core.Common;
 using Microsoft.Practices.ServiceLocation;
 using System;
@@ -52,11 +53,23 @@ namespace BaconographyWP8.Converters
 
         public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
-            if (_offlineService.HasHistory(value as string))
-                return history;
+            if (value is string)
+            {
+                if (_offlineService.HasHistory(value as string))
+                    return history;
+                else
+                    return noHistory;
+            }
+            else if(value is LinkViewModel)
+            {
+                var vm = value as LinkViewModel;
+                if (_offlineService.HasHistory(vm.IsSelfPost ? vm.LinkThing.Data.Permalink : vm.Url))
+                    return history;
+                else
+                    return noHistory;
+            }
             else
                 return noHistory;
-
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
