@@ -1,4 +1,5 @@
-﻿using GalaSoft.MvvmLight;
+﻿using BaconographyPortable.ViewModel;
+using GalaSoft.MvvmLight;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -23,5 +24,14 @@ namespace BaconographyW8.View
         {
             this.InitializeComponent();
         }
+
+		private void FlipView_SelectionChanged(object sender, SelectionChangedEventArgs e)
+		{
+			var dataContext = this.DataContext as BaconographyW8.Converters.PreviewDataConverter.PreviewImageViewModelWrapper;
+			if (dataContext != null && flipView.SelectedIndex >= 0)
+			{
+				dataContext.CurrentPosition = flipView.SelectedIndex;
+			}
+		}
     }
 }

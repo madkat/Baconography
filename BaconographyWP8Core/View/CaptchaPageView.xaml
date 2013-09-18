@@ -43,7 +43,7 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="150" />
-            <RowDefinition Height="1*" />
+            <RowDefinition Height="*" MinHeight="200" />
             <RowDefinition Height="150" />
         </Grid.RowDefinitions>
         
@@ -53,15 +53,11 @@
                        TextWrapping="Wrap" />
         </StackPanel>
 
-        <local:ScalingPictureView
-            Grid.Row="1"
-            HorizontalAlignment="Stretch"
-            VerticalAlignment="Bottom"
-            HorizontalContentAlignment="Stretch"
-            VerticalContentAlignment="Stretch"
-            Margin="12,0,12,0"
-            ImageSource="{Binding ImageSource, Mode=TwoWay}"
-            MinWidth="200"/>
+        <Image Grid.Row="1"
+               HorizontalAlignment="Stretch"
+               VerticalAlignment="Bottom"
+               Source="{Binding ImageSource}" Margin="24,0,24,-24"
+               MinWidth="400" ImageFailed="Image_ImageFailed" ImageOpened="Image_ImageOpened" />
 
         <Grid Grid.Row="2" VerticalAlignment="Bottom">
             <TextBox Text="{Binding CaptchaResponse, Mode=TwoWay}"

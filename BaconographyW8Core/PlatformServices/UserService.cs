@@ -3,12 +3,14 @@ using BaconographyPortable.Model.Reddit;
 using BaconographyPortable.Services;
 using GalaSoft.MvvmLight.Messaging;
 using KitaroDB;
+using Microsoft.Practices.ServiceLocation;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Windows.System.Threading;
 
 namespace BaconographyW8.PlatformServices
 {
@@ -236,33 +238,50 @@ namespace BaconographyW8.PlatformServices
             return credentials;
         }
 
-        private async Task<User> LoginWithCredentials(UserCredential credential)
+        private async Task<User> LoginWithCredentials(UserCredential credential, bool userInitiated)
         {
-            if (await _redditService.CheckLogin(credential.LoginCookie))
-            {
-                var loggedInUser = new User { Username = credential.Username, LoginCookie = credential.LoginCookie, NeedsCaptcha = false };
-                loggedInUser.Me = await _redditService.GetMe(loggedInUser);
-                return loggedInUser;
-            }
-            else
-            {
-                //we dont currently posses a valid login cookie, see if windows has a stored credential we can use for this username
-                var passwordVault = new Windows.Security.Credentials.PasswordVault();
-                try
-                {
-                    var windowsCredentials = passwordVault.FindAllByResource("Baconography");
-                    var matchingWindowsCredential = windowsCredentials.FirstOrDefault(windowsCredential => string.Compare(windowsCredential.UserName, credential.Username, StringComparison.CurrentCultureIgnoreCase) == 0);
-                    if (matchingWindowsCredential != null)
-                    {
-                        matchingWindowsCredential.RetrievePassword();
-                        return await _redditService.Login(matchingWindowsCredential.UserName, matchingWindowsCredential.Password);
-                    }
-                }
-                catch
-                {
-                }
-            }
-            return null;
+			var originalCookie = credential.LoginCookie;
+			if (!string.IsNullOrWhiteSpace(credential.LoginCookie))
+			{
+				var loggedInUser = new User { Username = credential.Username, LoginCookie = credential.LoginCookie, NeedsCaptcha = false };
+				if (userInitiated)
+				{
+					loggedInUser.Me = await _redditService.GetMe(loggedInUser);
+				}
+				else
+				{
+					ThreadPool.RunAsync(async (o) =>
+					{
+						await Task.Delay(5000);
+						try
+						{
+							loggedInUser.Me = await _redditService.GetMe(loggedInUser);
+						}
+						catch { }
+						if (loggedInUser.Me == null)
+							ServiceLocator.Current.GetInstance<INotificationService>().CreateNotification(string.Format("Failed to login with user {0}", credential.Username));
+					});
+				}
+				return loggedInUser;
+			}
+			else
+			{
+				var passwordVault = new Windows.Security.Credentials.PasswordVault();
+				try
+				{
+					var windowsCredentials = passwordVault.FindAllByResource("Baconography");
+					var matchingWindowsCredential = windowsCredentials.FirstOrDefault(windowsCredential => string.Compare(windowsCredential.UserName, credential.Username, StringComparison.CurrentCultureIgnoreCase) == 0);
+					if (matchingWindowsCredential != null)
+					{
+						matchingWindowsCredential.RetrievePassword();
+						return await _redditService.Login(matchingWindowsCredential.UserName, matchingWindowsCredential.Password);
+					}
+				}
+				catch
+				{
+				}
+			}
+			return null;
         }
 
         private async Task<User> TryDefaultUser()
@@ -271,7 +290,7 @@ namespace BaconographyW8.PlatformServices
             var defaultCredential = credentials.FirstOrDefault(credential => credential.IsDefault);
             if (defaultCredential != null)
             {
-                var result = await LoginWithCredentials(defaultCredential);
+                var result = await LoginWithCredentials(defaultCredential, false);
                 if (result != null)
                 {
                     return result;
@@ -287,7 +306,7 @@ namespace BaconographyW8.PlatformServices
 
             if (targetCredential != null)
             {
-                var theUser = await LoginWithCredentials(targetCredential);
+                var theUser = await LoginWithCredentials(targetCredential, true);
                 return theUser;
             }
             return null;

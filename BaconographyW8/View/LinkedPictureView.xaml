@@ -36,9 +36,11 @@
                 <DataTemplate>
                     <Grid>
                         <TextBlock Text="{Binding Title}" Visibility="{Binding Path=IsAlbum, Converter={StaticResource booleanVisibilityConverter}}"/>
-                        <Viewbox Stretch="Uniform" StretchDirection="DownOnly">
+                        <ScrollViewer VerticalScrollBarVisibility="Hidden" VerticalScrollMode="Auto"
+                                      HorizontalScrollBarVisibility="Hidden" HorizontalScrollMode="Auto"
+                                      ZoomMode="Enabled">
                             <Image Source="{Binding ImageSource}"/>
-                        </Viewbox>
+                        </ScrollViewer>
                     </Grid>
                 </DataTemplate>
             </FlipView.ItemTemplate>

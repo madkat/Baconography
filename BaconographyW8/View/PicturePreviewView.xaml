@@ -8,26 +8,33 @@
     mc:Ignorable="d"
     d:DesignHeight="300"
     d:DesignWidth="400">
-    
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
-        </Grid.RowDefinitions>
-        <StackPanel Grid.Row="0" Orientation="Horizontal" Visibility="{Binding Path=IsAlbum, Converter={StaticResource booleanVisibilityConverter}}">
-            <Button Style="{StaticResource GoBackButton}" Command="{Binding MoveBack}"/>
-            <Button Style="{StaticResource GoForwardButton}" Command="{Binding MoveForward}"/>
-        </StackPanel>
-        <StackPanel Grid.Row="1" Orientation="Horizontal" Visibility="{Binding Path=IsAlbum, Converter={StaticResource booleanVisibilityConverter}}">
-            <TextBlock Text="{Binding CurrentPosition}"/>
-            <TextBlock Text=" of "/>
-            <TextBlock Text="{Binding AlbumSize}"/>
-            <TextBlock Margin="5,0,0,0" Text="{Binding Title}"/>
-        </StackPanel>
-        <ProgressRing Grid.Row="2" IsActive="{Binding IsLoading}"/>
-        <Viewbox Grid.Row="2" Stretch="Uniform" StretchDirection="DownOnly">
-            <Image Source="{Binding ImageSource}"/>
-        </Viewbox>
+
+    <Grid x:Name="controlRoot" MaxHeight="500">
+        
+        <FlipView x:Name="flipView" ItemsSource="{Binding FinishedImages}" VerticalAlignment="Stretch" HorizontalAlignment="Stretch"
+                  SelectionChanged="FlipView_SelectionChanged">
+            <FlipView.ItemTemplate>
+                <DataTemplate>
+                    <Grid DataContext="{Binding ElementName=controlRoot, Path=DataContext}">
+                        <Viewbox Stretch="Uniform" StretchDirection="DownOnly">
+                            <Image Source="{Binding ImageSource}"/>
+                        </Viewbox>
+                        <ProgressRing IsActive="{Binding IsLoading}"/>
+                    </Grid>
+                </DataTemplate>
+            </FlipView.ItemTemplate>
+        </FlipView>
+        <Grid Margin="0,0,0,0" VerticalAlignment="Bottom" HorizontalAlignment="Stretch" Height="40"
+              Visibility="{Binding HasTitle, Converter={StaticResource booleanVisibilityConverter}}">
+            <Grid.Background>
+                <SolidColorBrush Color="Black" Opacity="0.25" />
+            </Grid.Background>
+            <StackPanel Orientation="Horizontal" Visibility="{Binding Path=IsAlbum, Converter={StaticResource booleanVisibilityConverter}}">
+                <TextBlock Text="{Binding CurrentPosition}"/>
+                <TextBlock Text=" of "/>
+                <TextBlock Text="{Binding AlbumSize}"/>
+                <TextBlock Margin="12,0,0,0" Text="{Binding Title}"/>
+            </StackPanel>
+        </Grid>
     </Grid>
 </UserControl>

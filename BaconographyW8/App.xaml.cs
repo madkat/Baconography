@@ -127,7 +127,7 @@ namespace BaconographyW8
                 // When the navigation stack isn't restored navigate to the first page,
                 // configuring the new page by passing required information as a navigation
                 // parameter
-                if (!rootFrame.Navigate(_baconProvider.GetService<IDynamicViewLocator>().RedditView, args.Arguments))
+                if (!rootFrame.Navigate(_baconProvider.GetService<IDynamicViewLocator>().MainView, args.Arguments))
                 {
                     throw new Exception("Failed to create initial page");
                 }

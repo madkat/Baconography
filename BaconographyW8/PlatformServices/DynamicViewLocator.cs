@@ -62,7 +62,7 @@ namespace BaconographyW8.PlatformServices
 
 		public Type MainView
 		{
-			get { return RedditView; }
+			get { return typeof(MainView); }
 		}
 
         public Type MessagesView

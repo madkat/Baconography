@@ -32,6 +32,9 @@
                     </TextBlock>
                     <StackPanel Margin="0,2,0,2" Orientation="Horizontal">
                         <TextBlock FontSize="18"  Foreground="{StaticResource PhoneAccentBrush}" Text="{Binding Author}" />
+                        <TextBlock Foreground="{StaticResource PhoneAccentBrush}" Opacity="0.75" FontStyle="Italic"
+                                   FontSize="15" Text="{Binding Path=AuthorFlairText}" Margin="4,3,0,0"
+                                   Visibility="{Binding HasAuthorFlair, Converter={StaticResource booleanVisibilityConverter}}"/>
                         <TextBlock Margin="8,2,0,0" Foreground="Gray" FontSize="16" Text="{Binding Path=Votable.TotalVotes, Converter={StaticResource totalPointsConverter}}"/>
                     </StackPanel>
                     <StackPanel VerticalAlignment="Top" Orientation="Horizontal" Margin="0,3,0,0">

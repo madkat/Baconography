@@ -102,5 +102,15 @@ namespace BaconographyWP8.View
             UpdateMenuItems();
         }
 
+		private void Image_ImageFailed(object sender, ExceptionRoutedEventArgs e)
+		{
+
+		}
+
+		private void Image_ImageOpened(object sender, RoutedEventArgs e)
+		{
+
+		}
+
     }
 }

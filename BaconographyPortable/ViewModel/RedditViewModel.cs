@@ -117,6 +117,7 @@ namespace BaconographyPortable.ViewModel
 				{
 					_links = null;
 					RefreshLinks();
+					RaisePropertyChanged("Links");
 				}
 
 				Heading = _selectedSubreddit.Data.DisplayName;

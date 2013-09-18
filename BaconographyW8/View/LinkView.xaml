@@ -11,113 +11,129 @@
     d:DesignWidth="400"
     x:Name="_page">
 
-    <Grid Margin="0,0,15,0" Background="#353535" HorizontalAlignment="Stretch">
-        <local:VotableView x:Name="votable" HorizontalAlignment="Left" Background="#575757" DataContext="{Binding Votable}" />
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" MinHeight="0" MaxHeight="600" />
+        </Grid.RowDefinitions>
+    
+        <Border Grid.Row="0" Background="#353535" Padding="8,8,8,8" Margin="0,0,24,0">
+            <Grid HorizontalAlignment="Stretch">
 
-        <Grid x:Name="snappedView" MinHeight="100" Margin="10,0,5,5" HorizontalAlignment="Stretch" Visibility="Collapsed">
-            <Grid.RowDefinitions>
-                <RowDefinition MinHeight="75"  Height="Auto" />
-                <RowDefinition Height="25" />
-            </Grid.RowDefinitions>
-
-            <Border Grid.Row="0" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0,0,0,5" MaxWidth="320">
-                <TextBlock Grid.Row="0" Text="{Binding Title}" FontSize="20" Margin="0,0,25,0" TextWrapping="Wrap" Style="{StaticResource SubheaderTextStyle}"/>
-            </Border>
-            <Border Grid.Row="1" HorizontalAlignment="Left">
-                <TextBlock Foreground="Goldenrod" FontSize="18" Style="{StaticResource BodyTextStyle}" Text="{Binding Subreddit}" />
-            </Border>
-        </Grid>
-        <Grid x:Name="fullView" Margin="70,0,0,5" HorizontalAlignment="Stretch" MinHeight="140">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="*"/>
-            </Grid.RowDefinitions>
-            <Grid Grid.Row="0" x:Name="fullGrid" MinHeight="80" HorizontalAlignment="Stretch">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="110" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
-                
-                <Border Grid.Column="0" Height="70" Margin="0,10,10,10" VerticalAlignment="Center" Visibility="{Binding HasThumbnail, Converter={StaticResource booleanVisibilityConverter}}">
-                    <Image Source="{Binding Thumbnail}" VerticalAlignment="Center" Margin="0" Stretch="None"/>
-                </Border>
 
-                <Border Grid.Column="1" MinHeight="80" HorizontalAlignment="Stretch" VerticalAlignment="Center" Margin="0,0,90,0">
-                    <TextBlock Text="{Binding Title}" TextWrapping="Wrap" Style="{StaticResource SubheaderTextStyle}">
-                        <TextBlock.Foreground>
-                            <Binding Path="Url" Converter="{Binding VisitedMainLink, Source={StaticResource Locator}}"/>
-                        </TextBlock.Foreground>
-                    </TextBlock>
-                </Border>
-            </Grid>
+                <Button Grid.Column="0" Height="110" VerticalAlignment="Center" Padding="0" Command="{Binding ShowPreview}"
+                        HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" BorderBrush="Transparent"
+                        BorderThickness="0" Visibility="{Binding HasPreview, Converter={StaticResource booleanVisibilityConverter}}">
+                    <Grid Height="110" Width="110">
+                        <Grid Visibility="{Binding HasThumbnail, Converter={StaticResource booleanVisibilityConverter}}">
+                            <Border Height="70" VerticalAlignment="Center" HorizontalAlignment="Center">
+                                <Image Source="{Binding Thumbnail}" VerticalAlignment="Center" Margin="0" Stretch="None"/>
+                            </Border>
+                            <TextBlock FontFamily="Segoe UI Symbol" FontSize="26"
+                               HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,12,12"
+                               Text="{Binding Converter={StaticResource linkGlyphConverter}}" />
+                        </Grid>
+                        <TextBlock FontFamily="Segoe UI Symbol" FontSize="55" HorizontalAlignment="Center" VerticalAlignment="Center"
+                            Text="{Binding Converter={StaticResource linkGlyphConverter}}" Opacity="0.95"
+                            Visibility="{Binding HasThumbnail, Converter={StaticResource invertBooleanVisibilityConverter}}"/>
+                    </Grid>
+                </Button>
 
-            <StackPanel Grid.Row="1" Orientation="Vertical" HorizontalAlignment="Left" VerticalAlignment="Bottom" Height="55" Margin="0,5,0,0">
-                <StackPanel Orientation="Horizontal">
-                    <TextBlock Style="{StaticResource BodyTextStyle}" Text="submitted" Margin="2,0,0,0" />
-                    <TextBlock Style="{StaticResource TitleTextStyle}" Text="{Binding CreatedUTC, Converter={StaticResource timeRelationConverter}}" Margin="5,0,0,0" />
-                    <TextBlock Style="{StaticResource BodyTextStyle}" Text="by" Margin="5,0,0,0" />
-                    <Button BorderThickness="0" Padding="0" Margin="5,0,0,0" VerticalAlignment="Top" CommandParameter="{Binding Author}" Command="{Binding GotoUserDetails, Source={StaticResource StaticCommands}}">
-                        <Border Margin="0,0,0,0" BorderThickness="0" Background="{Binding AuthorFlair, Converter={StaticResource authorFlairKindConverter}}">
-                            <TextBlock Foreground="Goldenrod" Style="{StaticResource BodyTextStyle}" Text="{Binding Author}" Margin="0,-3,0,0" />
+                <Button Grid.Column="0" Height="110" VerticalAlignment="Center" Padding="0" Command="{Binding GotoLink}"  CommandParameter="{Binding}"
+                        HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" BorderBrush="Transparent"
+                        BorderThickness="0" Visibility="{Binding HasPreview, Converter={StaticResource invertBooleanVisibilityConverter}}">
+                    <Grid Height="110" Width="110">
+                        <Grid Visibility="{Binding HasThumbnail, Converter={StaticResource booleanVisibilityConverter}}">
+                            <Border Height="70" VerticalAlignment="Center" HorizontalAlignment="Center">
+                                <Image Source="{Binding Thumbnail}" VerticalAlignment="Center" Margin="0" Stretch="None"/>
+                            </Border>
+                            <TextBlock FontFamily="Segoe UI Symbol" FontSize="26"
+                               HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,12,12"
+                               Text="{Binding Converter={StaticResource linkGlyphConverter}}" />
+                        </Grid>
+                        <TextBlock FontFamily="Segoe UI Symbol" FontSize="55" HorizontalAlignment="Center" VerticalAlignment="Center"
+                            Text="{Binding Converter={StaticResource linkGlyphConverter}}" Opacity="0.95"
+                            Visibility="{Binding HasThumbnail, Converter={StaticResource invertBooleanVisibilityConverter}}"/>
+                    </Grid>
+                </Button>
+
+                <local:VotableView Grid.Column="1" x:Name="votable" Margin="0,0,12,0"
+                                   HorizontalAlignment="Left" DataContext="{Binding Votable}" />
+
+                <Button Grid.Column="2" Background="#565656" Padding="6,6,6,6" Margin="0"
+                        Command="{Binding GotoLink}" CommandParameter="{Binding}"
+                        BorderThickness="0" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="35" />
+                            <RowDefinition Height="40" />
+                        </Grid.RowDefinitions>
+                        <Border Grid.Row="0" MinHeight="80" HorizontalAlignment="Stretch" VerticalAlignment="Center">
+                            <TextBlock Text="{Binding Title}" TextWrapping="Wrap" Style="{StaticResource SubheaderTextStyle}">
+                                <TextBlock.Foreground>
+                                    <Binding Path="Url" Converter="{Binding VisitedMainLink, Source={StaticResource Locator}}"/>
+                                </TextBlock.Foreground>
+                            </TextBlock>
                         </Border>
-                    </Button>
-                    <TextBlock Style="{StaticResource BodyTextStyle}" Text="to" Margin="5,0,0,0" />
-                    <TextBlock Foreground="Goldenrod" Style="{StaticResource BodyTextStyle}" Text="{Binding Subreddit}" Margin="5,0,0,0" />
-                </StackPanel>
-                <StackPanel Orientation="Horizontal">
-                    <Button VerticalAlignment="Center" Command="{Binding NavigateToComments}" CommandParameter="{Binding}" BorderThickness="0" Margin="-15,0,0,3">
-                        <StackPanel Orientation="Horizontal">
-                            <TextBlock FontSize="18" Text="{Binding CommentCount}" />
-                            <TextBlock FontSize="18" Text="comments" Margin="5,0,0,0" />
+                        <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,5,0,0">
+                            <TextBlock Style="{StaticResource BodyTextStyle}" Text="submitted" Margin="2,0,0,0" />
+                            <TextBlock Style="{StaticResource TitleTextStyle}" Text="{Binding CreatedUTC, Converter={StaticResource timeRelationConverter}}" Margin="5,0,0,0" />
+                            <TextBlock Style="{StaticResource BodyTextStyle}" Text="by" Margin="5,0,0,0" />
+                            <Button BorderThickness="0" Padding="0" Margin="5,0,0,0" VerticalAlignment="Top" CommandParameter="{Binding Author}" Command="{Binding GotoUserDetails, Source={StaticResource StaticCommands}}">
+                                <Border Margin="0,0,0,0" BorderThickness="0" Background="{Binding AuthorFlair, Converter={StaticResource authorFlairKindConverter}}">
+                                    <TextBlock Foreground="Goldenrod" Style="{StaticResource BodyTextStyle}" Text="{Binding Author}" Margin="0,-3,0,0" />
+                                </Border>
+                            </Button>
+                            <TextBlock Style="{StaticResource BodyTextStyle}" Text="to" Margin="5,0,0,0" />
+                            <TextBlock Foreground="Goldenrod" Style="{StaticResource BodyTextStyle}" Text="{Binding Subreddit}" Margin="5,0,0,0" />
                         </StackPanel>
-                    </Button>
-                    <Button VerticalAlignment="Center" Visibility="{Binding HasPreview, Converter={StaticResource booleanVisibilityConverter}}" Command="{Binding ShowPreview}" Style="{StaticResource ShowPreviewAppBarButtonStyle}"/>
-                </StackPanel>
-            </StackPanel>
-            <ContentControl Grid.Row="2" HorizontalAlignment="Left" MaxWidth="768" Content="{Binding PreviewPack, Converter={Binding PreviewData, Source={StaticResource Locator}}}"/>
-        </Grid>
+                        <StackPanel Grid.Row="2" Orientation="Horizontal">
+                            <Button VerticalAlignment="Center" Command="{Binding NavigateToComments}" CommandParameter="{Binding}" BorderThickness="0" Margin="-5,0,0,3"
+                                    Padding="5,5,5,5">
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock FontSize="18" Text="{Binding CommentCount}" />
+                                    <TextBlock FontSize="18" Text="comments" Margin="5,0,0,0" />
+                                </StackPanel>
+                            </Button>
+                        </StackPanel>
+                    </Grid>
+                </Button>
 
-        <VisualStateManager.VisualStateGroups>
+                <VisualStateManager.VisualStateGroups>
+                    <VisualStateGroup x:Name="ApplicationViewStates">
+                        <VisualState x:Name="FullScreenLandscape">
+                            <Storyboard>
+                            </Storyboard>
+                        </VisualState>
+                        <VisualState x:Name="FullScreenPortrait">
+                            <Storyboard>
+                            </Storyboard>
+                        </VisualState>
+                        <VisualState x:Name="Snapped">
+                            <Storyboard>
+                            </Storyboard>
+                        </VisualState>
+                        <VisualState x:Name="Filled">
+                            <Storyboard>
+                            </Storyboard>
+                        </VisualState>
+                    </VisualStateGroup>
+                </VisualStateManager.VisualStateGroups>
+            </Grid>
+        </Border>
 
-            <!-- Visual states reflect the application's view state -->
-            <VisualStateGroup x:Name="ApplicationViewStates">
-                <VisualState x:Name="FullScreenLandscape">
-                    <Storyboard>
-                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="votable" Storyboard.TargetProperty="Visibility">
-                            <DiscreteObjectKeyFrame KeyTime="0" Value="Visible"/>
-                        </ObjectAnimationUsingKeyFrames>
-                    </Storyboard>
-                </VisualState>
-                <VisualState x:Name="FullScreenPortrait">
-                    <Storyboard>
-                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="votable" Storyboard.TargetProperty="Visibility">
-                            <DiscreteObjectKeyFrame KeyTime="0" Value="Visible"/>
-                        </ObjectAnimationUsingKeyFrames>
-                    </Storyboard>
-                </VisualState>
-
-                <VisualState x:Name="Snapped">
-                    <Storyboard>
-                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="votable" Storyboard.TargetProperty="Visibility">
-                            <DiscreteObjectKeyFrame KeyTime="0" Value="Collapsed"/>
-                        </ObjectAnimationUsingKeyFrames>
-                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="fullView" Storyboard.TargetProperty="Visibility">
-                            <DiscreteObjectKeyFrame KeyTime="0" Value="Collapsed"/>
-                        </ObjectAnimationUsingKeyFrames>
-                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="snappedView" Storyboard.TargetProperty="Visibility">
-                            <DiscreteObjectKeyFrame KeyTime="0" Value="Visible"/>
-                        </ObjectAnimationUsingKeyFrames>
-                    </Storyboard>
-                </VisualState>
-                <VisualState x:Name="Filled">
-                    <Storyboard>
-                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="votable" Storyboard.TargetProperty="Visibility">
-                            <DiscreteObjectKeyFrame KeyTime="0" Value="Visible"/>
-                        </ObjectAnimationUsingKeyFrames>
-                    </Storyboard>
-                </VisualState>
-            </VisualStateGroup>
-        </VisualStateManager.VisualStateGroups>
+        <Border Grid.Row="1" Margin="50,0,74,0" Padding="12,12,12,12" Background="#111111" HorizontalAlignment="Stretch"
+                Visibility="{Binding IsPreviewShown, Converter={StaticResource booleanVisibilityConverter}}">
+            <ContentControl Margin="12,0,12,0" HorizontalAlignment="Center" VerticalAlignment="Stretch" MaxHeight="500" Height="Auto"
+                        Content="{Binding PreviewPack, Converter={Binding PreviewData, Source={StaticResource Locator}}}"/>
+        </Border>
+        
     </Grid>
-    </common:LayoutAwareUserControl>
+
+</common:LayoutAwareUserControl>
