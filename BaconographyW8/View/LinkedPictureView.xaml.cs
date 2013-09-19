@@ -107,5 +107,11 @@ namespace BaconographyW8.View
                 }
             }
         }
+
+
+		private void imageFlip_SelectionChanged(object sender, SelectionChangedEventArgs e)
+		{
+
+		}
     }
 }

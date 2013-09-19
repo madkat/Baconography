@@ -30,8 +30,8 @@
             <TextBlock x:Name="pageTitle" Grid.Column="1" Text="{Binding ImageTitle}" Style="{StaticResource PageHeaderTextStyle}"/>
         </Grid>
 
-        <FlipView Grid.Row="2" Margin="130,0,130,0" Name="comments"
-                  ItemsSource="{Binding Path=Pictures}">
+        <FlipView Grid.Row="2" Margin="130,0,130,0" x:Name="imageFlip"
+                  ItemsSource="{Binding Path=Pictures}" SelectionChanged="imageFlip_SelectionChanged">
             <FlipView.ItemTemplate>
                 <DataTemplate>
                     <Grid>
@@ -39,7 +39,7 @@
                         <ScrollViewer VerticalScrollBarVisibility="Hidden" VerticalScrollMode="Auto"
                                       HorizontalScrollBarVisibility="Hidden" HorizontalScrollMode="Auto"
                                       ZoomMode="Enabled">
-                            <Image Source="{Binding ImageSource}"/>
+                            <Image Source="{Binding ImageSource}" Stretch="None"  IsDoubleTapEnabled="True" />
                         </ScrollViewer>
                     </Grid>
                 </DataTemplate>

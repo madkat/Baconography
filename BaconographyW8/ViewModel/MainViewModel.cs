@@ -49,7 +49,7 @@ namespace BaconographyPortable.ViewModel
 			_viewModelLocator = new ViewModelLocator();
 
 			MessengerInstance.Register<UserLoggedInMessage>(this, OnUserLoggedIn);
-			//MessengerInstance.Register<SelectSubredditMessage>(this, OnSubredditChanged);
+			MessengerInstance.Register<SelectSubredditMessage>(this, OnSubredditChanged);
 			MessengerInstance.Send<UserLoggedInMessage>(new UserLoggedInMessage { CurrentUser = _userService.GetUser().Result, UserTriggered = false });
         }
 
@@ -76,6 +76,11 @@ namespace BaconographyPortable.ViewModel
 						sub.Selected = false;
 				}
 			}
+		}
+
+		private async void OnSubredditChanged(SelectSubredditMessage message)
+		{
+			CheckSelections();
 		}
 
 		private async void OnUserLoggedIn(UserLoggedInMessage message)
