@@ -3,6 +3,7 @@ using BaconographyPortable.Services;
 using BaconographyPortable.ViewModel;
 using BaconographyPortable.ViewModel.Collections;
 using GalaSoft.MvvmLight;
+using GalaSoft.MvvmLight.Messaging;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -157,6 +158,11 @@ namespace BaconographyWP8Core.ViewModel
 
         public BindingShellViewModelCollection Subreddits { get; set; }
 
+    }
+
+    public class PickedSubredditMessage : MessageBase
+    {
+        public string SubredditName { get; set; }
     }
 
     public class TypedSubreddit

@@ -265,6 +265,9 @@
     <Compile Include="View\SelectSortTypeView.xaml.cs">
       <DependentUpon>SelectSortTypeView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="View\SingleSubredditPickerView.xaml.cs">
+      <DependentUpon>SingleSubredditPickerView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="View\SortSubredditPageView.xaml.cs">
       <DependentUpon>SortSubredditPageView.xaml</DependentUpon>
     </Compile>
@@ -405,6 +408,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="View\SelectSortTypeView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\SingleSubredditPickerView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

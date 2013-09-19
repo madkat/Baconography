@@ -12,6 +12,9 @@ using Microsoft.Practices.ServiceLocation;
 using BaconographyPortable.ViewModel;
 using BaconographyPortable.Services;
 using System.Windows.Data;
+using BaconographyWP8Core.View;
+using GalaSoft.MvvmLight.Messaging;
+using BaconographyWP8Core.ViewModel;
 
 namespace BaconographyWP8.View
 {
@@ -154,6 +157,22 @@ namespace BaconographyWP8.View
             var vm = this.DataContext as ComposePostViewModel;
             if (vm == null)
                 return;
+        }
+
+        private void SearchSubreddit(object sender, RoutedEventArgs e)
+        {
+            Messenger.Default.Register<PickedSubredditMessage>(this, RecievePickedSubreddit);
+            ServiceLocator.Current.GetInstance<INavigationService>().Navigate<SingleSubredditPickerView>(null);
+        }
+
+        private void RecievePickedSubreddit(PickedSubredditMessage obj)
+        {
+            Messenger.Default.Unregister<PickedSubredditMessage>(this);
+            var vm = this.DataContext as ComposePostViewModel;
+            if (vm != null)
+            {
+                vm.Subreddit = obj.SubredditName;
+            }
         }
 
     }
