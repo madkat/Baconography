@@ -276,6 +276,8 @@ namespace BaconographyPortable.ViewModel
 		{
 			get
 			{
+				if (_selectedSubreddit == null)
+					_selectedSubreddit = new TypedThing<Subreddit>(ThingUtility.GetFrontPageThing());
 				return _selectedSubreddit;
 			}
 		}
@@ -286,7 +288,7 @@ namespace BaconographyPortable.ViewModel
             get
             {
                 if (_heading == null)
-                    _heading = "The front page of this device";
+                    _heading = "front page";
                 return _heading;
             }
             set

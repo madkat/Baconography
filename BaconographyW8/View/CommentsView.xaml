@@ -94,8 +94,8 @@
 
         <ContentControl Grid.Row="3" Content="{Binding ReplyData, Converter={StaticResource replyConverter}}"/>
 
-        <ScrollViewer Grid.Row="4" Margin="20,0,0,0" HorizontalScrollMode="Disabled" HorizontalScrollBarVisibility="Disabled" Background="{StaticResource ApplicationPageBackgroundThemeBrush}">
-            <StackPanel Orientation="Vertical">
+        <ScrollViewer Grid.Row="4" Margin="0,0,0,0" HorizontalScrollMode="Disabled" HorizontalScrollBarVisibility="Disabled" Background="{StaticResource ApplicationPageBackgroundThemeBrush}">
+            <StackPanel Orientation="Vertical" Margin="24,0,24,0">
                 <Border BorderBrush="White" BorderThickness="1" CornerRadius="3" Margin="10,5,8,10" Visibility="{Binding IsSelf, Converter={StaticResource booleanVisibilityConverter}}">
                     <ContentControl Margin="5,5,5,5" Content="{Binding SelfText, Converter={StaticResource markdownConverter}}"/>
                 </Border>
