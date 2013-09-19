@@ -99,7 +99,7 @@
                                         Background="White" BorderThickness="0" Padding="0"
                                         VerticalAlignment="Center">
                                         <Image 
-                                            Source="{Binding Path=TypedData.HeaderImage}" MaxHeight="50" MaxWidth="125" HorizontalAlignment="Center" Margin="0"
+                                            Source="{Binding Path=TypedData.HeaderImage}" MaxHeight="50" MaxWidth="125"  HorizontalAlignment="Center" Margin="0"
                                             VerticalAlignment="Center"/>
                                     </Border>
 
