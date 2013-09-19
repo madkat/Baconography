@@ -56,7 +56,13 @@ namespace BaconographyPortable.ViewModel
             _minimizeCommand = new RelayCommand(() => IsMinimized = !IsMinimized);
             Body = _comment.Data.Body;
         }
-
+        public TypedThing<Comment> Comment
+        {
+            get
+            {
+                return _comment;
+            }
+        }
         public bool OddNesting { get; private set; }
 
         VotableViewModel _votable;
