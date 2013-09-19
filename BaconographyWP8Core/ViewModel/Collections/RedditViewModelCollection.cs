@@ -15,5 +15,7 @@ namespace BaconographyWP8.ViewModel.Collections
 {
     public class RedditViewModelCollection : ObservableCollection<ViewModelBase>
     {
+        public RedditViewModelCollection(IEnumerable<ViewModelBase> initial) : base(initial) { }
+        public RedditViewModelCollection() : base() { }
     }
 }

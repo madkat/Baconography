@@ -177,7 +177,7 @@ namespace BaconographyPortable.ViewModel
         {
             get
             {
-                return IsSelfPost && _userService.GetUser().Result.Username == _linkThing.Data.Author;
+                return IsSelfPost && string.Compare(_userService.GetUser().Result.Username, _linkThing.Data.Author, StringComparison.CurrentCultureIgnoreCase) == 0;
             }
         }
 

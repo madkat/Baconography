@@ -162,6 +162,7 @@
     <Compile Include="ViewModel\ComposeViewModel.cs" />
     <Compile Include="ViewModel\CaptchaViewModel.cs" />
     <Compile Include="ViewModel\ComposePostViewModel.cs" />
+    <Compile Include="ViewModel\IRedditViewModelCollection.cs" />
     <Compile Include="ViewModel\MessageViewModel.cs" />
     <Compile Include="ViewModel\MessagesViewModel.cs" />
     <Compile Include="ViewModel\FileOpenPickerViewModel.cs" />

@@ -14,5 +14,7 @@ namespace BaconographyPortable.Services
         void PopViewModelContext(ViewModelBase viewModel);
         ViewModelBase Context { get; }
         IEnumerable<ViewModelBase> ContextStack { get; }
+
+        void ClearViewModelContext();
     }
 }

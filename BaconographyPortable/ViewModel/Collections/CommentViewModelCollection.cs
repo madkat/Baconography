@@ -248,6 +248,36 @@ namespace BaconographyPortable.ViewModel.Collections
             return count;
         }
 
+        Listing MapParentage(Listing listing)
+        {
+            if (listing != null)
+            {
+                Dictionary<string, Comment> nameMap = new Dictionary<string, Comment>();
+                foreach (var item in listing.Data.Children)
+                {
+                    if(item.Data is Comment)
+                        nameMap.Add(((Comment)item.Data).Name, ((Comment)item.Data));
+                }
+                
+                foreach (var item in new List<Thing>(listing.Data.Children))
+                {
+                    if (item.Data is Comment)
+                    {
+                        if (nameMap.ContainsKey(((Comment)item.Data).ParentId))
+                        {
+                            var targetParent = nameMap[((Comment)item.Data).ParentId];
+                            if (targetParent.Replies == null)
+                                targetParent.Replies = new Listing { Data = new ListingData { Children = new List<Thing>() } };
+
+                            targetParent.Replies.Data.Children.Add(item);
+                            listing.Data.Children.Remove(item);
+                        }
+                    }
+                }
+            }
+            return listing;
+        }
+
         async void RunLoadMore(IEnumerable<string> ids, List<ViewModelBase> targetCollection, ViewModelBase parent, ViewModelBase removeMe)
         {
             Messenger.Default.Send<LoadingMessage>(new LoadingMessage { Loading = true });
@@ -255,11 +285,11 @@ namespace BaconographyPortable.ViewModel.Collections
             try
             {
 
-                var initialListing = await _listingProvider.GetMore(ids, _state);
+                var initialListing = MapParentage(await _listingProvider.GetMore(ids, _state));
 
                 remainingVMs = MapListing(initialListing, parent);
-                if (parent is CommentViewModel)
-                    ((CommentViewModel)parent).Replies.AddRange(remainingVMs);
+                //if (parent is CommentViewModel)
+                //    ((CommentViewModel)parent).Replies.AddRange(remainingVMs);
                 
             }
             finally

@@ -56,7 +56,13 @@ namespace BaconographyPortable.ViewModel
             _minimizeCommand = new RelayCommand(() => IsMinimized = !IsMinimized);
             Body = _comment.Data.Body;
         }
-
+        public TypedThing<Comment> Comment
+        {
+            get
+            {
+                return _comment;
+            }
+        }
         public bool OddNesting { get; private set; }
 
         VotableViewModel _votable;
@@ -200,7 +206,7 @@ namespace BaconographyPortable.ViewModel
                 //this looks really bad but it shouldnt actually end up being an issue in practice because we 
                 //shouldnt be in a state where we can be looking at a comment but be waiting on GetUser to return
                 var userTask = _userService.GetUser();
-                return userTask.IsCompleted && userTask.Result != null && userTask.Result.Username == PosterName;
+                return userTask.IsCompleted && userTask.Result != null && string.Compare(userTask.Result.Username, PosterName, StringComparison.CurrentCultureIgnoreCase) == 0;
             }
         }
 

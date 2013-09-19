@@ -100,9 +100,10 @@ namespace BaconographyPortable.ViewModel
             }
         }
 
-        private void UserLoggedIn(UserLoggedInMessage obj)
+        private async void UserLoggedIn(UserLoggedInMessage obj)
         {
             _userLoggedIn = true;
+            await Task.Delay(2000);
             GetMessages();
         }
 

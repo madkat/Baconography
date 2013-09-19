@@ -27,7 +27,7 @@
                 <StackPanel>
                     <TextBlock FontSize="22" HorizontalAlignment="Left" Text="{Binding Title}" TextWrapping="Wrap">
                         <TextBlock.Foreground>
-                            <Binding Path="Url" Converter="{StaticResource visitedMainLinkConverter}"/>
+                            <Binding Converter="{StaticResource visitedMainLinkConverter}"/>
                         </TextBlock.Foreground>
                     </TextBlock>
                     <StackPanel Margin="0,2,0,2" Orientation="Horizontal">

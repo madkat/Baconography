@@ -20,7 +20,7 @@ using System.Threading.Tasks;
 
 namespace BaconographyPortable.ViewModel
 {
-    public class MainPageViewModel : ViewModelBase
+    public class MainPageViewModel : ViewModelBase, IRedditViewModelCollection
     {
         IBaconProvider _baconProvider;
         IRedditService _redditService;
@@ -341,5 +341,10 @@ namespace BaconographyPortable.ViewModel
 				return _subscribedSubreddits;
 			}
 		}
+
+        public IEnumerable<RedditViewModel> RedditViewModels
+        {
+            get { return PivotItems.OfType<RedditViewModel>(); }
+        }
     }
 }

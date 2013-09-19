@@ -129,6 +129,10 @@ namespace BaconographyWP8
             }
             else if (e.NavigationMode == NavigationMode.New)
             {
+                if(DataContext is ViewModelBase)
+                    _viewModelContextService.PushViewModelContext(DataContext as ViewModelBase);
+                _smartOfflineService.NavigatedToView(typeof(MainPage), (e.NavigationMode == NavigationMode.New));
+
                 if (this.NavigationContext.QueryString.ContainsKey("data") && !string.IsNullOrWhiteSpace(this.NavigationContext.QueryString["data"]))
                 {
                     try
@@ -165,8 +169,7 @@ namespace BaconographyWP8
                 }
             }
 
-            _viewModelContextService.PushViewModelContext(DataContext as ViewModelBase);
-            _smartOfflineService.NavigatedToView(typeof(MainPage), (e.NavigationMode == NavigationMode.New));
+            
 		}
 
 		protected override void OnBackKeyPress(System.ComponentModel.CancelEventArgs e)
