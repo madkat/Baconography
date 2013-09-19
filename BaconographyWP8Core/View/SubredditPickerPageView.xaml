@@ -112,8 +112,7 @@
                                 Background="White" BorderThickness="0" Padding="0" Margin="0"
                                 VerticalAlignment="Center">
                                 <Image 
-                                    Source="{Binding HeaderImage}" MaxHeight="50" MaxWidth="125" Height="{Binding HeaderImageHeight}"
-                                    Width="{Binding HeaderImageWidth}" HorizontalAlignment="Center" Margin="0"
+                                    Source="{Binding HeaderImage}" MaxHeight="50" MaxWidth="125" HorizontalAlignment="Center" Margin="0"
                                     VerticalAlignment="Center"/>
                             </Border>
 
