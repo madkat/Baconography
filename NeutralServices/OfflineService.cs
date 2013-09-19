@@ -18,6 +18,7 @@ using Windows.System.Threading;
 
 namespace Baconography.NeutralServices
 {
+
     class OfflineService : IOfflineService
     {
         private string _historyFileName = Windows.Storage.ApplicationData.Current.LocalFolder.Path + "\\history_v3.flat";
@@ -104,6 +105,10 @@ namespace Baconography.NeutralServices
             }
         }
 
+		
+
+		
+
         private async Task InitializeImpl()
         {
             try
@@ -132,26 +137,36 @@ namespace Baconography.NeutralServices
 
                 //this doesnt ever actually get looked up, just loaded into a dictionary so 
                 //there is no reason to load it into kitaro and pay for indexes we will never use
-                if (File.Exists(_historyFileName))
-                {
-                    lock (_historyFileName)
-                    {
-                        using (var fileStream = File.OpenText(_historyFileName))
-                        {
-                            try
-                            {
-                                string fileLine;
-                                while ((fileLine = fileStream.ReadLine()) != null)
-                                {
-                                    if (!_clickHistory.Contains(fileLine))
-                                        _clickHistory.Add(fileLine);
-                                    if (_terminateSource.IsCancellationRequested)
-                                        return;
-                                }
-                            } catch {}
-                        }
-                    }
-                }
+
+				using (var file = new AgnosticFile(_historyFileName))
+				{
+					if (await file.Exists())
+					{
+						try
+						{
+							Monitor.Enter(this);
+							using (var fileStream = await file.GetStreamReader())
+							{
+								try
+								{
+									string fileLine;
+									while ((fileLine = fileStream.ReadLine()) != null)
+									{
+										if (!_clickHistory.Contains(fileLine))
+											_clickHistory.Add(fileLine);
+										if (_terminateSource.IsCancellationRequested)
+											return;
+									}
+								}
+								catch { }
+							}
+						}
+						finally
+						{
+							Monitor.Exit(this);
+						}
+					}
+				}
             }
             catch (Exception e)
             {
@@ -227,12 +242,19 @@ namespace Baconography.NeutralServices
             await _comments.Clear();
             await _links.Clear();
             _blobStoreDb.Dispose();
-            lock (_historyFileName)
-            {
-                if (File.Exists(_historyFileName))
-                    File.Delete(_historyFileName);
-                File.CreateText(_historyFileName).Dispose();
-            }
+			try
+			{
+				Monitor.Enter(this);
+				using (var file = new AgnosticFile(_historyFileName))
+				{
+					await file.Delete();
+					await file.Create();
+				}
+			}
+			finally
+			{
+				Monitor.Exit(this);
+			}
             await PurgeDB(_actionsDb, _actionsFileName);
             await PurgeDB(_imageAPIDb, _imageApiFileName);
             await PurgeDB(_imageDb, _imageFileName);
@@ -700,13 +722,21 @@ namespace Baconography.NeutralServices
             if (!_clickHistory.Contains(link))
             {
                 _clickHistory.Add(link);
-                lock(_historyFileName)
-                {
-                    using (var historyFile = File.AppendText(_historyFileName))
-                    {
-                        historyFile.WriteLine(link);
-                    }
-                }
+				try
+				{
+					Monitor.Enter(this);
+					using (var file = new AgnosticFile(_historyFileName))
+					{
+						using (var writer = await file.GetStreamWriter(true))
+						{
+							writer.WriteLine(link);
+						}
+					}
+				}
+				finally
+				{
+					Monitor.Exit(this);
+				}
 
             }
             
@@ -716,13 +746,19 @@ namespace Baconography.NeutralServices
         {
             await Initialize();
             _clickHistory.Clear();
-            lock (_historyFileName)
-            {
-                if(File.Exists(_historyFileName))
-                    File.Delete(_historyFileName);
-
-                File.CreateText(_historyFileName).Dispose();
-            }
+			try
+			{
+				Monitor.Enter(this);
+				using (var file = new AgnosticFile(_historyFileName))
+				{
+					await file.Delete();
+					await file.Create();
+				}
+			}
+			finally
+			{
+				Monitor.Exit(this);
+			}
         }
 
         public bool HasHistory(string link)
