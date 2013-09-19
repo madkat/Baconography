@@ -35,13 +35,13 @@
             <local:LinkView InComments="True" DataContext="{Binding}" />
                 <Grid Margin="0,0,0,0" HorizontalAlignment="Stretch">
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition />
+                        <ColumnDefinition />
+                        <ColumnDefinition />
+                        <ColumnDefinition />
+                        <ColumnDefinition />
+                        <ColumnDefinition />
+                        <ColumnDefinition />
                     </Grid.ColumnDefinitions>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="10" />
@@ -113,12 +113,12 @@
                     Click="MenuSort_Click"/>
                     <TextBlock Grid.Row="3" Grid.Column="5" Margin="0,4,0,0" Text="Sort" FontSize="14" HorizontalAlignment="Center" />
 
-                    <Button Grid.Row="1" Grid.Column="6" Visibility="{Binding IsContexted, Converter={StaticResource booleanVisibilityConverter}}"
+                    <Button Grid.Row="1" Grid.Column="6" Visibility="{Binding ElementName=controlRoot, Path=DataContext.IsContexted, Converter={StaticResource booleanVisibilityConverter}}"
                                             FontFamily="Segoe UI Symbol" FontSize="16"
                                             Width="40" Height="40"
                                             Content="&#xE1AA;" Style="{StaticResource RoundButtonStyle}"
                                             Command="{Binding ElementName=controlRoot, Path=DataContext.GotoTopLevel}" CommandParameter="{Binding ElementName=controlRoot, Path=DataContext}"/>
-                    <TextBlock Grid.Row="3" Visibility="{Binding IsContexted, Converter={StaticResource booleanVisibilityConverter}}" Grid.Column="6" Margin="0,4,0,0" Text="Top Level" FontSize="14" HorizontalAlignment="Center" />
+                    <TextBlock Grid.Row="3" Visibility="{Binding ElementName=controlRoot, Path=DataContext.IsContexted, Converter={StaticResource booleanVisibilityConverter}}" Grid.Column="6" Margin="0,4,0,0" Text="Top Level" FontSize="14" HorizontalAlignment="Center" />
 
 
                 </Grid>

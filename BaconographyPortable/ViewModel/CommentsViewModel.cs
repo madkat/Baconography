@@ -246,7 +246,7 @@ namespace BaconographyPortable.ViewModel
         {
             get
             {
-                return _linkThing.Data.Url.ToLower().Contains("context=");
+                return _linkThing.Data.Permalink.ToLower().Contains("context=");
             }
         }
 

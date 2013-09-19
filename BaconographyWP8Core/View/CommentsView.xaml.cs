@@ -19,6 +19,7 @@ using GalaSoft.MvvmLight.Ioc;
 using Microsoft.Practices.ServiceLocation;
 using BaconographyPortable.Services;
 using GalaSoft.MvvmLight;
+using System.Windows.Data;
 
 namespace BaconographyWP8.View
 {
@@ -135,6 +136,30 @@ namespace BaconographyWP8.View
             _smartOfflineService.NavigatedToView(typeof(CommentsView), e.NavigationMode == NavigationMode.New);
 		}
 
+        public ContextedWidthConverter WidthConverter
+        {
+            get
+            {
+                return new ContextedWidthConverter();
+            }
+        }
+
+        public class ContextedWidthConverter : IValueConverter
+        {
+            public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+            {
+                var isContexted = (bool)value;
+                if (isContexted)
+                    return GridLength.Auto;
+                else
+                    return new GridLength(0);
+            }
+
+            public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+            {
+                throw new NotImplementedException();
+            }
+        }
 
 		protected override void OnNavigatedFrom(NavigationEventArgs e)
 		{
