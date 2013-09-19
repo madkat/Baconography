@@ -110,7 +110,7 @@ namespace BaconographyWP8.Common
                 IEnumerable<string> tileImages = new string[0];
 
                 if ((settingsService.UpdateImagesOnlyOnWifi && Microsoft.Phone.Net.NetworkInformation.DeviceNetworkInformation.IsWiFiEnabled) ||
-                    (connectionCostType != NetworkCostType.Variable))
+                    (!settingsService.UpdateImagesOnlyOnWifi && connectionCostType != NetworkCostType.Variable))
                 {
                     if(!settingsService.UseImagePickerForLockScreen)
                         lockScreenImages = await MakeLockScreenImages(settingsService, redditService, userService, imagesService, liveTileService);
