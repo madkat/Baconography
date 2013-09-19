@@ -242,9 +242,18 @@ namespace BaconographyPortable.ViewModel
             }
         }
 
+        public bool IsContexted
+        {
+            get
+            {
+                return _linkThing.Data.Url.ToLower().Contains("context=");
+            }
+        }
+
         static RelayCommand<CommentsViewModel> _saveLink = new RelayCommand<CommentsViewModel>((vm) => vm.SaveLinkImpl());
         static RelayCommand<CommentsViewModel> _reportLink = new RelayCommand<CommentsViewModel>((vm) => vm.ReportLinkImpl());
         static RelayCommand<CommentsViewModel> _gotoReply = new RelayCommand<CommentsViewModel>((vm) => vm.GotoReplyImpl());
+        static RelayCommand<CommentsViewModel> _gotoTopLevel = new RelayCommand<CommentsViewModel>((vm) => vm.GotoTopLevelImpl());
         RelayCommand _gotoLink;
         RelayCommand _gotoSubreddit;
         RelayCommand _gotoUserDetails;
@@ -252,6 +261,7 @@ namespace BaconographyPortable.ViewModel
         public RelayCommand<CommentsViewModel> SaveLink { get { return _saveLink; } }
         public RelayCommand<CommentsViewModel> ReportLink { get { return _reportLink; } }
         public RelayCommand<CommentsViewModel> GotoReply { get { return _gotoReply; } }
+        public RelayCommand<CommentsViewModel> GotoTopLevel { get { return _gotoTopLevel; } }
         public RelayCommand GotoLink { get { return _gotoLink; } }
         public RelayCommand GotoSubreddit { get { return _gotoSubreddit; } }
         public RelayCommand GotoUserDetails { get { return _gotoUserDetails; } }
@@ -287,6 +297,26 @@ namespace BaconographyPortable.ViewModel
         {
             Action<Thing> uiResponse = (madeComment) => Comments.Add(new CommentViewModel(_baconProvider, madeComment, _linkThing.Data.Name, false));
             ReplyData = new ReplyViewModel(_baconProvider, _linkThing, new RelayCommand(() => ReplyData = null), uiResponse);
+        }
+
+        private void GotoTopLevelImpl()
+        {
+            string permalink = _linkThing.Data.Permalink;
+            var slashCount = permalink.Length - permalink.Replace("/", "").Length;
+            //this means we've got a comment id in the permalink
+            if(slashCount == 8)
+            {
+                _linkThing.Data.Permalink = permalink = permalink.Remove(permalink.LastIndexOf('/'));
+            }
+            else if (permalink.Contains("?"))
+            {
+                _linkThing.Data.Permalink = permalink = permalink.Remove(permalink.IndexOf('?'));
+            }
+            _sortOrder = "Hot";
+            Comments = new CommentViewModelCollection(_baconProvider, permalink, _linkThing.Data.Subreddit, _linkThing.Data.SubredditId, _linkThing.Data.Name, _linkThing);
+            RaisePropertyChanged("Comments");
+            RaisePropertyChanged("SortOrder");
+            RaisePropertyChanged("IsContexted");
         }
 
         private ReplyViewModel _replyData;
