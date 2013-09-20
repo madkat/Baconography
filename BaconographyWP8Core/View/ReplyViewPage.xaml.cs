@@ -13,6 +13,7 @@ using System.Net;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
+using System.Windows.Input;
 using System.Windows.Navigation;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
@@ -64,6 +65,13 @@ namespace BaconographyWP8.View
 
 		private void SendButton_Tap(object sender, System.Windows.Input.GestureEventArgs e)
 		{
+			object focusObj = FocusManager.GetFocusedElement();
+			if (focusObj != null && focusObj is TextBox)
+			{
+				var binding = (focusObj as TextBox).GetBindingExpression(TextBox.TextProperty);
+				binding.UpdateSource();
+			}
+
 			var vm = this.DataContext as ReplyViewModel;
 			if (vm != null)
 			{

@@ -12,6 +12,7 @@ using Microsoft.Practices.ServiceLocation;
 using BaconographyPortable.ViewModel;
 using BaconographyPortable.Services;
 using System.Windows.Data;
+using System.Windows.Input;
 
 namespace BaconographyWP8.View
 {
@@ -45,6 +46,13 @@ namespace BaconographyWP8.View
 
         private void Send_Click(object sender, EventArgs e)
         {
+			object focusObj = FocusManager.GetFocusedElement();
+			if (focusObj != null && focusObj is TextBox)
+			{
+				var binding = (focusObj as TextBox).GetBindingExpression(TextBox.TextProperty);
+				binding.UpdateSource();
+			}
+
             var vm = this.DataContext as MessagesViewModel;
             if (vm != null)
                 vm.Compose.Send.Execute(null);
