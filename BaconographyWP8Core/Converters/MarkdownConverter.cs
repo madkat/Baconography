@@ -298,6 +298,17 @@ namespace BaconographyWP8.Converters
                                 break;
                         }
                     }
+
+                    var plainTextVisitor = new SnuDomPlainTextVisitor();
+                    if (link.Display != null && link.Display.FirstOrDefault() != null)
+                    {
+                        foreach (var item in link.Display)
+                            item.Accept(plainTextVisitor);
+                    }
+                    else
+                        plainTextVisitor.Result = link.Url;
+
+                    ((Hyperlink)inlineContainer).Inlines.Add(plainTextVisitor.Result);
                 }
                 else
                 {
