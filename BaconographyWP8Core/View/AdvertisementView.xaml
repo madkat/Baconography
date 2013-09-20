@@ -26,7 +26,7 @@
             Visibility="{Binding ElementName=layoutRoot, Path=Visibility}"/>
 
         <adduplex:AdControl x:Name="adDuplexAd" 
-                        AppId="53de57dd-e6cd-46af-89c3-221789b966cd" 
+                        AppId="52859" 
                         Visibility="Collapsed" />
     </Grid>
 
