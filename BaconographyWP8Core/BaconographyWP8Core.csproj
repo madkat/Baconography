@@ -48,7 +48,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>Bin\x86\Debug</OutputPath>
-    <DefineConstants>DEBUG;TRACE;SILVERLIGHT;WINDOWS_PHONE</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;SILVERLIGHT;WINDOWS_PHONE</DefineConstants>
     <NoStdLib>true</NoStdLib>
     <NoConfig>true</NoConfig>
     <ErrorReport>prompt</ErrorReport>
@@ -106,6 +106,9 @@
     </Compile>
     <Compile Include="..\NeutralServices\VideoService.cs">
       <Link>NeutralServices\VideoService.cs</Link>
+    </Compile>
+    <Compile Include="..\NeutralServices\AgnosticFile.cs">
+      <Link>NeutralServices\AgnosticFile.cs</Link>
     </Compile>
     <Compile Include="Common\RichMarkdownButton.xaml.cs">
       <DependentUpon>RichMarkdownButton.xaml</DependentUpon>
