@@ -123,8 +123,16 @@ namespace BaconographyWP8.Common
                     var taskSettings = liveTileService.LoadTaskSettings();
                     if (taskSettings != null)
                     {
-                        if (!settingsService.UseImagePickerForLockScreen)
-                            lockScreenImages = taskSettings.Value.lock_images;
+						if (!settingsService.UseImagePickerForLockScreen)
+						{
+							if (taskSettings.Value.lock_images.Length == 0
+								&& connectionCostType == NetworkCostType.Unrestricted)
+							{
+								lockScreenImages = await MakeLockScreenImages(settingsService, redditService, userService, imagesService, liveTileService, 1);
+							}
+							else
+								lockScreenImages = taskSettings.Value.lock_images;
+						}
                         tileImages = taskSettings.Value.tile_images;
                     }
                 }
@@ -317,7 +325,7 @@ namespace BaconographyWP8.Common
 
 
 
-        public static async Task<IEnumerable<string>> MakeLockScreenImages(ISettingsService settingsService, IRedditService redditService, IUserService userService, IImagesService imagesService, ILiveTileService liveTileService)
+        public static async Task<IEnumerable<string>> MakeLockScreenImages(ISettingsService settingsService, IRedditService redditService, IUserService userService, IImagesService imagesService, ILiveTileService liveTileService, int limiter = 10)
         {
             try
             {
@@ -405,7 +413,7 @@ namespace BaconographyWP8.Common
                         await Task.Yield();
                         results.Add(string.Format("lockScreenCache{0}.jpg", results.Count.ToString()));
 
-                        if (results.Count > 10)
+                        if (results.Count >= limiter)
                             break;
                     }
                     catch (OutOfMemoryException oom)

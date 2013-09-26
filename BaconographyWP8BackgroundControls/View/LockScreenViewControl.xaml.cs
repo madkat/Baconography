@@ -38,7 +38,8 @@ namespace BaconographyWP8BackgroundControls.View
         public LockScreenViewControl(LockScreenViewModel lockScreenViewModel)
         {
             InitializeComponent();
-            backgroundImage.ImageSource = GetImageFromIsolatedStorage(lockScreenViewModel.ImageSource);
+			if (!String.IsNullOrWhiteSpace(lockScreenViewModel.ImageSource))
+				backgroundImage.ImageSource = GetImageFromIsolatedStorage(lockScreenViewModel.ImageSource);
             borderBackground.Opacity = lockScreenViewModel.OverlayOpacity;
             overlayBorder.Margin = lockScreenViewModel.Margin;
             overlayBorder.CornerRadius = lockScreenViewModel.CornerRadius;
