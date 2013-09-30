@@ -1,7 +1,6 @@
 ﻿using BaconographyPortable.ViewModel;
 using BaconographyWP8.View;
 using BaconographyWP8.ViewModel;
-using BaconographyWP8.ViewModel.Collections;
 using GalaSoft.MvvmLight;
 using Microsoft.Phone.Controls;
 using System;

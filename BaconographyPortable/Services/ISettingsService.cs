@@ -49,6 +49,9 @@ namespace BaconographyPortable.Services
        
         bool AllowAdvertising { get; set; }
 
+        bool SimpleLayoutMode { get; set; }
+        bool OneTouchVoteMode { get; set; }
+
         int ScreenWidth { get; set; }
         int ScreenHeight { get; set; }
         DateTime LastUpdatedImages { get; set; }

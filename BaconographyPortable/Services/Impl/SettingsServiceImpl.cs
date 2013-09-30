@@ -69,6 +69,8 @@ namespace BaconographyPortable.Services.Impl
         public int OfflineCacheDays { get; set; }
         public DateTime LastCleanedCache { get; set; }
         public DateTime LastUpdatedImages { get; set; }
+        public bool SimpleLayoutMode { get; set; }
+        public bool OneTouchVoteMode { get; set; }
 
         public void ShowSettings()
         {
@@ -304,6 +306,18 @@ namespace BaconographyPortable.Services.Impl
                     OnlyFlipViewImages = bool.Parse(onlyFlipViewImages);
                 else
                     OnlyFlipViewImages = true;
+
+                var simpleLayoutMode = await offlineService.GetSetting("SimpleLayoutMode");
+                if (!string.IsNullOrWhiteSpace(simpleLayoutMode))
+                    SimpleLayoutMode = bool.Parse(simpleLayoutMode);
+                else
+                    SimpleLayoutMode = false;
+
+                var oneTouchVoteMode = await offlineService.GetSetting("OneTouchVoteMode");
+                if (!string.IsNullOrWhiteSpace(oneTouchVoteMode))
+                    OneTouchVoteMode = bool.Parse(oneTouchVoteMode);
+                else
+                    OneTouchVoteMode = false;
 
                 Messenger.Default.Send<SettingsChangedMessage>(new SettingsChangedMessage { InitialLoad = true });
             }

@@ -1,8 +1,11 @@
-﻿using BaconographyPortable.Services;
+﻿using BaconographyPortable.Messages;
+using BaconographyPortable.Services;
 using BaconographyPortable.ViewModel;
+using BaconographyWP8.Messages;
 using BaconographyWP8.View;
 using BaconographyWP8.ViewModel;
 using GalaSoft.MvvmLight;
+using GalaSoft.MvvmLight.Messaging;
 using Microsoft.Phone.Controls;
 using Microsoft.Practices.ServiceLocation;
 using System;
@@ -31,6 +34,19 @@ namespace BaconographyWP8.Common
         {
             _viewModelContextService = ServiceLocator.Current.GetInstance<IViewModelContextService>();
             _suspendableWorkQueue = ServiceLocator.Current.GetInstance<ISuspendableWorkQueue>();
+            Messenger.Default.Register<SelectIndexMessage>(this, selectIndex);
+        }
+
+        private void selectIndex(SelectIndexMessage message)
+        {
+            if (message.Index < Items.Count && message.Index >= 0)
+            {
+                SelectedIndex = message.Index;
+            }
+            else if (message.Index == -1)
+            {
+                SelectedIndex = Items.Count - 1;
+            }
         }
 
         RedditView MapViewModel(ViewModelBase viewModel)

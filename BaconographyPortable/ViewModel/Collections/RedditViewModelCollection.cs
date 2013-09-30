@@ -11,7 +11,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BaconographyWP8.ViewModel.Collections
+namespace BaconographyPortable.ViewModel.Collections
 {
     public class RedditViewModelCollection : ObservableCollection<ViewModelBase>
     {
