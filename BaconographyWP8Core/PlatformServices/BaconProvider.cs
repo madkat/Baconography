@@ -41,11 +41,12 @@ namespace BaconographyWP8.PlatformServices
             var viewModelContextService = new ViewModelContextService();
             var suspendableWorkQueueImpl = new SuspendableWorkQueueImpl(systemServices);
             var markdownProcessor = new MarkdownProcessor();
-            
+            var viewModelLocator = new ViewModelLocatorImpl();
 
 
             _services = new Dictionary<Type, object>
             {
+                {typeof(IViewModelLocator), viewModelLocator},
                 {typeof(IImagesService), imagesService},
                 {typeof(ILiveTileService), liveTileService},
                 {typeof(IRedditService), smartRedditService},
@@ -75,7 +76,7 @@ namespace BaconographyWP8.PlatformServices
             smartRedditService.Initialize(smartOfflineService, suspensionService, redditService, settingsService, systemServices, offlineService, notificationService, userService, suspendableWorkQueueImpl);
             smartOfflineService.Initialize(viewModelContextService, oomService, settingsService, suspensionService, _services.ContainsKey(typeof(IDynamicViewLocator)) ? _services[typeof(IDynamicViewLocator)] as IDynamicViewLocator : null, offlineService, imagesService, systemServices, suspendableWorkQueueImpl);
 
-
+            SimpleIoc.Default.Register<IViewModelLocator>(() => viewModelLocator);
             SimpleIoc.Default.Register<IImagesService>(() => imagesService);
             SimpleIoc.Default.Register<ILiveTileService>(() => liveTileService);
             SimpleIoc.Default.Register<IRedditService>(() => smartRedditService);
