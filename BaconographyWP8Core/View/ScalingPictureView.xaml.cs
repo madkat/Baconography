@@ -53,6 +53,26 @@ namespace BaconographyWP8.View
             image.ImageSource = e.NewValue;
         }
 
+		public static readonly DependencyProperty ImageUrlProperty =
+			DependencyProperty.Register(
+				"ImageUrl",
+				typeof(string),
+				typeof(ScalingPictureView),
+				new PropertyMetadata(null, OnImageUrlChanged)
+			);
+
+		private static void OnImageUrlChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+		{
+			var image = (ScalingPictureView)d;
+			image.ImageUrl = (string)e.NewValue;
+		}
+
+		public string ImageUrl
+		{
+			get;
+			set;
+		}
+
         object _imageSource;
 		public object ImageSource
 		{
@@ -88,7 +108,17 @@ namespace BaconographyWP8.View
                         _bitmap.ImageOpened += OnImageOpened;
                         _bitmap.ImageFailed += _bitmap_ImageFailed;
                         Messenger.Default.Send<LoadingMessage>(new LoadingMessage { Loading = true });
-                        _bitmap.SetSource(new MemoryStream(value as byte[]));
+						try
+						{
+							_bitmap.SetSource(new MemoryStream(value as byte[]));
+						}
+						catch
+						{
+							// Image load failed. Is this really an image?
+							ServiceLocator.Current.GetInstance<INavigationService>().NavigateToExternalUri(new Uri(ImageUrl));
+							_bitmap = null;
+							_imageSource = null;
+						}
                         if (_loaded)
                             OnImageOpened(null, null);
                     }

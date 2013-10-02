@@ -139,6 +139,15 @@ namespace BaconographyWP8.View
                     ServiceLocator.Current.GetInstance<INavigationService>().RemoveBackEntry();
                 }
             }
+			else if (e.NavigationMode == NavigationMode.New)
+			{
+				var absPath = e.Uri.ToString().Contains('?') ? e.Uri.ToString().Substring(0, e.Uri.ToString().IndexOf("?")) : e.Uri.ToString();
+				if (absPath == "app://external/")
+				{
+					CleanupImageSource();
+					ServiceLocator.Current.GetInstance<INavigationService>().RemoveBackEntry();
+				}
+			}
 		}
 
         Task _cleanup;

@@ -116,7 +116,8 @@ namespace BaconographyWP8.Converters
                 }
                 else
                 {
-                    return new ScalingPictureView { DataContext = linkedPicture, ImageSource = linkedPicture.ImageSource };
+					// TODO: Grossness. ImageUrl has to be set before ImageSource, since the ImageSource setter needs both values in failure cases.
+                    return new ScalingPictureView { DataContext = linkedPicture, ImageUrl = linkedPicture.Url, ImageSource = linkedPicture.ImageSource };
                 }
             }
             return null;
