@@ -52,7 +52,10 @@
     <Compile Include="Common\StreamViewUtility.cs" />
     <Compile Include="Common\UtilityCommandImpl.cs" />
     <Compile Include="Messages\CloseSettingsMessage.cs" />
+    <Compile Include="Messages\CloseSubredditMessage.cs" />
     <Compile Include="Messages\LongNavigationMessage.cs" />
+    <Compile Include="Messages\ReorderSubredditMessage.cs" />
+    <Compile Include="Messages\SelectIndexMessage.cs" />
     <Compile Include="Messages\SettingsChangedMessage.cs" />
     <Compile Include="Messages\RefreshSubredditMessage.cs" />
     <Compile Include="Messages\ConnectionStatusMessage.cs" />
@@ -65,6 +68,7 @@
     <Compile Include="Messages\SelectSubredditMessage.cs" />
     <Compile Include="Messages\SelectTemporaryRedditMessage.cs" />
     <Compile Include="Messages\SelectUserAccountMessage.cs" />
+    <Compile Include="Messages\SubredditFocusedMessage.cs" />
     <Compile Include="Messages\UserLoggedInMessage.cs" />
     <Compile Include="Model\Compression\CompressionService.cs" />
     <Compile Include="Model\Compression\LZ4Codec.cs" />
@@ -141,6 +145,7 @@
     <Compile Include="Services\IUserService.cs" />
     <Compile Include="Services\IVideoService.cs" />
     <Compile Include="Services\IViewModelContextService.cs" />
+    <Compile Include="Services\IViewModelLocator.cs" />
     <Compile Include="Services\IWebViewWrapper.cs" />
     <Compile Include="ViewModel\AboutUserViewModel.cs" />
     <Compile Include="ViewModel\AdvertisementViewModel.cs" />
@@ -149,6 +154,7 @@
     <Compile Include="ViewModel\Collections\ImageSearchViewModelCollection.cs" />
     <Compile Include="ViewModel\Collections\LinkViewModelCollection.cs" />
     <Compile Include="ViewModel\Collections\BindingShellViewModelCollection.cs" />
+    <Compile Include="ViewModel\Collections\RedditViewModelCollection.cs" />
     <Compile Include="ViewModel\Collections\SearchResultsViewModelCollection.cs" />
     <Compile Include="ViewModel\Collections\StoredUserCredentialsCollection.cs" />
     <Compile Include="ViewModel\Collections\SubredditViewModelCollection.cs" />
@@ -173,12 +179,14 @@
     <Compile Include="ViewModel\LoadIndicatorViewModel.cs" />
     <Compile Include="ViewModel\LoginViewModel.cs" />
     <Compile Include="ViewModel\MoreViewModel.cs" />
+    <Compile Include="ViewModel\MultipleRedditMainViewModel.cs" />
     <Compile Include="ViewModel\ReadableArticleViewModel.cs" />
     <Compile Include="ViewModel\RedditPickerViewModel.cs" />
     <Compile Include="ViewModel\RedditViewModel.cs" />
     <Compile Include="ViewModel\ReplyViewModel.cs" />
     <Compile Include="ViewModel\SearchQueryViewModel.cs" />
     <Compile Include="ViewModel\SearchResultsViewModel.cs" />
+    <Compile Include="ViewModel\SimpleMainViewModel.cs" />
     <Compile Include="ViewModel\SubredditsViewModel.cs" />
     <Compile Include="ViewModel\AboutSubredditViewModel.cs" />
     <Compile Include="ViewModel\VotableViewModel.cs" />

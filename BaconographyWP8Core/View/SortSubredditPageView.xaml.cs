@@ -66,7 +66,7 @@ namespace BaconographyWP8.View
 			var subredditVM = newListLastItem as AboutSubredditViewModel;
 			if (subredditVM != null)
 			{
-				var mainPageVM = this.DataContext as MainPageViewModel;
+				var mainPageVM = this.DataContext as SimpleMainViewModel;
 				var match = mainPageVM.Subreddits.FirstOrDefault<TypedThing<Subreddit>>(thing => thing.Data.DisplayName == subredditVM.Thing.Data.DisplayName);
 				if (match != null)
 				{
@@ -89,7 +89,7 @@ namespace BaconographyWP8.View
 				{
 					if ((e.Container.Content).Equals(linksView.ItemsSource[linksView.ItemsSource.Count - _offsetKnob]))
 					{
-						var viewModel = DataContext as MainPageViewModel;
+						var viewModel = DataContext as MultipleRedditMainViewModel;
                         if (viewModel != null && viewModel.SubscribedSubreddits.HasMoreItems)
                         {
                             viewModel.SubscribedSubreddits.LoadMoreItemsAsync(30);
@@ -101,7 +101,7 @@ namespace BaconographyWP8.View
             var subredditVM = subbedListLastItem as AboutSubredditViewModel;
 			if (subredditVM != null)
 			{
-				var mainPageVM = this.DataContext as MainPageViewModel;
+				var mainPageVM = this.DataContext as MultipleRedditMainViewModel;
 				var match = mainPageVM.Subreddits.FirstOrDefault<TypedThing<Subreddit>>(thing => thing.Data.DisplayName == subredditVM.Thing.Data.DisplayName);
 				if (match != null)
 				{
@@ -114,7 +114,7 @@ namespace BaconographyWP8.View
 			}
 		}
 
-		protected override async void OnNavigatedFrom(NavigationEventArgs e)
+		protected override void OnNavigatedFrom(NavigationEventArgs e)
 		{
 			if (e.NavigationMode == NavigationMode.Back)
 			{
@@ -183,7 +183,7 @@ namespace BaconographyWP8.View
             }
 			else if (subredditVM != null)
 			{
-				var mpvm = this.DataContext as MainPageViewModel;
+				var mpvm = this.DataContext as MultipleRedditMainViewModel;
 				if (mpvm != null)
 				{
 					var match = mpvm.Subreddits.FirstOrDefault<TypedThing<Subreddit>>(thing => thing.Data.DisplayName == subredditVM.Thing.Data.DisplayName);
@@ -212,7 +212,7 @@ namespace BaconographyWP8.View
 
         private void RefreshSubscribedButton_Tap(object sender, System.Windows.Input.GestureEventArgs e)
         {
-            var viewModel = DataContext as MainPageViewModel;
+            var viewModel = DataContext as MultipleRedditMainViewModel;
             if (viewModel != null)
             {
                 viewModel.SubscribedSubreddits.Refresh();

@@ -47,7 +47,6 @@ namespace BaconographyWP8
             //BuildLocalizedApplicationBar();
             Loaded +=MainPage_Loaded;
 			Messenger.Default.Register<UserLoggedInMessage>(this, OnUserLoggedIn);
-			Messenger.Default.Register<SelectIndexMessage>(this, OnSelectIndexMessage);
 			_settingsService = ServiceLocator.Current.GetInstance<ISettingsService>();
             _viewModelContextService = ServiceLocator.Current.GetInstance<IViewModelContextService>();
             _smartOfflineService = ServiceLocator.Current.GetInstance<ISmartOfflineService>();
@@ -60,6 +59,19 @@ namespace BaconographyWP8
         {
             ReviewNotification.TriggerAsync("Like what we're doing? Please leave us a review on the store\n\nGot a Nag? Let us know what we can improve on /r/baconography", "Review", 5);
         }
+
+
+
+        public RedditView CurrentRedditView
+        {
+            get { return (RedditView)GetValue(CurrentRedditViewProperty); }
+            set { SetValue(CurrentRedditViewProperty, value); }
+        }
+
+        // Using a DependencyProperty as the backing store for CurrentRedditView.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty CurrentRedditViewProperty =
+            DependencyProperty.Register("CurrentRedditView", typeof(RedditView), typeof(MainPage), new PropertyMetadata(null));
+
 
 
 		private void AdjustForOrientation(PageOrientation orientation)
@@ -87,19 +99,6 @@ namespace BaconographyWP8
             {
                 _viewModelContextService.PopViewModelContext(DataContext as ViewModelBase);
             }
-            else if (e.NavigationMode == NavigationMode.New)
-            {
-                //Cleanup so we dont reposition to something old when we return
-                if (pivot != null && pivot.Items != null && pivot.Items.FirstOrDefault() != null)
-                {
-                    var pivotItem = pivot.Items.FirstOrDefault() as PivotItem;
-                    if (pivotItem != null && pivotItem.DataContext is RedditViewModel)
-                    {
-                        var redditViewModel = pivotItem.DataContext as RedditViewModel;
-                        redditViewModel.TopVisibleLink = null;
-                    }
-                }
-            }
             base.OnNavigatingFrom(e);
         }
 
@@ -109,18 +108,9 @@ namespace BaconographyWP8
 
 			if (e.NavigationMode == NavigationMode.Back)
 			{
-                if (pivot != null && pivot.Items != null &&  pivot.Items.FirstOrDefault() != null)
+                if (CurrentRedditView != null)
                 {
-                    var pivotItem = pivot.Items.FirstOrDefault() as PivotItem;
-                    if (pivotItem != null && pivotItem.DataContext is RedditViewModel)
-                    {
-                        var redditViewModel = pivotItem.DataContext as RedditViewModel;
-                        if (pivotItem.Content is RedditView)
-                        {
-                            var redditView = pivotItem.Content as RedditView;
-                            redditView.LoadWithScroll();
-                        }
-                    }
+                    CurrentRedditView.LoadWithScroll();
                 }
 			}
             else if (e.NavigationMode == NavigationMode.Refresh)
@@ -137,21 +127,15 @@ namespace BaconographyWP8
                 {
                     try
                     {
-                        //this appears to be a bug in WP8, the page is getting lazily bound but
-                        //we're at a point where it should be completed
-                        if (pivot.DataContext != null && pivot.ItemsSource == null)
-                        {
-                            pivot.ItemsSource = new ReifiedSubredditTemplateCollectionConverter().Convert(((MainPageViewModel)pivot.DataContext).PivotItems, null, null, null) as System.Collections.IEnumerable;
-                        }
                         var unescapedData = Uri.UnescapeDataString(this.NavigationContext.QueryString["data"]);
                         var deserializedObject = JsonConvert.DeserializeObject<SelectTemporaryRedditMessage>(unescapedData);
                         if (deserializedObject is SelectTemporaryRedditMessage)
                         {
                             Messenger.Default.Send<SelectTemporaryRedditMessage>(deserializedObject as SelectTemporaryRedditMessage);
                             int indexToPosition;
-                            if (pivot.DataContext != null && (((MainPageViewModel)pivot.DataContext).FindSubredditMessageIndex(deserializedObject as SelectTemporaryRedditMessage, out indexToPosition)))
+                            if (DataContext != null && (((MultipleRedditMainViewModel)DataContext).FindSubredditMessageIndex(deserializedObject as SelectTemporaryRedditMessage, out indexToPosition)))
                             {
-                                pivot.SelectedIndex = indexToPosition;
+                                Messenger.Default.Send<SelectIndexMessage>(new SelectIndexMessage { Index = indexToPosition, TypeContext = typeof(MultipleRedditMainViewModel)});
                             }
                         }
                     }
@@ -189,21 +173,6 @@ namespace BaconographyWP8
 		{
 			AdjustForOrientation(e.Orientation);
 			base.OnOrientationChanged(e);
-		}
-
-		private void OnSelectIndexMessage(SelectIndexMessage message)
-		{
-			if (message.TypeContext == typeof(MainPageViewModel))
-			{
-				if (message.Index < pivot.Items.Count && message.Index >= 0)
-				{
-					pivot.SelectedIndex = message.Index;
-				}
-				else if (message.Index == -1)
-				{
-					pivot.SelectedIndex = pivot.Items.Count - 1;
-				}
-			}
 		}
 
 		private string loginItemText = "login";
@@ -257,16 +226,18 @@ namespace BaconographyWP8
 
 		private void MenuClose_Click(object sender, EventArgs e)
 		{
-            var rvm = ((PivotItem)pivot.SelectedItem).DataContext as RedditViewModel;
-			if (rvm != null)
+            if (CurrentRedditView != null && CurrentRedditView.DataContext is RedditViewModel)
 			{
-				Messenger.Default.Send<CloseSubredditMessage>(new CloseSubredditMessage { Heading = rvm.Heading });
+				Messenger.Default.Send<CloseSubredditMessage>(new CloseSubredditMessage { Heading = ((RedditViewModel)CurrentRedditView.DataContext).Heading });
 			}
 		}
 
 		private void MenuPin_Click(object sender, EventArgs e)
 		{
-            var trvm = ((PivotItem)pivot.SelectedItem).DataContext as RedditViewModel;
+            if (CurrentRedditView == null)
+                return;
+
+            var trvm = CurrentRedditView.DataContext as RedditViewModel;
 			if (trvm == null || !trvm.IsTemporary)
 				return;
 
@@ -314,7 +285,7 @@ namespace BaconographyWP8
 			sortPopup.Height = height;
 			sortPopup.Width = width;
 
-			RedditViewModel rvm = ((PivotItem)pivot.SelectedItem).DataContext as RedditViewModel;
+            RedditViewModel rvm = CurrentRedditView.DataContext as RedditViewModel;
 			if (rvm == null)
 			    return;
 			
@@ -479,10 +450,9 @@ namespace BaconographyWP8
 
         private void MenuSidebar_Click(object sender, EventArgs e)
         {
-            if (pivot.SelectedItem is PivotItem &&
-                ((PivotItem)pivot.SelectedItem).DataContext is RedditViewModel)
+            if (CurrentRedditView != null && CurrentRedditView.DataContext is RedditViewModel)
             {
-                var vm = ((PivotItem)pivot.SelectedItem).DataContext as RedditViewModel;
+                var vm = CurrentRedditView.DataContext as RedditViewModel;
 
                 var _navigationService = ServiceLocator.Current.GetInstance<INavigationService>();
                 _navigationService.Navigate(typeof(AboutSubreddit), new Tuple<string>(vm.SelectedSubreddit.Data.Url));
@@ -511,9 +481,9 @@ namespace BaconographyWP8
 			if (appMenuItems == null || ApplicationBar.MenuItems.Count == 0)
 				BuildMenu();
 
-            if (pivot.SelectedItem is PivotItem &&
-                ((PivotItem)pivot.SelectedItem).DataContext is RedditViewModel &&
-                ((RedditViewModel)((PivotItem)pivot.SelectedItem).DataContext).IsMulti)
+            var selectedViewModel = CurrentRedditView == null ? null : CurrentRedditView.DataContext as RedditViewModel;
+
+            if (selectedViewModel != null && selectedViewModel.IsMulti)
             {
                 if(ApplicationBar.MenuItems.Contains(appMenuItems[(int)MenuEnum.Sidebar]))
                     ApplicationBar.MenuItems.Remove(appMenuItems[(int)MenuEnum.Sidebar]);
@@ -524,9 +494,7 @@ namespace BaconographyWP8
                     ApplicationBar.MenuItems.Insert(0, appMenuItems[(int)MenuEnum.Sidebar]);
             }
 
-            if (pivot.SelectedItem is PivotItem &&
-                ((PivotItem)pivot.SelectedItem).DataContext is RedditViewModel &&
-                ((RedditViewModel)((PivotItem)pivot.SelectedItem).DataContext).IsTemporary)
+            if (selectedViewModel != null && selectedViewModel.IsTemporary)
             {
                 if (!ApplicationBar.MenuItems.Contains(appMenuItems[(int)MenuEnum.Close]))
                 {
@@ -574,19 +542,14 @@ namespace BaconographyWP8
             if (!(e.OriginalSource is TextBlock))
                 return;
 
-            if (pivot.SelectedItem is PivotItem)
+            if (CurrentRedditView != null)
             {
-                var pivotItem = pivot.SelectedItem as PivotItem;
-                if (pivotItem.Content is RedditView)
-                {
-                    var view = pivotItem.Content as RedditView;
-                    var context = view.DataContext as RedditViewModel;
-                    var source = e.OriginalSource as TextBlock;
-                    if (source.Text != context.Heading)
-                        return;
+                var context = CurrentRedditView.DataContext as RedditViewModel;
+                var source = e.OriginalSource as TextBlock;
+                if (source.Text != context.Heading)
+                    return;
 
-                    view.linksView.ScrollTo(context.Links.First());
-                }
+                CurrentRedditView.linksView.ScrollTo(context.Links.First());   
             }
         }
 

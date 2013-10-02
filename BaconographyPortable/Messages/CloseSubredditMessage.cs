@@ -7,11 +7,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BaconographyWP8.Messages
+namespace BaconographyPortable.Messages
 {
-    public class SelectIndexMessage : MessageBase
+    public class CloseSubredditMessage : MessageBase
     {
-        public Type TypeContext { get; set; }
-		public int Index { get; set; }
+        public TypedThing<Subreddit> Subreddit { get; set; }
+		public string Heading { get; set; }
     }
 }
