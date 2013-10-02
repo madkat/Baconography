@@ -15,9 +15,7 @@
             <local:LinkView />
         </DataTemplate>
         <DataTemplate x:Key="Type:AdvertisementViewModel">
-            <Grid Visibility="Collapsed">
-
-            </Grid>
+            <local:AdvertisementView />
         </DataTemplate>
     </common:LayoutAwarePage.Resources>
 

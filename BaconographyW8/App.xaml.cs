@@ -113,7 +113,6 @@ namespace BaconographyW8
 
                 await _baconProvider.Initialize(rootFrame);
 				var settingsService = _baconProvider.GetService<ISettingsService>();
-				settingsService.AllowAdvertising = false;
 
                 ViewModelLocator.Initialize(_baconProvider);
             }
