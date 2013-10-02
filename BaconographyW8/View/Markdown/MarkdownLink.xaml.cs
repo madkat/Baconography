@@ -24,5 +24,10 @@ namespace BaconographyW8.View.Markdown
             theLink.CommandParameter = url;
             theLink.Content = content;
         }
+
+		private void theLink_Tapped(object sender, TappedRoutedEventArgs e)
+		{
+
+		}
     }
 }

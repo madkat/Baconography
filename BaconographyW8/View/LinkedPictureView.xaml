@@ -31,7 +31,7 @@
         </Grid>
 
         <FlipView Grid.Row="2" Margin="130,0,130,0" x:Name="imageFlip"
-                  ItemsSource="{Binding Path=Pictures}" SelectionChanged="imageFlip_SelectionChanged">
+                  ItemsSource="{Binding Path=Pictures, Mode=TwoWay}" SelectionChanged="imageFlip_SelectionChanged">
             <FlipView.ItemTemplate>
                 <DataTemplate>
                     <Grid>
