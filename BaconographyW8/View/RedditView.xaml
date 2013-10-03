@@ -15,7 +15,7 @@
             <local:LinkView />
         </DataTemplate>
         <DataTemplate x:Key="Type:AdvertisementViewModel">
-            <local:AdvertisementView />
+            <local:AdvertisementView Visibility="{Binding Path=DataContext.ShowAds, ElementName=linksView, Converter={StaticResource booleanVisibilityConverter}}" />
         </DataTemplate>
     </common:LayoutAwarePage.Resources>
 

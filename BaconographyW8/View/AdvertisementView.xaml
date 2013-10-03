@@ -4,16 +4,17 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:ad="using:Microsoft.Advertising.WinRT.UI"
+    xmlns:adduplex="using:AdDuplex.Controls"
     mc:Ignorable="d"
-    d:DesignHeight="480" d:DesignWidth="480"
+    d:DesignHeight="90" d:DesignWidth="728"
     Background="Black"
     BorderThickness="0"
     x:Name="layoutRoot">
 
-    <Grid>
+    <Grid Height="90" Width="728">
         <ad:AdControl
             x:Name="advertisement"
-            ApplicationId="d25517cb-12d4-4699-8bdc-52040c712cab" AdUnitId="10042998"
+            ApplicationId="65151657-89ee-4b8b-bdfb-9a6bef1397fb" AdUnitId="145719"
             Height="90" Width="728"
             IsAutoRefreshEnabled="True"
             AdRefreshed="advertisement_AdRefreshed"
@@ -23,8 +24,13 @@
             Margin="0"
             Visibility="{Binding ElementName=layoutRoot, Path=Visibility}"/>
 
+        <adduplex:AdControl x:Name="adDuplexAd" 
+                        AppId="57075" 
+                        Visibility="Collapsed"
+                        Size="728x90"
+                        />
     </Grid>
 
     <!--ApplicationId="test_client" AdUnitId="Image480_80"-->
-    <!--ApplicationId="cde702d8-0417-4b14-9c5b-38da338eb6a6" AdUnitId="143033"-->
+    <!--ApplicationId="d25517cb-12d4-4699-8bdc-52040c712cab" AdUnitId="10042998"-->
 </UserControl>

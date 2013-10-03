@@ -21,6 +21,7 @@ namespace BaconographyW8.View
 			{
 				advertisement.Height = 90;
 				advertisement.Visibility = Windows.UI.Xaml.Visibility.Visible;
+				adDuplexAd.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
 			}
 		}
 
@@ -28,6 +29,7 @@ namespace BaconographyW8.View
 		{
 			advertisement.Height = 0;
 			advertisement.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+			adDuplexAd.Visibility = Windows.UI.Xaml.Visibility.Visible;
 		}
     }
 }
