@@ -1,4 +1,5 @@
 ﻿using BaconographyPortable.Messages;
+using BaconographyPortable.Model.Reddit;
 using BaconographyPortable.Services;
 using BaconographyPortable.ViewModel.Collections;
 using GalaSoft.MvvmLight;
@@ -132,6 +133,88 @@ namespace BaconographyPortable.ViewModel
                 indexToPosition++;
             }
             return false;
+        }
+
+        public override async Task LoadSubreddits()
+        {
+            try
+            {
+                var subreddits = await _offlineService.RetrieveOrderedThings("pivotsubreddits", TimeSpan.FromDays(1024));
+
+                if (subreddits == null || subreddits.Count() == 0)
+                    subreddits = new List<TypedThing<Subreddit>> { new TypedThing<Subreddit>(ThingUtility.GetFrontPageThing()) };
+
+                foreach (var sub in subreddits)
+                {
+                    if (sub.Data is Subreddit && (((Subreddit)sub.Data).Id != null || ((Subreddit)sub.Data).Url.Contains("/m/")))
+                    {
+                        var message = new SelectSubredditMessage();
+                        message.Subreddit = new TypedThing<Subreddit>(sub);
+                        message.DontRefresh = true;
+                        ChangeSubreddit(message, false);
+                    }
+                }
+
+
+                _subreddits.CollectionChanged += _subreddits_CollectionChanged;
+
+                Messenger.Default.Send<SelectIndexMessage>(
+                    new SelectIndexMessage
+                    {
+                        TypeContext = typeof(MultipleRedditMainViewModel),
+                        Index = 0
+                    }
+                );
+            }
+            catch
+            {
+                _notificationService.CreateNotification("Failed loading subreddits list, file corruption may be present");
+            }
+        }
+
+        public override async Task SaveSubreddits()
+        {
+            try
+            {
+                await _offlineService.StoreOrderedThings("pivotsubreddits", Subreddits);
+            }
+            catch { }
+        }
+
+        private void OnSubredditChanged(SelectSubredditMessage message)
+        {
+            ChangeSubreddit(message, !message.AddOnly);
+        }
+
+        private void ChangeSubreddit(SelectSubredditMessage message, bool fireSubredditsChanged = true)
+        {
+            int indexToPosition;
+            bool foundExisting = FindSubredditMessageIndex(message, out indexToPosition);
+
+            if (!foundExisting)
+            {
+                var newReddit = new RedditViewModel(_baconProvider);
+                newReddit.DetachSubredditMessage();
+                newReddit.AssignSubreddit(message);
+
+                if (PivotItems.Count > 0)
+                    PivotItems.Insert(PivotItems.Count, newReddit);
+                else
+                    PivotItems.Add(newReddit);
+                _subreddits.Add(message.Subreddit);
+                indexToPosition = PivotItems.Count - 1;
+            }
+
+            if (fireSubredditsChanged)
+            {
+                Messenger.Default.Send<SelectIndexMessage>(
+                    new SelectIndexMessage
+                    {
+                        TypeContext = typeof(MultipleRedditMainViewModel),
+                        Index = indexToPosition
+                    }
+                );
+            }
         }
     }
 }

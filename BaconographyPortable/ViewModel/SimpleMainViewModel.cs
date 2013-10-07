@@ -48,7 +48,7 @@ namespace BaconographyPortable.ViewModel
 
 			MessengerInstance.Register<UserLoggedInMessage>(this, OnUserLoggedIn);
 			MessengerInstance.Register<SelectSubredditMessage>(this, OnSubredditChanged);
-			MessengerInstance.Send<UserLoggedInMessage>(new UserLoggedInMessage { CurrentUser = _userService.GetUser().Result, UserTriggered = false });
+			//MessengerInstance.Send<UserLoggedInMessage>(new UserLoggedInMessage { CurrentUser = _userService.GetUser().Result, UserTriggered = false });
         }
 
 		private Subreddit _currentSubreddit;
@@ -122,7 +122,7 @@ namespace BaconographyPortable.ViewModel
 			}
 		}
 
-		public async Task SaveSubreddits()
+		public virtual async Task SaveSubreddits()
 		{
 			try
 			{
@@ -132,7 +132,7 @@ namespace BaconographyPortable.ViewModel
 
 		}
 
-		public async Task LoadSubreddits()
+		public virtual async Task LoadSubreddits()
 		{
 			try
 			{
