@@ -22,7 +22,7 @@
     DataContext="{Binding MainPage, Source={StaticResource Locator}}">
 
     <phone:PhoneApplicationPage.Resources>
-        <DataTemplate x:Key="Type:MainPageViewModel">
+        <DataTemplate x:Key="Type:MultipleRedditMainViewModel">
             <common:RedditViewPivotControl x:Name="pivot"
                      ItemsSource="{Binding PivotItems, Converter={StaticResource reifiedSubredditTemplateCollectionConverter}}"
                      HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
@@ -30,11 +30,10 @@
                      DoubleTap="pivot_DoubleTap"/>
         </DataTemplate>
         <DataTemplate x:Key="Type:SimpleMainPageViewModel">
-            <common:RedditViewPivotControl x:Name="pivot"
-                     ItemsSource="{Binding PivotItems, Converter={StaticResource reifiedSubredditTemplateCollectionConverter}}"
-                     HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
-                     Margin="0,-20,-16,0" Padding="0" LoadedPivotItem="OnLoadedPivotItem"
-                     DoubleTap="pivot_DoubleTap"/>
+            <TextBlock Text="simple vm"></TextBlock>
+        </DataTemplate>
+        <DataTemplate x:Name="TypedTemplateSelector">
+            <common:TypedTemplateSelector HorizontalContentAlignment="Stretch" Content="{Binding}" />
         </DataTemplate>
     </phone:PhoneApplicationPage.Resources>
     
@@ -84,11 +83,13 @@
             <TextBlock x:Name="SortType" Text="HOT" Style="{StaticResource PhoneTextNormalStyle}" Margin="12,0"/>
         </StackPanel>-->
 
-        <common:RedditViewPivotControl x:Name="pivot"
+        <!--<common:RedditViewPivotControl x:Name="pivot"
                      ItemsSource="{Binding PivotItems, Converter={StaticResource reifiedSubredditTemplateCollectionConverter}}"
                      HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
                      Margin="0,-20,-16,0" Padding="0" LoadedPivotItem="OnLoadedPivotItem"
-                     DoubleTap="pivot_DoubleTap"/>
+                     DoubleTap="pivot_DoubleTap"/>-->
+        <ContentControl HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch"
+                        Content="{Binding}" ContentTemplate="{StaticResource TypedTemplateSelector}"/>
         <Popup x:Name="sortPopup" HorizontalAlignment="Center" VerticalAlignment="Center"/>
 
         <!--<local:AdvertisementView VerticalAlignment="Bottom" />--> <!--Visibility="{Binding ShowAds, Converter={StaticResource booleanVisibilityConverter}}" />-->
