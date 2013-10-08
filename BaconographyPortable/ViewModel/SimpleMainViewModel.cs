@@ -46,8 +46,6 @@ namespace BaconographyPortable.ViewModel
 			_displayedSubreddits = new ObservableCollection<AboutSubredditViewModel>();
 			_viewModelLocator = baconProvider.GetService<IViewModelLocator>();
 
-			MessengerInstance.Register<UserLoggedInMessage>(this, OnUserLoggedIn);
-			MessengerInstance.Register<SelectSubredditMessage>(this, OnSubredditChanged);
 			//MessengerInstance.Send<UserLoggedInMessage>(new UserLoggedInMessage { CurrentUser = _userService.GetUser().Result, UserTriggered = false });
         }
 
@@ -64,17 +62,29 @@ namespace BaconographyPortable.ViewModel
 			}
 		}
 
+        public RedditViewModel CurrentViewModel
+        {
+            get
+            {
+                if (_viewModelLocator.Reddit != null && _viewModelLocator.Reddit.SelectedSubreddit != null)
+                    return _viewModelLocator.Reddit;
+                return null;
+            }
+        }
+
 		private void CheckSelections()
 		{
 			foreach (var sub in _displayedSubreddits)
 			{
-				if (CurrentSubreddit != null && sub.DisplayName == CurrentSubreddit.DisplayName)
-					sub.Selected = true;
-				else
-				{
-					if (sub.Selected)
-						sub.Selected = false;
-				}
+                if (CurrentSubreddit != null && sub.DisplayName == CurrentSubreddit.DisplayName)
+                {
+                    sub.Selected = true;
+                }
+                else
+                {
+                    if (sub.Selected)
+                        sub.Selected = false;
+                }
 			}
 		}
 
@@ -149,7 +159,10 @@ namespace BaconographyPortable.ViewModel
 					}
 				}
 
-                
+                var newReddit = new RedditViewModel(_baconProvider);
+                newReddit.AssignSubreddit(new SelectSubredditMessage { Subreddit = _subreddits.First() });
+
+                MessengerInstance.Send<SubredditFocusedMessage>(new SubredditFocusedMessage { SelectedViewModel = newReddit });
 
 				RefreshDisplaySubreddits();
 				RaisePropertyChanged("Subreddits");
@@ -247,5 +260,17 @@ namespace BaconographyPortable.ViewModel
 		{
 			RefreshDisplaySubreddits();
 		}
+
+        public virtual void Activate()
+        {
+            MessengerInstance.Register<UserLoggedInMessage>(this, OnUserLoggedIn);
+            MessengerInstance.Register<SelectSubredditMessage>(this, OnSubredditChanged);
+        }
+
+        public virtual void Deactivate()
+        {
+            MessengerInstance.Unregister<UserLoggedInMessage>(this);
+            MessengerInstance.Unregister<SelectSubredditMessage>(this);
+        }
     }
 }

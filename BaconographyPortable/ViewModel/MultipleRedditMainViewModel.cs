@@ -16,12 +16,7 @@ namespace BaconographyPortable.ViewModel
     {
         public MultipleRedditMainViewModel(IBaconProvider baconProvider) : base(baconProvider)
         {
-            MessengerInstance.Register<SelectTemporaryRedditMessage>(this, OnSelectTemporarySubreddit);
-            MessengerInstance.Register<CloseSubredditMessage>(this, OnCloseSubreddit);
-            MessengerInstance.Register<ReorderSubredditMessage>(this, OnReorderSubreddit);
-            MessengerInstance.Register<SettingsChangedMessage>(this, OnSettingsChanged);
-
-            _pivotItems = new RedditViewModelCollection();
+            
         }
 
         private RedditViewModelCollection _pivotItems;
@@ -197,12 +192,29 @@ namespace BaconographyPortable.ViewModel
                 newReddit.DetachSubredditMessage();
                 newReddit.AssignSubreddit(message);
 
+                MessengerInstance.Send<SubredditFocusedMessage>(new SubredditFocusedMessage { SelectedViewModel = newReddit });
+
                 if (PivotItems.Count > 0)
                     PivotItems.Insert(PivotItems.Count, newReddit);
                 else
                     PivotItems.Add(newReddit);
                 _subreddits.Add(message.Subreddit);
                 indexToPosition = PivotItems.Count - 1;
+            }
+            else
+            {
+                foreach (var vm in PivotItems)
+                {
+                    if (vm is RedditViewModel)
+                    {
+                        if (((RedditViewModel)vm).Url == message.Subreddit.Data.Url)
+                        {
+                            MessengerInstance.Send<SubredditFocusedMessage>(new SubredditFocusedMessage { SelectedViewModel = vm as RedditViewModel });
+                        }
+
+                    }
+                }
+                
             }
 
             if (fireSubredditsChanged)
@@ -215,6 +227,26 @@ namespace BaconographyPortable.ViewModel
                     }
                 );
             }
+        }
+
+        public override void Activate()
+        {
+            base.Activate();
+            MessengerInstance.Register<SelectTemporaryRedditMessage>(this, OnSelectTemporarySubreddit);
+            MessengerInstance.Register<CloseSubredditMessage>(this, OnCloseSubreddit);
+            MessengerInstance.Register<ReorderSubredditMessage>(this, OnReorderSubreddit);
+            MessengerInstance.Register<SettingsChangedMessage>(this, OnSettingsChanged);
+            _pivotItems = new RedditViewModelCollection();
+        }
+
+        public override void Deactivate()
+        {
+            base.Deactivate();
+            MessengerInstance.Unregister<SelectTemporaryRedditMessage>(this);
+            MessengerInstance.Unregister<CloseSubredditMessage>(this);
+            MessengerInstance.Unregister<ReorderSubredditMessage>(this);
+            MessengerInstance.Unregister<SettingsChangedMessage>(this);
+            _pivotItems = null;
         }
     }
 }

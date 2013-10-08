@@ -29,8 +29,8 @@
                      Margin="0,-20,-16,0" Padding="0" LoadedPivotItem="OnLoadedPivotItem"
                      DoubleTap="pivot_DoubleTap"/>
         </DataTemplate>
-        <DataTemplate x:Key="Type:SimpleMainPageViewModel">
-            <TextBlock Text="simple vm"></TextBlock>
+        <DataTemplate x:Key="Type:SimpleMainViewModel">
+            <local:RedditView HorizontalAlignment="Stretch" VerticalAlignment="Stretch" DataContext="{Binding CurrentViewModel}"/>
         </DataTemplate>
         <DataTemplate x:Name="TypedTemplateSelector">
             <common:TypedTemplateSelector HorizontalContentAlignment="Stretch" Content="{Binding}" />
@@ -89,7 +89,7 @@
                      Margin="0,-20,-16,0" Padding="0" LoadedPivotItem="OnLoadedPivotItem"
                      DoubleTap="pivot_DoubleTap"/>-->
         <ContentControl HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch"
-                        Content="{Binding}" ContentTemplate="{StaticResource TypedTemplateSelector}"/>
+                        Content="{Binding MainPage, Source={StaticResource Locator}}" ContentTemplate="{StaticResource TypedTemplateSelector}"/>
         <Popup x:Name="sortPopup" HorizontalAlignment="Center" VerticalAlignment="Center"/>
 
         <!--<local:AdvertisementView VerticalAlignment="Bottom" />--> <!--Visibility="{Binding ShowAds, Converter={StaticResource booleanVisibilityConverter}}" />-->

@@ -414,6 +414,19 @@ namespace BaconographyPortable.ViewModel
             }
         }
 
+        public bool SimpleLayoutMode
+        {
+            get
+            {
+                return _settingsService.SimpleLayoutMode;
+            }
+            set
+            {
+                _settingsService.SimpleLayoutMode = value;
+                RaisePropertyChanged("SimpleLayoutMode");
+            }
+        }
+
         public RelayCommand ClearOffline
         {
             get
