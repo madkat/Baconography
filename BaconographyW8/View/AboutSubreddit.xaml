@@ -28,12 +28,12 @@
             </Grid>
             <StackPanel Orientation="Horizontal" Margin="0,6,0,0">
                 <CheckBox IsChecked="{Binding Subscribed, Mode=TwoWay}">
-                    <TextBlock FontSize="12" Text="Subscribed" Margin="0,1,0,0"/>
+                    <TextBlock FontSize="15" Text="Subscribed" Margin="0,0,0,0"/>
                 </CheckBox>
-                <TextBlock FontSize="12" Foreground="Red" Margin="8,0,0,0" Text="nsfw"
+                <TextBlock FontSize="15" Foreground="Red" Margin="8,0,0,0" Text="nsfw"
                            VerticalAlignment="Center"
                            Visibility="{Binding Over18, Converter={StaticResource booleanVisibilityConverter}}"/>
-                <TextBlock FontSize="12" Foreground="Goldenrod"  Margin="8,0,0,0" Text="multi"
+                <TextBlock FontSize="15" Foreground="Goldenrod"  Margin="8,0,0,0" Text="multi"
                            VerticalAlignment="Center"
                            Visibility="{Binding IsMultiReddit, Converter={StaticResource booleanVisibilityConverter}}" />
             </StackPanel>
@@ -55,7 +55,8 @@
             </Grid>
         </StackPanel>
         <Grid x:Name="ContentPanel" Grid.Row="1" Visibility="Visible">
-            <ContentControl Margin="6,12,6,0" HorizontalAlignment="Left" VerticalAlignment="Top"  Content="{Binding PublicDescription, Converter={StaticResource markdownConverter}}"/>
+            <ContentControl Margin="6,12,6,0" MaxWidth="300" 
+                            HorizontalAlignment="Left" VerticalAlignment="Top"  Content="{Binding PublicDescription, Converter={StaticResource markdownConverter}}"/>
         </Grid>
     </Grid>
 </UserControl>

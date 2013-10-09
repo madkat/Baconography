@@ -81,7 +81,7 @@ namespace BaconographyW8.Converters
         }
         Brush _forgroundBrush;
         private int _textLengthInCurrent = 0;
-        public RichTextBlock Result = new RichTextBlock { TextWrapping = TextWrapping.Wrap, FontFamily = new FontFamily("Segoe UI"), FontSize = 12 };
+        public RichTextBlock Result = new RichTextBlock { TextWrapping = TextWrapping.Wrap, FontFamily = new FontFamily("Segoe UI"), FontSize = 14, FontStyle = FontStyle.Normal, FontWeight = FontWeights.Normal };
         public StackPanel ResultGroup = null;
         Windows.UI.Xaml.Documents.Paragraph _currentParagraph;
 
@@ -96,7 +96,7 @@ namespace BaconographyW8.Converters
 
                 }
 
-				ResultGroup.Children.Add(Result = new RichTextBlock { TextWrapping = TextWrapping.Wrap, FontFamily = new FontFamily("Segoe UI"), FontSize = 12 });
+				ResultGroup.Children.Add(Result = new RichTextBlock { TextWrapping = TextWrapping.Wrap, FontFamily = new FontFamily("Segoe UI"), FontSize = 14 });
                 _textLengthInCurrent = 0;
             }
 
@@ -129,7 +129,7 @@ namespace BaconographyW8.Converters
 			}
 			ResultGroup.Children.Add(element);
 
-			ResultGroup.Children.Add(Result = new RichTextBlock { TextWrapping = TextWrapping.Wrap, Margin = new Thickness(0, 3, 0, 3) });
+			ResultGroup.Children.Add(Result = new RichTextBlock { TextWrapping = TextWrapping.Wrap, Margin = new Thickness(0, -2, 0, 3), FontFamily = new FontFamily("Segoe UI"), FontSize = 14 });
 			_textLengthInCurrent = 0;
 		}
 
@@ -153,7 +153,7 @@ namespace BaconographyW8.Converters
                         madeRun.FontSize = 14;
                         break;
                     case 2:
-                        madeRun.FontSize = 14;
+                        madeRun.FontSize = 16;
                         madeRun.FontWeight = FontWeights.Bold;
                         madeRun.Foreground = _forgroundBrush;
                         break;
@@ -161,7 +161,7 @@ namespace BaconographyW8.Converters
                     case 4:
                     case 5:
                     case 6:
-                        madeRun.FontSize = 16;
+                        madeRun.FontSize = 18;
                         madeRun.FontWeight = FontWeights.Bold;
                         break;
                 }
@@ -236,7 +236,7 @@ namespace BaconographyW8.Converters
 				return;
 			}
 
-            var inlineContainer = new InlineUIContainer();
+			var inlineContainer = new InlineUIContainer { FontSize = 14 };
             SnuDomCategoryVisitor categoryVisitor = new SnuDomCategoryVisitor();
             if (link.Display != null)
             {
@@ -282,7 +282,7 @@ namespace BaconographyW8.Converters
 								inlineContainer.FontSize = 14;
 								break;
 							case 2:
-								inlineContainer.FontSize = 14;
+								inlineContainer.FontSize = 16;
 								inlineContainer.FontWeight = FontWeights.Bold;
 								inlineContainer.Foreground = _forgroundBrush;
 								break;
@@ -290,7 +290,7 @@ namespace BaconographyW8.Converters
 							case 4:
 							case 5:
 							case 6:
-								inlineContainer.FontSize = 16;
+								inlineContainer.FontSize = 18;
 								inlineContainer.FontWeight = FontWeights.Bold;
 								break;
 						}
@@ -436,7 +436,7 @@ namespace BaconographyW8.Converters
 						item.Accept(plainTextVisitor);
 					}
 
-					results.Add(new TextBlock { TextWrapping = TextWrapping.Wrap, Text = plainTextVisitor.Result, Margin = new Thickness(0, 3, 0, 3) });
+					results.Add(new TextBlock { TextWrapping = TextWrapping.Wrap, FontSize = 14, Text = plainTextVisitor.Result, Margin = new Thickness(0, 3, 0, 3) });
 				}
 				else if (column != null && ((TableColumn)item).Contents.Count() == 1 && (columnFirstContent = ((TableColumn)item).Contents.FirstOrDefault()) != null &&
 					(columnFirstContent is Text))

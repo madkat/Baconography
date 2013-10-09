@@ -9,5 +9,10 @@
     d:DesignHeight="300"
     d:DesignWidth="400">
 
-    <StackPanel x:Name="items" Orientation="Vertical"/>
+    <Grid x:Name="theGrid" Margin="0">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+    </Grid>
 </UserControl>

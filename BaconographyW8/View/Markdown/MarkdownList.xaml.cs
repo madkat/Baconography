@@ -20,16 +20,28 @@ namespace BaconographyW8.View.Markdown
     {
         public MarkdownList(bool numbered, IEnumerable<UIElement> elements)
         {
-            this.InitializeComponent();
-            int number = 1;
-            foreach (var element in elements)
-            {
-                var itemPanel = new StackPanel();
-                itemPanel.Orientation = Orientation.Horizontal;
-                itemPanel.Children.Add(new TextBlock { Margin = new Thickness(5, 0, 15, 0), Text = numbered ? (number++).ToString() + "." : "&#x25CF;" });
-                itemPanel.Children.Add(element);
-                items.Children.Add(itemPanel);
-            }
+			InitializeComponent();
+			int number = 1;
+			int rowCount = 0;
+			foreach (var element in elements)
+			{
+				theGrid.RowDefinitions.Add(new RowDefinition());
+				var text = new TextBlock { TextWrapping = TextWrapping.Wrap, Margin = new Thickness(0, 0, 5, 0), Text = numbered ? (number++).ToString() + "." : "\u25CF" };
+				text.SetValue(Grid.RowProperty, rowCount);
+				text.SetValue(Grid.ColumnProperty, 0);
+				element.SetValue(Grid.RowProperty, rowCount++);
+				element.SetValue(Grid.ColumnProperty, 1);
+				if (element is RichTextBlock)
+				{
+					element.SetValue(FrameworkElement.MarginProperty, new Thickness(0, 0, 0, 0));
+				}
+				else
+				{
+					element.SetValue(FrameworkElement.MarginProperty, new Thickness(0, 0, 0, 0));
+				}
+				theGrid.Children.Add(text);
+				theGrid.Children.Add(element);
+			}
         }
     }
 }

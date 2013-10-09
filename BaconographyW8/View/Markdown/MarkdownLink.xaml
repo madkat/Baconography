@@ -9,6 +9,6 @@
     d:DesignHeight="300"
     d:DesignWidth="400">
 
-    <Button x:Name="theLink" Command="{Binding GotoMarkdownLink, Source={StaticResource StaticCommands}, Mode=OneTime}" Style="{StaticResource TextButtonStyle}" Margin="0,0,0,0" Padding="0"
-            Tapped="theLink_Tapped"/>
+    <Button x:Name="theLink" Command="{Binding GotoMarkdownLink, Source={StaticResource StaticCommands}, Mode=OneTime}" Style="{StaticResource TextButtonStyle}" Margin="0,-2,0,0" Padding="0"
+            Tapped="theLink_Tapped" FontSize="15"/>
 </UserControl>
