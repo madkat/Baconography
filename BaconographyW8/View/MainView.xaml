@@ -21,7 +21,107 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <local:NavigationView Grid.RowSpan="2" Grid.Column="0" x:Name="navigationView" />
+        <!--<local:NavigationView Grid.RowSpan="2" Grid.Column="0" x:Name="navigationView" />-->
+
+        <Grid Grid.RowSpan="2" Grid.Column="0" x:Name="navigationView">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="97" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+
+            <Grid Grid.Row="0" HorizontalAlignment="Stretch" VerticalAlignment="Center">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="100" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Image Grid.Column="0" Style="{StaticResource BaconPageLogoStyle}" HorizontalAlignment="Center"/>
+                <TextBlock Grid.Column="1" Text="Baconography" FontFamily="Segoe UI" FontSize="28" VerticalAlignment="Center" />
+            </Grid>
+
+            <ScrollViewer Grid.Row="1" Margin="24,0,0,0"
+            ScrollViewer.VerticalScrollBarVisibility="Auto"
+            ScrollViewer.VerticalScrollMode="Enabled"
+            ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                <Grid Background="{StaticResource ApplicationPageBackgroundThemeBrush}"
+                  Margin="0,0,16,0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <Button Grid.Row="0"
+                    HorizontalAlignment="Stretch" HorizontalContentAlignment="Right"
+                    Margin="0,0,0,0" BorderThickness="0" Background="#565656"
+                    Tapped="Sidebar_Tapped">
+                        <TextBlock Text="Sidebar" Foreground="White" FontSize="20" Margin="0,3,0,3" />
+                    </Button>
+                    <local:AboutSubreddit
+                    Grid.Row="1" Margin="3,3,3,3" Visibility="Collapsed" x:Name="sidebar"
+                    VerticalAlignment="Stretch" HorizontalAlignment="Stretch" 
+                    DataContext="{Binding AboutSubredditVM, Mode=TwoWay}"/>
+                    <Button Grid.Row="2"
+                    HorizontalAlignment="Stretch" HorizontalContentAlignment="Right"
+                    Margin="0,0,0,0" BorderThickness="0" Background="#565656"
+                    Tapped="Subreddits_Tapped">
+                        <TextBlock Text="Subreddits" Foreground="White" FontSize="20" Margin="0,3,0,3" />
+                    </Button>
+                    <Button Grid.Row="3"
+                        BorderThickness="0"
+                        Background="#343434"
+                        HorizontalAlignment="Stretch" Margin="12,0,0,0" FontFamily="Segoe UI"
+                        HorizontalContentAlignment="Right" Tapped="ShowRedditPicker">
+                        <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+
+                            <StackPanel Grid.Column="0" HorizontalAlignment="Stretch" Orientation="Horizontal"
+                                        VerticalAlignment="Center">
+                                <TextBlock Text="+ subreddit" FontSize="18" Margin="0,4,6,4" HorizontalAlignment="Right" />
+                            </StackPanel>
+                        </Grid>
+                    </Button>
+                    <ListView Grid.Row="4"
+                    Margin="0,0,0,0"
+                    BorderThickness="0" VerticalAlignment="Stretch"
+                    SelectionMode="Single"
+                    ItemsSource="{Binding Path=DisplayedSubreddits, Mode=TwoWay}"
+                    HorizontalAlignment="Stretch"
+                    HorizontalContentAlignment="Stretch"
+                    Padding="0,0,0,0"
+                    x:Name="subredditList">
+                        <ListView.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <StackPanel Margin="0" />
+                            </ItemsPanelTemplate>
+                        </ListView.ItemsPanel>
+
+                        <ListView.ItemTemplate>
+                            <DataTemplate>
+                                <Button BorderThickness="0"
+                                Background="{Binding Selected, Converter={StaticResource alternatingColorConverter}}" 
+                                HorizontalAlignment="Stretch" Margin="12,0,0,0" FontFamily="Segoe UI"
+                                HorizontalContentAlignment="Right" Tapped="Button_Tapped">
+                                    <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                        </Grid.ColumnDefinitions>
+
+                                        <StackPanel Grid.Column="0" HorizontalAlignment="Right" Orientation="Horizontal"
+                                        VerticalAlignment="Center">
+                                            <TextBlock Text="{Binding Path=DisplayName}" FontSize="18" Margin="0,4,6,4" />
+                                        </StackPanel>
+                                    </Grid>
+                                </Button>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                    </ListView>
+                </Grid>
+            </ScrollViewer>
+        </Grid>
+        
         <local:LoadIndicatorView Grid.Row="0" Grid.Column="1" x:Name="indicatorView" />
         <local:RedditView Grid.Row="1" Grid.Column="1" x:Name="redditView" />
 

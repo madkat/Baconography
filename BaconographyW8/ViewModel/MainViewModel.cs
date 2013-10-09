@@ -52,6 +52,8 @@ namespace BaconographyPortable.ViewModel
 			MessengerInstance.Register<UserLoggedInMessage>(this, OnUserLoggedIn);
 			MessengerInstance.Register<SelectSubredditMessage>(this, OnSubredditChanged);
 			MessengerInstance.Send<UserLoggedInMessage>(new UserLoggedInMessage { CurrentUser = _userService.GetUser().Result, UserTriggered = false });
+
+			AboutSubredditVM = new AboutSubredditViewModel(_baconProvider, _viewModelLocator.Reddit.SelectedSubreddit, true);
         }
 
 		private Subreddit _currentSubreddit;

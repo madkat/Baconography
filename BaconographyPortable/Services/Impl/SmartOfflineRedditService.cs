@@ -334,7 +334,8 @@ namespace BaconographyPortable.Services.Impl
                 else
                 {
                     var result = await _redditService.GetSubreddit(name);
-                    await _offlineService.StoreSubreddit(result);
+					if (result.Data.Name != null && result.Data.Id != null)
+						await _offlineService.StoreSubreddit(result);
                     return result;
                 }
             }

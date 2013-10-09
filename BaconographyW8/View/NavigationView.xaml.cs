@@ -2,6 +2,7 @@
 using BaconographyPortable.Messages;
 using BaconographyPortable.Model.Reddit;
 using BaconographyPortable.ViewModel;
+using BaconographyW8.Common;
 using GalaSoft.MvvmLight.Messaging;
 using System;
 using System.Collections.Generic;
@@ -60,6 +61,19 @@ namespace BaconographyW8.View
 			{
 				subredditList.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
 			}
+		}
+
+		Flyout _redditPickerFlyout;
+		private void ShowRedditPicker(object sender, RoutedEventArgs e)
+		{
+			App.SetSearchKeyboard(false);
+			_redditPickerFlyout = new Flyout();
+			_redditPickerFlyout.Width = 430;
+			_redditPickerFlyout.Closed += (obj1, obj2) => App.SetSearchKeyboard(true);
+			_redditPickerFlyout.Placement = PlacementMode.Bottom;
+			_redditPickerFlyout.PlacementTarget = sender as UIElement;
+			_redditPickerFlyout.Content = new SubredditPickerView();
+			_redditPickerFlyout.IsOpen = true;
 		}
     }
 }

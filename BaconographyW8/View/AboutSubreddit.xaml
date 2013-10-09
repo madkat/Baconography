@@ -12,6 +12,7 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
+            <RowDefinition Height="8" />
         </Grid.RowDefinitions>
 
         <!--ContentPanel - place additional content here-->
@@ -27,7 +28,7 @@
                 <TextBlock Grid.Column="0" FontSize="20" Text="{Binding DisplayName}" />
             </Grid>
             <StackPanel Orientation="Horizontal" Margin="0,6,0,0">
-                <CheckBox IsChecked="{Binding Subscribed, Mode=TwoWay}">
+                <CheckBox IsChecked="{Binding Subscribed, Mode=TwoWay}" Margin="-1,0,0,0">
                     <TextBlock FontSize="15" Text="Subscribed" Margin="0,0,0,0"/>
                 </CheckBox>
                 <TextBlock FontSize="15" Foreground="Red" Margin="8,0,0,0" Text="nsfw"
@@ -37,7 +38,8 @@
                            VerticalAlignment="Center"
                            Visibility="{Binding IsMultiReddit, Converter={StaticResource booleanVisibilityConverter}}" />
             </StackPanel>
-            <Grid Margin="0,6,0,0">
+            <Grid Margin="0,6,0,0"
+                  Visibility="{Binding IsMultiReddit, Converter={StaticResource invertBooleanVisibilityConverter}}">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="*" />
@@ -54,7 +56,8 @@
                 </StackPanel>
             </Grid>
         </StackPanel>
-        <Grid x:Name="ContentPanel" Grid.Row="1" Visibility="Visible">
+        <Grid x:Name="ContentPanel" Grid.Row="1"
+              Visibility="{Binding IsMultiReddit, Converter={StaticResource invertBooleanVisibilityConverter}}">
             <ContentControl Margin="6,12,6,0" MaxWidth="300" 
                             HorizontalAlignment="Left" VerticalAlignment="Top"  Content="{Binding PublicDescription, Converter={StaticResource markdownConverter}}"/>
         </Grid>

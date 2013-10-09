@@ -26,6 +26,10 @@ namespace BaconographyPortable.ViewModel
             _redditService = _baconProvider.GetService<IRedditService>();
             _userService = _baconProvider.GetService<IUserService>();
             _subscribed = subscribed;
+
+			// Prevent converter failures
+			if (Thing.Data.CreatedUTC == null)
+				Thing.Data.CreatedUTC = DateTime.Now;
         }
 
         public bool IsMultiReddit
