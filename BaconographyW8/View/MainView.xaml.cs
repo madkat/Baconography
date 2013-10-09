@@ -1,5 +1,6 @@
 ﻿using BaconographyPortable.Messages;
 using BaconographyPortable.Model.Reddit;
+using BaconographyPortable.ViewModel;
 using BaconographyW8.Common;
 using GalaSoft.MvvmLight.Messaging;
 using Newtonsoft.Json;

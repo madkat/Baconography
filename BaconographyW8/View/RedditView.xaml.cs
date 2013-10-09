@@ -216,7 +216,8 @@ namespace BaconographyW8.View
         {
             var scrollViewer = GetScrollViewer(linksView) as ScrollViewer;
 			ScrollOffset = 0;
-            scrollViewer.ScrollToVerticalOffset(0);
+			if (scrollViewer != null)
+				scrollViewer.ScrollToVerticalOffset(0);
         }
     }
 }

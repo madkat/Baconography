@@ -27,7 +27,6 @@ namespace BaconographyW8.Converters
                 var markdownData = value as MarkdownData;
                 try
                 {
-                    
                     var categoryVisitor = new SnuDomCategoryVisitor();
                     ((IDomObject)markdownData.MarkdownDom).Accept(categoryVisitor);
                     switch (categoryVisitor.Category)
@@ -67,11 +66,11 @@ namespace BaconographyW8.Converters
             return new TextBlock { Text = value as string, TextWrapping = TextWrapping.Wrap, Margin = new Thickness(0, 0, 0, 0) };
         }
 
+
         public object ConvertBack(object value, Type targetType, object parameter, string language)
         {
             throw new NotImplementedException();
         }
-
     }
 
     class SnuDomFullUIVisitor : IDomVisitor
@@ -82,7 +81,7 @@ namespace BaconographyW8.Converters
         }
         Brush _forgroundBrush;
         private int _textLengthInCurrent = 0;
-        public RichTextBlock Result = new RichTextBlock { TextWrapping = TextWrapping.Wrap, FontFamily = new FontFamily("Segoe UI"), FontSize = 15 };
+        public RichTextBlock Result = new RichTextBlock { TextWrapping = TextWrapping.Wrap, FontFamily = new FontFamily("Segoe UI"), FontSize = 12 };
         public StackPanel ResultGroup = null;
         Windows.UI.Xaml.Documents.Paragraph _currentParagraph;
 
@@ -94,15 +93,45 @@ namespace BaconographyW8.Converters
                 {
                     ResultGroup = new StackPanel { Orientation = Orientation.Vertical };
                     ResultGroup.Children.Add(Result);
+
                 }
 
-				ResultGroup.Children.Add(Result = new RichTextBlock { TextWrapping = TextWrapping.Wrap, FontFamily = new FontFamily("Segoe UI"), FontSize = 15 });
+				ResultGroup.Children.Add(Result = new RichTextBlock { TextWrapping = TextWrapping.Wrap, FontFamily = new FontFamily("Segoe UI"), FontSize = 12 });
                 _textLengthInCurrent = 0;
             }
 
-            _currentParagraph = new Windows.UI.Xaml.Documents.Paragraph();
-            Result.Blocks.Add(_currentParagraph);
+			if (_currentParagraph != null)
+			{
+				_currentParagraph.Inlines.Add(new Windows.UI.Xaml.Documents.LineBreak());
+			}
+
+			_currentParagraph = new Windows.UI.Xaml.Documents.Paragraph { TextAlignment = TextAlignment.Left };
+			Result.Blocks.Add(_currentParagraph);
         }
+
+		private void DirectlyPlaceUIContent(UIElement element)
+		{
+			if (ResultGroup == null)
+			{
+				ResultGroup = new StackPanel { Orientation = Orientation.Vertical, Margin = new Thickness(0) };
+				if (Result.Blocks.Count == 0)
+				{
+					//nothing here yet so lets just ignore the current result and move on
+				}
+				else
+				{
+					ResultGroup.Children.Add(Result);
+				}
+			}
+			else if (ResultGroup.Children.Last() is RichTextBlock && ((RichTextBlock)ResultGroup.Children.Last()).Blocks.Count == 0)
+			{
+				ResultGroup.Children.Remove(ResultGroup.Children.Last());
+			}
+			ResultGroup.Children.Add(element);
+
+			ResultGroup.Children.Add(Result = new RichTextBlock { TextWrapping = TextWrapping.Wrap, Margin = new Thickness(0, 3, 0, 3) });
+			_textLengthInCurrent = 0;
+		}
 
         public void Visit(Text text)
         {
@@ -115,15 +144,16 @@ namespace BaconographyW8.Converters
             if (text.Bold)
                 madeRun.FontWeight = FontWeights.Bold;
 
+
             if (text.HeaderSize != 0)
             {
                 switch (text.HeaderSize)
                 {
                     case 1:
-                        madeRun.FontSize = 24;
+                        madeRun.FontSize = 14;
                         break;
                     case 2:
-                        madeRun.FontSize = 24;
+                        madeRun.FontSize = 14;
                         madeRun.FontWeight = FontWeights.Bold;
                         madeRun.Foreground = _forgroundBrush;
                         break;
@@ -131,7 +161,7 @@ namespace BaconographyW8.Converters
                     case 4:
                     case 5:
                     case 6:
-                        madeRun.FontSize = 28;
+                        madeRun.FontSize = 16;
                         madeRun.FontWeight = FontWeights.Bold;
                         break;
                 }
@@ -142,7 +172,7 @@ namespace BaconographyW8.Converters
                     var inlineContainer = new InlineUIContainer();
                     inlineContainer.Child = new Border
                     {
-                        Margin = new Thickness(0, 5, 0, 5),
+                        Margin = new Thickness(0, 3, 0, 3),
                         Height = 1,
                         VerticalAlignment = VerticalAlignment.Top,
                         BorderBrush = _forgroundBrush,
@@ -159,7 +189,7 @@ namespace BaconographyW8.Converters
             {
                 if (_currentParagraph == null)
                 {
-                    _currentParagraph = new Windows.UI.Xaml.Documents.Paragraph();
+					_currentParagraph = new Windows.UI.Xaml.Documents.Paragraph { TextAlignment = TextAlignment.Left };
                     Result.Blocks.Add(_currentParagraph);
                 }
                 _currentParagraph.Inlines.Add(madeRun);
@@ -181,7 +211,7 @@ namespace BaconographyW8.Converters
             var inlineContainer = new InlineUIContainer();
             inlineContainer.Child = new Border
             {
-                Margin = new Thickness(0, 5, 0, 5),
+                Margin = new Thickness(3, 3, 0, 3),
                 Height = 2,
                 VerticalAlignment = VerticalAlignment.Top,
                 BorderBrush = _forgroundBrush,
@@ -199,8 +229,14 @@ namespace BaconographyW8.Converters
 
         public void Visit(Link link)
         {
-            var inlineContainer = new InlineUIContainer();
+			if (link.Display.Count() == 0 &&
+				(link.Url.StartsWith("#") || link.Url.StartsWith("/#") ||
+				link.Url.StartsWith("//#") || (link.Url.StartsWith("/") && link.Url.ToCharArray().Count(ch => ch == '/') == 1)))
+			{
+				return;
+			}
 
+            var inlineContainer = new InlineUIContainer();
             SnuDomCategoryVisitor categoryVisitor = new SnuDomCategoryVisitor();
             if (link.Display != null)
             {
@@ -213,7 +249,7 @@ namespace BaconographyW8.Converters
             if (categoryVisitor.Category == MarkdownCategory.PlainText)
             {
                 var plainTextVisitor = new SnuDomPlainTextVisitor();
-                if (link.Display != null)
+				if (link.Display != null && link.Display.FirstOrDefault() != null)
                 {
                     foreach (var item in link.Display)
                         item.Accept(plainTextVisitor);
@@ -222,18 +258,73 @@ namespace BaconographyW8.Converters
                     plainTextVisitor.Result = link.Url;
 
                 inlineContainer.Child = new MarkdownLink(link.Url, plainTextVisitor.Result);
+				//((Hyperlink)inlineContainer).Inlines.Add(plainTextVisitor.Result);
+				//inlineContainer.Child = new MarkdownButton(link.Url, plainTextVisitor.Result);
             }
             else
             {
-                var fullUIVisitor = new SnuDomFullUIVisitor(_forgroundBrush);
-                //cant be null in this category
-                foreach (var item in link.Display)
-                    item.Accept(fullUIVisitor);
+				//inlineContainer = new Hyperlink { Command = new RelayCommand<string>(UtilityCommandImpl.GotoLinkImpl), CommandParameter = link.Url };
+				var text = link.Display.FirstOrDefault() as Text;
+				if (text != null)
+				{
+					if (text.Italic)
+						inlineContainer.FontStyle = FontStyle.Italic;
 
-                inlineContainer.Child = new MarkdownLink(link.Url, fullUIVisitor.Result);
-            }
+					if (text.Bold)
+						inlineContainer.FontWeight = FontWeights.Bold;
 
-            _currentParagraph.Inlines.Add(inlineContainer);
+
+					if (text.HeaderSize != 0)
+					{
+						switch (text.HeaderSize)
+						{
+							case 1:
+								inlineContainer.FontSize = 14;
+								break;
+							case 2:
+								inlineContainer.FontSize = 14;
+								inlineContainer.FontWeight = FontWeights.Bold;
+								inlineContainer.Foreground = _forgroundBrush;
+								break;
+							case 3:
+							case 4:
+							case 5:
+							case 6:
+								inlineContainer.FontSize = 16;
+								inlineContainer.FontWeight = FontWeights.Bold;
+								break;
+						}
+					}
+
+					var plainTextVisitor = new SnuDomPlainTextVisitor();
+					if (link.Display != null && link.Display.FirstOrDefault() != null)
+					{
+						foreach (var item in link.Display)
+							item.Accept(plainTextVisitor);
+					}
+					else
+						plainTextVisitor.Result = link.Url;
+
+					inlineContainer.Child = new MarkdownLink(link.Url, plainTextVisitor.Result);
+				}
+				else
+				{
+					inlineContainer = new InlineUIContainer();
+					var fullUIVisitor = new SnuDomFullUIVisitor(_forgroundBrush);
+					//cant be null in this category
+					foreach (var item in link.Display)
+						item.Accept(fullUIVisitor);
+
+					inlineContainer.Child = new MarkdownLink(link.Url, fullUIVisitor.Result);
+				}
+			}
+
+			if (_currentParagraph == null)
+			{
+				MaybeSplitForParagraph();
+			}
+
+			_currentParagraph.Inlines.Add(inlineContainer);
         }
 
         public void Visit(Code code)
@@ -249,19 +340,12 @@ namespace BaconographyW8.Converters
                 MaybeSplitForParagraph();
             }
             _currentParagraph.Inlines.Add(madeRun);
-
-            if (code.IsBlock)
-            {
-                _currentParagraph.Inlines.Add(new Windows.UI.Xaml.Documents.LineBreak());
-            }
         }
 
         public void Visit(Quote code)
         {
-            var inlineContainer = new InlineUIContainer();
-
             SnuDomCategoryVisitor categoryVisitor = new SnuDomCategoryVisitor();
-
+			UIElement result = null;
             foreach (var item in code)
             {
                 item.Accept(categoryVisitor);
@@ -276,7 +360,7 @@ namespace BaconographyW8.Converters
                     item.Accept(plainTextVisitor);
 
 
-                inlineContainer.Child = new MarkdownQuote(plainTextVisitor.Result);
+				result = new MarkdownQuote(plainTextVisitor.Result);
             }
             else
             {
@@ -285,115 +369,156 @@ namespace BaconographyW8.Converters
                 foreach (var item in code)
                     item.Accept(fullUIVisitor);
 
-                inlineContainer.Child = new MarkdownQuote(fullUIVisitor.Result);
+				if (fullUIVisitor.ResultGroup != null)
+				{
+					result = new MarkdownQuote(fullUIVisitor.ResultGroup);
+				}
+				else
+				{
+					result = new MarkdownQuote(fullUIVisitor.Result);
+				}
+
             }
 
-            if (_currentParagraph == null)
-            {
-                MaybeSplitForParagraph();
-            }
-            else
-            {
-                _currentParagraph.Inlines.Add(new Windows.UI.Xaml.Documents.LineBreak());
-            }
-
-            _currentParagraph.Inlines.Add(inlineContainer);
-            _currentParagraph.Inlines.Add(new Windows.UI.Xaml.Documents.LineBreak());
+            DirectlyPlaceUIContent(result);
         }
+
+		private void FlattenVisitParagraph(IDomVisitor visitor, SnuDom.Paragraph paragraph)
+		{
+			foreach (var item in paragraph)
+			{
+				if (item is SnuDom.Paragraph)
+				{
+					FlattenVisitParagraph(visitor, item as SnuDom.Paragraph);
+				}
+				else
+					item.Accept(visitor);
+			}
+		}
 
         private IEnumerable<UIElement> BuildChildUIList(IEnumerable<IDomObject> objects)
         {
-            List<UIElement> results = new List<UIElement>();
-            foreach (var item in objects)
-            {
-                SnuDomCategoryVisitor categoryVisitor = new SnuDomCategoryVisitor();
-                item.Accept(categoryVisitor);
-                var column = item as TableColumn;
-                if (categoryVisitor.Category == MarkdownCategory.PlainText)
-                {
-                    var plainTextVisitor = new SnuDomPlainTextVisitor();
-                    //this might be a pp
-                    if (column != null)
-                    {
-                        foreach (var contents in column.Contents)
-                        {
-                            contents.Accept(plainTextVisitor);
-                        }
-                    }
-                    else if (item is SnuDom.Paragraph)
-                    {
-                        item.Accept(plainTextVisitor);
-                    }
-
-                    results.Add(new TextBlock { Text = plainTextVisitor.Result });
-                }
-                else
-                {
-                    var fullUIVisitor = new SnuDomFullUIVisitor(_forgroundBrush);
-                    item.Accept(fullUIVisitor);
-                    results.Add(fullUIVisitor.Result);
-                }
+			List<UIElement> results = new List<UIElement>();
+			foreach (var item in objects)
+			{
+				SnuDomCategoryVisitor categoryVisitor = new SnuDomCategoryVisitor();
 
 
-                if (column != null)
-                {
-                    switch (column.Alignment)
-                    {
-                        case ColumnAlignment.Center:
-                            results.Last().SetValue(FrameworkElement.HorizontalAlignmentProperty, HorizontalAlignment.Center);
-                            break;
-                        case ColumnAlignment.Left:
-                            results.Last().SetValue(FrameworkElement.HorizontalAlignmentProperty, HorizontalAlignment.Left);
-                            break;
-                        case ColumnAlignment.Right:
-                            results.Last().SetValue(FrameworkElement.HorizontalAlignmentProperty, HorizontalAlignment.Right);
-                            break;
-                    }
-                }
-            }
-            return results;
+				if (item is TableColumn)
+				{
+					foreach (var contents in ((TableColumn)item).Contents)
+					{
+						contents.Accept(categoryVisitor);
+					}
+				}
+				else
+				{
+					item.Accept(categoryVisitor);
+				}
+
+
+				var column = item as TableColumn;
+				IDomObject columnFirstContent = null;
+
+				if (categoryVisitor.Category == MarkdownCategory.PlainText)
+				{
+					var plainTextVisitor = new SnuDomPlainTextVisitor();
+					//this might be a pp
+					if (column != null)
+					{
+						foreach (var contents in column.Contents)
+						{
+							contents.Accept(plainTextVisitor);
+						}
+					}
+					else if (item is SnuDom.Paragraph)
+					{
+						item.Accept(plainTextVisitor);
+					}
+
+					results.Add(new TextBlock { TextWrapping = TextWrapping.Wrap, Text = plainTextVisitor.Result, Margin = new Thickness(0, 3, 0, 3) });
+				}
+				else if (column != null && ((TableColumn)item).Contents.Count() == 1 && (columnFirstContent = ((TableColumn)item).Contents.FirstOrDefault()) != null &&
+					(columnFirstContent is Text))
+				{
+					if (columnFirstContent is Link)
+					{
+						var plainTextVisitor = new SnuDomPlainTextVisitor();
+						var lnk = columnFirstContent as Link;
+						var firstContent = lnk.Display.FirstOrDefault();
+						if (firstContent != null)
+							firstContent.Accept(plainTextVisitor);
+						results.Add(new MarkdownLink(lnk.Url, plainTextVisitor.Result));
+					}
+					else
+					{
+						results.Add(new TextBlock { TextWrapping = TextWrapping.Wrap, Text = ((Text)columnFirstContent).Contents, Margin = new Thickness(0, 3, 0, 3) });
+					}
+				}
+				else
+				{
+					var fullUIVisitor = new SnuDomFullUIVisitor(_forgroundBrush);
+					if (column != null)
+					{
+						foreach (var contents in column.Contents)
+						{
+							contents.Accept(fullUIVisitor);
+						}
+					}
+					else if (item is SnuDom.Paragraph)
+					{
+						FlattenVisitParagraph(fullUIVisitor, item as SnuDom.Paragraph);
+					}
+
+					if (fullUIVisitor.ResultGroup != null)
+						results.Add(fullUIVisitor.ResultGroup);
+					else
+						results.Add(fullUIVisitor.Result);
+				}
+
+				if (column != null)
+				{
+					switch (column.Alignment)
+					{
+						case ColumnAlignment.Center:
+							results.Last().SetValue(FrameworkElement.HorizontalAlignmentProperty, HorizontalAlignment.Center);
+							break;
+						case ColumnAlignment.Left:
+							results.Last().SetValue(FrameworkElement.HorizontalAlignmentProperty, HorizontalAlignment.Left);
+							break;
+						case ColumnAlignment.Right:
+							results.Last().SetValue(FrameworkElement.HorizontalAlignmentProperty, HorizontalAlignment.Right);
+							break;
+					}
+
+					results.Last().SetValue(FrameworkElement.VerticalAlignmentProperty, VerticalAlignment.Top);
+				}
+			}
+			return results;
         }
 
         public void Visit(OrderedList orderedList)
         {
             var uiElements = BuildChildUIList(orderedList);
-            var inlineContainer = new InlineUIContainer();
-            inlineContainer.Child = new MarkdownList(true, uiElements);
-            MaybeSplitForParagraph();
-            _currentParagraph.Inlines.Add(inlineContainer);
+			DirectlyPlaceUIContent(new MarkdownList(false, uiElements));
         }
 
         public void Visit(UnorderedList unorderedList)
         {
             var uiElements = BuildChildUIList(unorderedList);
-            var inlineContainer = new InlineUIContainer();
-            inlineContainer.Child = new MarkdownList(false, uiElements);
-            MaybeSplitForParagraph();
-            _currentParagraph.Inlines.Add(inlineContainer);
+			DirectlyPlaceUIContent(new MarkdownList(false, uiElements));
         }
 
         public void Visit(Table table)
         {
-            var headerUIElements = BuildChildUIList(table.Headers);
-            List<IEnumerable<UIElement>> tableBody = new List<IEnumerable<UIElement>>();
-            foreach (var row in table.Rows)
-            {
-                tableBody.Add(BuildChildUIList(row.Columns));
-            }
-            var inlineContainer = new InlineUIContainer();
-            inlineContainer.Child = new MarkdownTable(headerUIElements, tableBody);
+			var headerUIElements = BuildChildUIList(table.Headers);
+			List<IEnumerable<UIElement>> tableBody = new List<IEnumerable<UIElement>>();
+			foreach (var row in table.Rows)
+			{
+				tableBody.Add(BuildChildUIList(row.Columns));
+			}
 
-            if (_currentParagraph == null)
-            {
-                MaybeSplitForParagraph();
-            }
-            else
-            {
-                _currentParagraph.Inlines.Add(new Windows.UI.Xaml.Documents.LineBreak());
-            }
-
-            _currentParagraph.Inlines.Add(inlineContainer);
-            _currentParagraph.Inlines.Add(new Windows.UI.Xaml.Documents.LineBreak());
+			DirectlyPlaceUIContent(new MarkdownTable(headerUIElements, tableBody));
         }
 
         public void Visit(Document document)

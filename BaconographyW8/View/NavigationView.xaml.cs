@@ -37,5 +37,29 @@ namespace BaconographyW8.View
 				Messenger.Default.Send<SelectSubredditMessage>(new SelectSubredditMessage { Subreddit = subreddit.Thing, DontRefresh = false });
 			}
 		}
+
+		private void Sidebar_Tapped(object sender, TappedRoutedEventArgs e)
+		{
+			if (sidebar.Visibility == Windows.UI.Xaml.Visibility.Collapsed)
+			{
+				sidebar.Visibility = Windows.UI.Xaml.Visibility.Visible;
+			}
+			else
+			{
+				sidebar.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+			}
+		}
+
+		private void Subreddits_Tapped(object sender, TappedRoutedEventArgs e)
+		{
+			if (subredditList.Visibility == Windows.UI.Xaml.Visibility.Collapsed)
+			{
+				subredditList.Visibility = Windows.UI.Xaml.Visibility.Visible;
+			}
+			else
+			{
+				subredditList.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+			}
+		}
     }
 }

@@ -1,12 +1,14 @@
 ﻿using BaconographyPortable.Messages;
 using BaconographyPortable.Services;
 using BaconographyW8.Common;
+using GalaSoft.MvvmLight.Ioc;
 using GalaSoft.MvvmLight.Messaging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Reflection;
 using Windows.System;
 using Windows.UI.Xaml.Controls;
 
@@ -39,6 +41,25 @@ namespace BaconographyW8.PlatformServices
 
         public bool Navigate(Type source, object parameter = null)
         {
+			if (parameter is SelectSubredditMessage)
+			{
+				var viewLocator = SimpleIoc.Default.GetService(typeof(IDynamicViewLocator)) as IDynamicViewLocator;
+				source = viewLocator.MainView;
+				var temp = parameter as SelectSubredditMessage;
+				//parameter = new SelectTemporaryRedditMessage
+				//{
+				//	Subreddit = temp.Subreddit
+				//};
+
+				//if we're already on the main page there is no reason to push context
+				if (_frame != null && _frame.Content != null && source.FullName == _frame.Content.GetType().FullName)
+				{
+					//Messenger.Default.Send<SelectTemporaryRedditMessage>(parameter as SelectTemporaryRedditMessage);
+					Messenger.Default.Send<SelectSubredditMessage>(temp);
+					return true;
+				}
+			}
+
             return _frame.Navigate(source, parameter);
         }
 

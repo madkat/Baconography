@@ -147,6 +147,9 @@
     <Compile Include="StaticCommands.cs" />
     <Compile Include="ViewModelLocator.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
+    <Compile Include="View\AboutSubreddit.xaml.cs">
+      <DependentUpon>AboutSubreddit.xaml</DependentUpon>
+    </Compile>
     <Compile Include="View\AboutUserView.xaml.cs">
       <DependentUpon>AboutUserView.xaml</DependentUpon>
     </Compile>
@@ -279,6 +282,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Page>
+    <Page Include="View\AboutSubreddit.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="View\AboutUserView.xaml">
       <SubType>Designer</SubType>

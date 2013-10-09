@@ -7,6 +7,7 @@ using BaconographyW8;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Messaging;
+using Microsoft.Practices.ServiceLocation;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -64,6 +65,28 @@ namespace BaconographyPortable.ViewModel
 			}
 		}
 
+		private AboutSubredditViewModel _aboutSubredditVM;
+		public AboutSubredditViewModel AboutSubredditVM
+		{
+			get
+			{
+				return _aboutSubredditVM;
+			}
+			private set
+			{
+				_aboutSubredditVM = value;
+				RaisePropertyChanged("AboutSubredditVM");
+			}
+		}
+
+		public bool HasSidebar
+		{
+			get
+			{
+				return _aboutSubredditVM != null;
+			}
+		}
+
 		private void CheckSelections()
 		{
 			foreach (var sub in _displayedSubreddits)
@@ -81,6 +104,8 @@ namespace BaconographyPortable.ViewModel
 		private async void OnSubredditChanged(SelectSubredditMessage message)
 		{
 			CheckSelections();
+			var sublist = await _redditService.GetSubscribedSubreddits();
+			AboutSubredditVM = new AboutSubredditViewModel(ServiceLocator.Current.GetInstance<IBaconProvider>(), message.Subreddit, sublist.Contains(message.Subreddit.Data.Name));
 		}
 
 		private async void OnUserLoggedIn(UserLoggedInMessage message)
