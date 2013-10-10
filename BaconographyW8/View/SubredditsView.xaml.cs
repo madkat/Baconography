@@ -62,8 +62,55 @@ namespace BaconographyW8.View
 				Messenger.Default.Send<CloseSubredditsMessage>(new CloseSubredditsMessage());
 
 				subredditGrid.SelectedItem = null;
-				manualEntry.Text = "";
+				manualBox.Text = "";
 			}
 		}
+
+		
+
+		private void manualBox_KeyDown(object sender, KeyRoutedEventArgs e)
+		{
+		//	if (e.Key == Windows.System.VirtualKey.Enter)
+		//	{
+		//		this.Focus(Windows.UI.Xaml.FocusState.Pointer);
+		//		var ssvm = this.DataContext as SubredditsViewModel;
+		//		if (ssvm != null)
+		//			ssvm.PinSubreddit.Execute(ssvm);
+		//	}
+		//	else
+		//	{
+		//		BindingExpression bindingExpression = ((TextBox)sender).GetBindingExpression(TextBox.TextProperty);
+		//		if (bindingExpression != null)
+		//		{
+		//			bindingExpression.UpdateSource();
+		//		}
+		//	}
+		}
+
+		//this bit of unpleasantry is needed to prevent the input box from getting defocused when an item gets added to the collection
+		bool _disableFocusHack = false;
+		bool _needToHackFocus = false;
+		TextBox _manualBox = null;
+		private void manualBox_LostFocus(object sender, RoutedEventArgs e)
+		{
+			_manualBox = sender as TextBox;
+			if (_disableFocusHack)
+				_disableFocusHack = false;
+			else
+			{
+				_needToHackFocus = true;
+			}
+			//((TextBox)sender).Focus();
+		}
+
+		private void manualBox_TextChanged(object sender, TextChangedEventArgs e)
+		{
+			var vm = this.DataContext as SubredditsViewModel;
+			if (vm != null)
+			{
+				vm.Text = manualBox.Text;
+			}
+		}
+
     }
 }
