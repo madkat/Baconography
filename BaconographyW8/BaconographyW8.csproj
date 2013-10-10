@@ -142,6 +142,7 @@
     <Compile Include="Converters\ReplyConverter.cs" />
     <Compile Include="Converters\TimeRelationConverter.cs" />
     <Compile Include="Converters\VisitedLinkConverter.cs" />
+    <Compile Include="Messages\CloseSubredditsMessage.cs" />
     <Compile Include="PlatformServices\DynamicViewLocator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="StaticCommands.cs" />

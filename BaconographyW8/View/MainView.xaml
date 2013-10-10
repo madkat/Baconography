@@ -103,7 +103,7 @@
                                 <Button BorderThickness="0"
                                 Background="{Binding Selected, Converter={StaticResource alternatingColorConverter}}" 
                                 HorizontalAlignment="Stretch" Margin="12,0,0,0" FontFamily="Segoe UI"
-                                HorizontalContentAlignment="Right" Tapped="Button_Tapped">
+                                HorizontalContentAlignment="Right" Tapped="SubredditButton_Tapped">
                                     <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="*" />
@@ -123,7 +123,10 @@
         </Grid>
         
         <local:LoadIndicatorView Grid.Row="0" Grid.Column="1" x:Name="indicatorView" />
-        <local:RedditView Grid.Row="1" Grid.Column="1" x:Name="redditView" />
+        <Grid Grid.Row="1" Grid.Column="1" x:Name="mainContainer">
+            <local:RedditView  x:Name="redditView" />
+            <local:SubredditsView x:Name="subredditPicker" Visibility="Collapsed" />
+        </Grid>
 
         <Button Grid.RowSpan="2" Grid.Column="0" Height="75" Opacity="0.25"
                 BorderThickness="1" BorderBrush="White" Background="Transparent"

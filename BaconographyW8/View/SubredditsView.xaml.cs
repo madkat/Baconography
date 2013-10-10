@@ -1,4 +1,8 @@
-﻿using System;
+﻿using BaconographyPortable.Messages;
+using BaconographyW8.Messages;
+using BaconographyPortable.ViewModel;
+using GalaSoft.MvvmLight.Messaging;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -45,8 +49,21 @@ namespace BaconographyW8.View
         /// requirements of <see cref="SuspensionManager.SessionState"/>.
         /// </summary>
         /// <param name="pageState">An empty dictionary to be populated with serializable state.</param>
-        protected override void SaveState(Dictionary<String, Object> pageState)
+        protected override void SaveState(Dictionary <String, Object> pageState)
         {
         }
+
+		private void GridView_SelectionChanged(object sender, SelectionChangedEventArgs e)
+		{
+			if (subredditGrid.SelectedItem != null)
+			{
+				var subreddit = subredditGrid.SelectedItem as AboutSubredditViewModel;
+				Messenger.Default.Send<SelectSubredditMessage>(new SelectSubredditMessage { Subreddit = subreddit.Thing });
+				Messenger.Default.Send<CloseSubredditsMessage>(new CloseSubredditsMessage());
+
+				subredditGrid.SelectedItem = null;
+				manualEntry.Text = "";
+			}
+		}
     }
 }

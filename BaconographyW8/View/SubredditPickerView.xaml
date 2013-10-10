@@ -11,19 +11,21 @@
     d:DesignWidth="400"
     DataContext="{Binding RedditPicker, Source={StaticResource Locator}}">
 
-    <StackPanel Orientation="Vertical" Background="{StaticResource ApplicationPageBackgroundThemeBrush}">
+    <StackPanel Grid.Row="1" Orientation="Vertical" Background="{StaticResource ApplicationPageBackgroundThemeBrush}"
+                Margin="24,0,12,12">
         <StackPanel Orientation="Horizontal">
             <Button Command="{Binding ShowViewAll}" CommandParameter="{Binding}">View All</Button>
-            <common:WatermarkTextBox WatermarkText="Subreddit Name" Margin="10,0,10,0" Text="{Binding TargetSubreddit, Mode=TwoWay}" Width="250"/>
+            <common:WatermarkTextBox WatermarkText="Subreddit Name" Text="{Binding TargetSubreddit, Mode=TwoWay}" Width="250"/>
             <Button Command="{Binding GotoSubreddit}">Goto</Button>
         </StackPanel>
-        
-        <ListView BorderThickness="0" VerticalAlignment="Stretch" 
-                  ScrollViewer.VerticalScrollBarVisibility="Auto"
-                  ScrollViewer.HorizontalScrollBarVisibility="Disabled" 
-                  SelectedItem="{Binding Mode=TwoWay,Path=SelectedSubreddit}"
-                  SelectionMode="Single"
-                  ItemsSource="{Binding Path=Subreddits, Converter={StaticResource portableAsyncCollectionConverter}}">
+
+        <ListView BorderThickness="0" Margin="0,12,0,0"
+                VerticalAlignment="Stretch" 
+                ScrollViewer.VerticalScrollBarVisibility="Auto"
+                ScrollViewer.HorizontalScrollBarVisibility="Disabled" 
+                SelectedItem="{Binding Mode=TwoWay,Path=SelectedSubreddit}"
+                SelectionMode="Single"
+                ItemsSource="{Binding Path=Subreddits, Converter={StaticResource portableAsyncCollectionConverter}}">
             <ListView.ItemTemplate>
                 <DataTemplate>
                     <TextBlock Text="{Binding Url}"/>

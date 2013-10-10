@@ -2,6 +2,7 @@
 using BaconographyPortable.Model.Reddit;
 using BaconographyPortable.ViewModel;
 using BaconographyW8.Common;
+using BaconographyW8.Messages;
 using GalaSoft.MvvmLight.Messaging;
 using Newtonsoft.Json;
 using System;
@@ -30,7 +31,17 @@ namespace BaconographyW8.View
         public MainView()
         {
             this.InitializeComponent();
+			Messenger.Default.Register<CloseSubredditsMessage>(this, OnCloseSubreddits);
         }
+
+		private async void OnCloseSubreddits(CloseSubredditsMessage message)
+		{
+			if (redditView.Visibility == Windows.UI.Xaml.Visibility.Collapsed)
+			{
+				redditView.Visibility = Windows.UI.Xaml.Visibility.Visible;
+				subredditPicker.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+			}
+		}
 
 		string _sidebarState = "SidebarOpen";
 
@@ -154,12 +165,17 @@ namespace BaconographyW8.View
 			pageState["ScrollOffset"] = redditView.ScrollOffset;
 		}
 
-		private void Button_Tapped(object sender, TappedRoutedEventArgs e)
+		private void SubredditButton_Tapped(object sender, TappedRoutedEventArgs e)
 		{
 			var button = sender as Button;
 			var subreddit = button.DataContext as AboutSubredditViewModel;
 			if (subreddit != null)
 			{
+				if (redditView.Visibility == Windows.UI.Xaml.Visibility.Collapsed)
+				{
+					redditView.Visibility = Windows.UI.Xaml.Visibility.Visible;
+					subredditPicker.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+				}
 				Messenger.Default.Send<SelectSubredditMessage>(new SelectSubredditMessage { Subreddit = subreddit.Thing, DontRefresh = false });
 			}
 		}
@@ -191,6 +207,9 @@ namespace BaconographyW8.View
 		Flyout _redditPickerFlyout;
 		private void ShowRedditPicker(object sender, RoutedEventArgs e)
 		{
+			subredditPicker.Visibility = Windows.UI.Xaml.Visibility.Visible;
+			redditView.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
+			return;
 			App.SetSearchKeyboard(false);
 			_redditPickerFlyout = new Flyout();
 			_redditPickerFlyout.Width = 430;

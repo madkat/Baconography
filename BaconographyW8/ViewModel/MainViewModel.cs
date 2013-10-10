@@ -108,6 +108,13 @@ namespace BaconographyPortable.ViewModel
 			CheckSelections();
 			var sublist = await _redditService.GetSubscribedSubreddits();
 			AboutSubredditVM = new AboutSubredditViewModel(ServiceLocator.Current.GetInstance<IBaconProvider>(), message.Subreddit, sublist.Contains(message.Subreddit.Data.Name));
+
+			var match = Subreddits.Where(p => p.Data.DisplayName == message.Subreddit.Data.DisplayName);
+			if (match.Count() == 0)
+			{
+				Subreddits.Add(message.Subreddit);
+				RefreshDisplaySubreddits();
+			}
 		}
 
 		private async void OnUserLoggedIn(UserLoggedInMessage message)
@@ -202,7 +209,12 @@ namespace BaconographyPortable.ViewModel
 			{
 				var temp = sub as AboutSubredditViewModel;
 				if (temp != null)
-					_displayedSubreddits.Add(temp);
+				{
+					var match = _subreddits.Where(p => p.Data.DisplayName == temp.Thing.Data.DisplayName);
+
+					if (match.Count() == 0)
+						_displayedSubreddits.Add(temp);
+				}
 			}
 
 			CheckSelections();

@@ -8,32 +8,45 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
-      DataContext="{Binding Subreddits, Source={StaticResource Locator}}">
+    DataContext="{Binding Subreddits, Source={StaticResource Locator}}">
 
     <Grid Style="{StaticResource LayoutRootStyle}">
-
         <!-- Main page layout -->
         <Grid.RowDefinitions>
-            <RowDefinition Height="140"/>
-            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="80"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <!-- Page header -->
-        <Grid Grid.Row="0">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="*"/>
-            </Grid.ColumnDefinitions>
-            <Button x:Name="backButton" Click="GoBack" IsEnabled="{Binding Frame.CanGoBack, ElementName=pageRoot}" Style="{StaticResource BackButtonStyle}"/>
-            <TextBlock x:Name="pageTitle" Grid.Column="1" Text="Subreddits" Style="{StaticResource PageHeaderTextStyle}"/>
+        <Grid x:Name="pageHeader" Grid.Row="0" Margin="0,0,0,0">
+            <TextBlock Margin="26,-14,0,0"
+                Text="subreddits" FontFamily="Segoe UI" FontSize="28" VerticalAlignment="Center" />
         </Grid>
 
-        <!-- Activity indicator -->
-        <local:LoadIndicatorView Grid.Row="1" />
+        <Grid Grid.Row="1" Background="{StaticResource ApplicationPageBackgroundThemeBrush}"
+                Margin="24,0,0,12">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
 
-        <!-- Body -->
-        <ListView Grid.Row="2" HorizontalAlignment="Left" Margin="20,0,0,0"
+            <StackPanel Grid.Row="0"  Orientation="Horizontal">
+                <common:WatermarkTextBox WatermarkText="Subreddit Name" Text="{Binding TargetSubreddit, Mode=TwoWay}" Width="250"
+                                         x:Name="manualEntry"/>
+                <Button Command="{Binding GotoSubreddit}">Goto</Button>
+            </StackPanel>
+
+            <!-- Body -->
+            <GridView Grid.Row="1" Margin="0,12,0,0"
+                      SelectionChanged="GridView_SelectionChanged"
+                      x:Name="subredditGrid"
+                      ItemsSource="{Binding Path=Subreddits, Converter={StaticResource portableAsyncCollectionConverter}}">
+                <GridView.ItemTemplate>
+                    <DataTemplate>
+                        <local:SubredditView />
+                    </DataTemplate>
+                </GridView.ItemTemplate>
+            </GridView>
+            <!--<ListView Grid.Row="1" HorizontalAlignment="Left" Margin="0,12,0,0"
                 Background="{StaticResource ApplicationPageBackgroundThemeBrush}"
                 BorderThickness="0" VerticalAlignment="Stretch" 
                 ScrollViewer.VerticalScrollBarVisibility="Auto"
@@ -41,12 +54,14 @@
                 SelectedItem="{Binding Mode=TwoWay,Path=SelectedSubreddit}"
                 SelectionMode="Single"
                 ItemsSource="{Binding Path=Subreddits, Converter={StaticResource portableAsyncCollectionConverter}}">
-            <ListView.ItemTemplate>
-                <DataTemplate>
-                    <local:SubredditView />
-                </DataTemplate>
-            </ListView.ItemTemplate>
-        </ListView>
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <local:SubredditView />
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+            -->
+        </Grid>
 
         <VisualStateManager.VisualStateGroups>
 
