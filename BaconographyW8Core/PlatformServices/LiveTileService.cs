@@ -69,7 +69,7 @@ namespace BaconographyW8.PlatformServices
             {
                 string id = "";
                 if (subreddit != null)
-                    id = subreddit.Data.DisplayName;
+                    id = subreddit.Data.DisplayName.Replace(" ", "");
 
                 SecondaryTile tile = new SecondaryTile();
                 tile.TileOptions = TileOptions.ShowNameOnWideLogo | TileOptions.ShowNameOnLogo;
@@ -79,6 +79,10 @@ namespace BaconographyW8.PlatformServices
                 {
 
                     // Download and create a local copy of the header image
+					if (subreddit.Data.HeaderImage.StartsWith("/Assets/"))
+					{
+						subreddit.Data.HeaderImage = "ms-appx://" + subreddit.Data.HeaderImage;
+					}
                     var rawImage = await _imagesService.SaveFileFromUriAsync(new Uri(subreddit.Data.HeaderImage), subreddit.Data.DisplayName + ".jpg", "Images");
                     // Generate a wide tile appropriate image
                     var wideImage = await _imagesService.GenerateResizedImage(rawImage, 310, 150) as StorageFile;
@@ -113,11 +117,12 @@ namespace BaconographyW8.PlatformServices
 
         public bool TileExists(string name)
         {
-            return SecondaryTile.Exists("r" + name);
+            return SecondaryTile.Exists("r" + name.Replace(" ", ""));
         }
 
         public async void RemoveSecondaryTile(string name)
         {
+			name = name.Replace(" ", "");
             if (TileExists(name))
             {
                 var tile = new SecondaryTile("r" + name);

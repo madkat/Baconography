@@ -71,7 +71,8 @@
                         BorderThickness="0"
                         Background="#343434"
                         HorizontalAlignment="Stretch" Margin="12,0,0,0" FontFamily="Segoe UI"
-                        HorizontalContentAlignment="Right" Tapped="ShowRedditPicker">
+                        HorizontalContentAlignment="Right" Tapped="ShowRedditPicker"
+                        Visibility="{Binding ElementName=subredditList, Path=Visibility}">
                         <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="Auto" />
@@ -208,21 +209,20 @@
     </Grid>
     <Page.BottomAppBar>
         <AppBar>
-            <Grid>
-                <!--
+            <Grid DataContext="{Binding Reddit, Source={StaticResource Locator}}">
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
-                    <Button Style="{StaticResource SubredditsAppBarButtonStyle}" Command="{Binding ShowSubreddits}" CommandParameter="{Binding}"/>
+                    <Button Style="{StaticResource SubredditsAppBarButtonStyle}" Click="ShowRedditPicker" />
                     <Button Style="{StaticResource SubscribeAppBarButtonStyle}" 
-                            Command="{Binding SubscribeSubreddit}" CommandParameter="{Binding}"
-                            Visibility="{Binding NotSubscribed, Converter={StaticResource booleanVisibilityConverter}}"/>
+                            Command="{Binding Path=SubscribeSubreddit}" CommandParameter="{Binding}"
+                            Visibility="{Binding Path=NotSubscribed, Converter={StaticResource booleanVisibilityConverter}}"/>
                     <Button Style="{StaticResource UnsubscribeAppBarButtonStyle}" 
-                            Command="{Binding UnsubscribeSubreddit}" CommandParameter="{Binding}"
-                            Visibility="{Binding Subscribed, Converter={StaticResource booleanVisibilityConverter}}"/>
+                            Command="{Binding Path=UnsubscribeSubreddit}" CommandParameter="{Binding}"
+                            Visibility="{Binding Path=Subscribed, Converter={StaticResource booleanVisibilityConverter}}"/>
                     
                     <Button Style="{StaticResource RefreshAppBarButtonStyle}" 
-                            Command="{Binding RefreshRedditView}" CommandParameter="{Binding}"
-                            Visibility="Visible" Click="OnRefresh"/>
-                </StackPanel>-->
+                            Command="{Binding Path=RefreshRedditView}" CommandParameter="{Binding}"
+                            Visibility="Visible"/>
+                </StackPanel>
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
                     <Button Style="{StaticResource LoginAppBarButtonStyle}" 
                             Command="{Binding ShowLogin, Source={StaticResource StaticCommands}}" CommandParameter="{Binding}"
@@ -231,23 +231,21 @@
                             Command="{Binding DoLogout, Source={StaticResource StaticCommands}}" CommandParameter="{Binding}"
                             Visibility="{Binding LoggedIn, Converter={StaticResource booleanVisibilityConverter}}"/>
                     
-                    <!--
                     <Button Style="{StaticResource PinAppBarButtonStyle}" 
-                            Command="{Binding PinReddit}" CommandParameter="{Binding}"
-                            Visibility="{Binding IsTilePinned, Mode=TwoWay, Converter={StaticResource invertBooleanVisibilityConverter}}"/>
+                            Command="{Binding Path=PinReddit}" CommandParameter="{Binding}"
+                            Visibility="{Binding Path=IsTilePinned, Mode=TwoWay, Converter={StaticResource invertBooleanVisibilityConverter}}"/>
                     <Button Style="{StaticResource UnpinAppBarButtonStyle}" 
-                            Command="{Binding UnpinReddit}" CommandParameter="{Binding}"
-                            Visibility="{Binding IsTilePinned, Mode=TwoWay, Converter={StaticResource booleanVisibilityConverter}}"/>
+                            Command="{Binding Path=UnpinReddit}" CommandParameter="{Binding}"
+                            Visibility="{Binding Path=IsTilePinned, Mode=TwoWay, Converter={StaticResource booleanVisibilityConverter}}"/>
                     <Button Style="{StaticResource OfflineAppBarButtonStyle}"
-                            Command="{Binding DownloadForOffline}" CommandParameter="{Binding}"
+                            Command="{Binding Path=DownloadForOffline}" CommandParameter="{Binding}"
                             Visibility="{Binding Path=IsOnline, Mode=TwoWay, Converter={StaticResource booleanVisibilityConverter}}"/>
                     <Button Style="{StaticResource OfflineAppBarButtonStyle}"
-                            Command="{Binding GoOffline}" CommandParameter="{Binding}" AutomationProperties.Name="Go Offline"
+                            Command="{Binding Path=GoOffline}" CommandParameter="{Binding}" AutomationProperties.Name="Go Offline"
                             Visibility="{Binding Path=OfflineReady, Mode=TwoWay, Converter={StaticResource booleanVisibilityConverter}}"/>
                     <Button Style="{StaticResource OfflineAppBarButtonStyle}"
-                            Command="{Binding GoOnline}"  CommandParameter="{Binding}" AutomationProperties.Name="Go Online"
+                            Command="{Binding Path=GoOnline}" CommandParameter="{Binding}" AutomationProperties.Name="Go Online"
                             Visibility="{Binding Path=IsOnline, Mode=TwoWay, Converter={StaticResource invertBooleanVisibilityConverter}}"/>
-                    -->
                 </StackPanel>
             </Grid>
         </AppBar>

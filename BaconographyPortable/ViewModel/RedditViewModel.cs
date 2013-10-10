@@ -325,7 +325,7 @@ namespace BaconographyPortable.ViewModel
             {
                 if (_selectedSubreddit == null)
                     return _liveTileService.TileExists("");
-                return _liveTileService.TileExists(_selectedSubreddit.Data.Name);
+                return _liveTileService.TileExists(_selectedSubreddit.Data.DisplayName);
             }
             set
             {

@@ -22,27 +22,43 @@ namespace BaconographyW8.PlatformServices
             if (localFileName.StartsWith("/"))
                 localFileName = localFileName.Substring(1);
 
-            localFileName = Path.GetFileName(localFileName);
-            
-            var destinationFolder = await Windows.Storage.ApplicationData.Current.LocalFolder.CreateFolderAsync(localPath, CreationCollisionOption.OpenIfExists);
+			var destinationFolder = await Windows.Storage.ApplicationData.Current.LocalFolder.CreateFolderAsync(localPath, CreationCollisionOption.OpenIfExists);
+			if (fileUri.ToString().StartsWith("ms-appx://"))
+			{
+				var sourceFile = await Windows.Storage.StorageFile.GetFileFromApplicationUriAsync(fileUri);
+				var outFile = await destinationFolder.CreateFileAsync(localFileName, CreationCollisionOption.OpenIfExists);
+				try
+				{
+					await sourceFile.CopyAndReplaceAsync(outFile);
+				}
+				catch
+				{
 
-            var outFile = await destinationFolder.CreateFileAsync(localFileName, CreationCollisionOption.OpenIfExists);
-            if((await outFile.GetBasicPropertiesAsync()).Size == 0)
-            {
-                BackgroundDownloader backgroundDownloader = new BackgroundDownloader();
-                var download = backgroundDownloader.CreateDownload(fileUri, outFile);
-                try
-                {
-                    download.CostPolicy = BackgroundTransferCostPolicy.Always;
-                    var downloadTask = download.StartAsync();
-                    await downloadTask;
-                }
-                catch
-                {
-                }
+				}
+				return outFile;
+			}
+			else
+			{
+				localFileName = Path.GetFileName(localFileName);
 
-            }
-            return outFile;
+				var outFile = await destinationFolder.CreateFileAsync(localFileName, CreationCollisionOption.OpenIfExists);
+				if ((await outFile.GetBasicPropertiesAsync()).Size == 0)
+				{
+					BackgroundDownloader backgroundDownloader = new BackgroundDownloader();
+					var download = backgroundDownloader.CreateDownload(fileUri, outFile);
+					try
+					{
+						download.CostPolicy = BackgroundTransferCostPolicy.Always;
+						var downloadTask = download.StartAsync();
+						await downloadTask;
+					}
+					catch
+					{
+					}
+
+				}
+				return outFile;
+			}
         }
 
         public async Task<object> SaveFileFromUriAsync(Uri fileUri, string localFileName, string localPath = "Images", bool replaceIfExists = true)
