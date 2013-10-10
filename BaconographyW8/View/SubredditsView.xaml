@@ -56,6 +56,7 @@
                 <VisualState x:Name="Filled"/>
 
                 <!-- The entire page respects the narrower 100-pixel margin convention for portrait -->
+                <!--
                 <VisualState x:Name="FullScreenPortrait">
                     <Storyboard>
                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="backButton" Storyboard.TargetProperty="Style">
@@ -64,7 +65,6 @@
                     </Storyboard>
                 </VisualState>
 
-                <!-- The back button and title have different styles when snapped -->
                 <VisualState x:Name="Snapped">
                     <Storyboard>
                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="backButton" Storyboard.TargetProperty="Style">
@@ -75,6 +75,7 @@
                         </ObjectAnimationUsingKeyFrames>
                     </Storyboard>
                 </VisualState>
+                -->
             </VisualStateGroup>
         </VisualStateManager.VisualStateGroups>
     </Grid>
