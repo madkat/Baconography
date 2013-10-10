@@ -113,5 +113,37 @@ namespace BaconographyW8.View
 		{
 
 		}
+
+		private void Image_ImageOpened(object sender, RoutedEventArgs e)
+		{
+			var image = sender as Image;
+			var bounds = Window.Current.Bounds;
+			var targetHeight = bounds.Height - 175;
+			var targetWidth = bounds.Width - 100;
+			var scroller = GetAncestorByType(sender as UIElement, typeof(ScrollViewer)) as ScrollViewer;
+
+			if (scroller != null && image != null)
+			{
+				if (image.ActualHeight > targetHeight || image.ActualWidth > targetWidth)
+				{
+					double heightFactor = targetHeight / image.ActualHeight;
+					double widthFactor = targetWidth / image.ActualWidth;
+					double factor = widthFactor < heightFactor ? widthFactor : heightFactor;
+					scroller.ZoomToFactor((float)factor);
+				}
+			}
+		}
+
+		private DependencyObject GetAncestorByType(DependencyObject element, Type type)
+		{
+			if (element == null)
+				return null;
+
+			if (element.GetType() == type)
+				return element;
+
+			var parent = VisualTreeHelper.GetParent(element);
+			return GetAncestorByType(parent, type);
+		}
     }
 }
