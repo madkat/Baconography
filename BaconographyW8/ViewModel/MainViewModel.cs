@@ -51,6 +51,7 @@ namespace BaconographyPortable.ViewModel
 
 			MessengerInstance.Register<UserLoggedInMessage>(this, OnUserLoggedIn);
 			MessengerInstance.Register<SelectSubredditMessage>(this, OnSubredditChanged);
+			MessengerInstance.Register<CloseSubredditMessage>(this, OnSubredditClosed);
 			MessengerInstance.Send<UserLoggedInMessage>(new UserLoggedInMessage { CurrentUser = _userService.GetUser().Result, UserTriggered = false });
 
 			AboutSubredditVM = new AboutSubredditViewModel(_baconProvider, _viewModelLocator.Reddit.SelectedSubreddit, true);
@@ -110,11 +111,40 @@ namespace BaconographyPortable.ViewModel
 			AboutSubredditVM = new AboutSubredditViewModel(ServiceLocator.Current.GetInstance<IBaconProvider>(), message.Subreddit, sublist.Contains(message.Subreddit.Data.Name));
 
 			var match = Subreddits.Where(p => p.Data.DisplayName == message.Subreddit.Data.DisplayName);
-			if (match.Count() == 0)
+			var subscribedMatch = SubscribedSubreddits.Where(p => (p as AboutSubredditViewModel).Thing.Data.DisplayName == message.Subreddit.Data.DisplayName);
+			if (match.Count() == 0 && subscribedMatch.Count() == 0)
 			{
 				Subreddits.Add(message.Subreddit);
 				RefreshDisplaySubreddits();
 			}
+		}
+
+		private async void OnSubredditClosed(CloseSubredditMessage message)
+		{
+			if (message.Subreddit.Data.DisplayName == CurrentSubreddit.DisplayName)
+			{
+				var selection = DisplayedSubreddits[0];
+				if (selection.Thing.Data.DisplayName == message.Subreddit.Data.DisplayName && DisplayedSubreddits.Count() > 1)
+					selection = DisplayedSubreddits[1];
+				MessengerInstance.Send<SelectSubredditMessage>(new SelectSubredditMessage { Subreddit = selection.Thing});
+			}
+
+			var customSubMatch = Subreddits.Where(p => p.Data.DisplayName == message.Subreddit.Data.DisplayName);
+			if (customSubMatch.Count() > 0)
+			{
+				var match = customSubMatch.First();
+				Subreddits.Remove(match);
+			}
+
+			var subscribedMatch = SubscribedSubreddits.Where(p => (p as AboutSubredditViewModel).Thing.Data.DisplayName == message.Subreddit.Data.DisplayName);
+			if (subscribedMatch.Count() > 0)
+			{
+				var match = subscribedMatch.First();
+				SubscribedSubreddits.Remove(match);
+			}
+
+			RefreshDisplaySubreddits();
+			CheckSelections();
 		}
 
 		private async void OnUserLoggedIn(UserLoggedInMessage message)
@@ -168,6 +198,7 @@ namespace BaconographyPortable.ViewModel
 
 		}
 
+		private bool _displayFirstSubscribed = false;
 		public async Task LoadSubreddits()
 		{
 			try
@@ -187,6 +218,11 @@ namespace BaconographyPortable.ViewModel
 
 				RefreshDisplaySubreddits();
 				RaisePropertyChanged("Subreddits");
+
+				if (_subreddits.Count > 0)
+					MessengerInstance.Send<SelectSubredditMessage>(new SelectSubredditMessage { Subreddit = _subreddits.First() });
+				else
+					_displayFirstSubscribed = true;
 
 				_subreddits.CollectionChanged += _subreddits_CollectionChanged;
 			}
@@ -284,6 +320,11 @@ namespace BaconographyPortable.ViewModel
 
 		void _subscribedSubreddits_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
 		{
+			if (_displayFirstSubscribed)
+			{
+				_displayFirstSubscribed = false;
+				MessengerInstance.Send<SelectSubredditMessage>(new SelectSubredditMessage { Subreddit = (_subscribedSubreddits.First() as AboutSubredditViewModel).Thing });
+			}
 			RefreshDisplaySubreddits();
 		}
     }

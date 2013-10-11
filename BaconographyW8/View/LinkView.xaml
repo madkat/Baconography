@@ -34,9 +34,14 @@
                             <Border Height="70" VerticalAlignment="Center" HorizontalAlignment="Center">
                                 <Image Source="{Binding Thumbnail}" VerticalAlignment="Center" Margin="0" Stretch="None"/>
                             </Border>
-                            <TextBlock FontFamily="Segoe UI Symbol" FontSize="26"
-                               HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,12,12"
-                               Text="{Binding Converter={StaticResource linkGlyphConverter}}" />
+                            <Border HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,12,12"
+                                    BorderThickness="0">
+                                <Border.Background>
+                                    <SolidColorBrush Color="Black" Opacity="0.4" />
+                                </Border.Background>
+                                <TextBlock FontFamily="Segoe UI Symbol" FontSize="26"
+                                    Text="{Binding Converter={StaticResource linkGlyphConverter}}" />
+                            </Border>
                         </Grid>
                         <TextBlock FontFamily="Segoe UI Symbol" FontSize="55" HorizontalAlignment="Center" VerticalAlignment="Center"
                             Text="{Binding Converter={StaticResource linkGlyphConverter}}" Opacity="0.95"
@@ -52,9 +57,14 @@
                             <Border Height="70" VerticalAlignment="Center" HorizontalAlignment="Center">
                                 <Image Source="{Binding Thumbnail}" VerticalAlignment="Center" Margin="0" Stretch="None"/>
                             </Border>
-                            <TextBlock FontFamily="Segoe UI Symbol" FontSize="26"
-                               HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,12,12"
-                               Text="{Binding Converter={StaticResource linkGlyphConverter}}" />
+                            <Border HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,12,12"
+                                    BorderThickness="0">
+                                <Border.Background>
+                                    <SolidColorBrush Color="Black" Opacity="0.4" />
+                                </Border.Background>
+                                <TextBlock FontFamily="Segoe UI Symbol" FontSize="26"
+                                    Text="{Binding Converter={StaticResource linkGlyphConverter}}" />
+                            </Border>
                         </Grid>
                         <TextBlock FontFamily="Segoe UI Symbol" FontSize="55" HorizontalAlignment="Center" VerticalAlignment="Center"
                             Text="{Binding Converter={StaticResource linkGlyphConverter}}" Opacity="0.95"

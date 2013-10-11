@@ -1,6 +1,9 @@
-﻿using BaconographyPortable.Model.Reddit;
+﻿using BaconographyPortable.Messages;
+using BaconographyPortable.Model.Reddit;
 using BaconographyPortable.Services;
 using GalaSoft.MvvmLight;
+using GalaSoft.MvvmLight.Command;
+using GalaSoft.MvvmLight.Messaging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -176,6 +179,14 @@ namespace BaconographyPortable.ViewModel
 				_pinned = value;
 				RaisePropertyChanged("Pinned");
 			}
+		}
+
+		static RelayCommand<AboutSubredditViewModel> _closeSubreddit = new RelayCommand<AboutSubredditViewModel>((vm) => vm.CloseSubredditImpl());
+		public RelayCommand<AboutSubredditViewModel> CloseSubreddit { get { return _closeSubreddit; } }
+
+		private void CloseSubredditImpl()
+		{
+			Messenger.Default.Send<CloseSubredditMessage>(new CloseSubredditMessage { Heading = this.DisplayName, Subreddit = this.Thing });
 		}
     }
 }

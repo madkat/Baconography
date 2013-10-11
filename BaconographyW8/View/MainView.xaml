@@ -39,9 +39,9 @@
             </Grid>
 
             <ScrollViewer Grid.Row="1" Margin="24,0,0,0"
-            ScrollViewer.VerticalScrollBarVisibility="Auto"
-            ScrollViewer.VerticalScrollMode="Enabled"
-            ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                ScrollViewer.VerticalScrollBarVisibility="Auto"
+                ScrollViewer.VerticalScrollMode="Enabled"
+                ScrollViewer.HorizontalScrollBarVisibility="Disabled">
                 <Grid Background="{StaticResource ApplicationPageBackgroundThemeBrush}"
                   Margin="0,0,16,0">
                     <Grid.RowDefinitions>
@@ -52,19 +52,19 @@
                         <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
                     <Button Grid.Row="0"
-                    HorizontalAlignment="Stretch" HorizontalContentAlignment="Right"
-                    Margin="0,0,0,0" BorderThickness="0" Background="#565656"
-                    Tapped="Sidebar_Tapped">
+                        HorizontalAlignment="Stretch" HorizontalContentAlignment="Right"
+                        Margin="0,0,0,0" BorderThickness="0" Background="#565656"
+                        Tapped="Sidebar_Tapped">
                         <TextBlock Text="Sidebar" Foreground="White" FontSize="20" Margin="0,3,0,3" />
                     </Button>
                     <local:AboutSubreddit
-                    Grid.Row="1" Margin="3,3,3,3" Visibility="Collapsed" x:Name="sidebar"
-                    VerticalAlignment="Stretch" HorizontalAlignment="Stretch" 
-                    DataContext="{Binding AboutSubredditVM, Mode=TwoWay}"/>
-                    <Button Grid.Row="2"
-                    HorizontalAlignment="Stretch" HorizontalContentAlignment="Right"
-                    Margin="0,0,0,0" BorderThickness="0" Background="#565656"
-                    Tapped="Subreddits_Tapped">
+                        Grid.Row="1" Margin="3,3,3,3" Visibility="Collapsed" x:Name="sidebar"
+                        VerticalAlignment="Stretch" HorizontalAlignment="Stretch" 
+                        DataContext="{Binding AboutSubredditVM, Mode=TwoWay}"/>
+                        <Button Grid.Row="2"
+                        HorizontalAlignment="Stretch" HorizontalContentAlignment="Right"
+                        Margin="0,0,0,0" BorderThickness="0" Background="#565656"
+                        Tapped="Subreddits_Tapped">
                         <TextBlock Text="Subreddits" Foreground="White" FontSize="20" Margin="0,3,0,3" />
                     </Button>
                     <Button Grid.Row="3"
@@ -85,14 +85,14 @@
                         </Grid>
                     </Button>
                     <ListView Grid.Row="4"
-                    Margin="0,0,0,0"
-                    BorderThickness="0" VerticalAlignment="Stretch"
-                    SelectionMode="Single"
-                    ItemsSource="{Binding Path=DisplayedSubreddits, Mode=TwoWay}"
-                    HorizontalAlignment="Stretch"
-                    HorizontalContentAlignment="Stretch"
-                    Padding="0,0,0,0"
-                    x:Name="subredditList">
+                        Margin="0,0,0,0"
+                        BorderThickness="0" VerticalAlignment="Stretch"
+                        SelectionMode="Single"
+                        ItemsSource="{Binding Path=DisplayedSubreddits, Mode=TwoWay}"
+                        HorizontalAlignment="Stretch"
+                        HorizontalContentAlignment="Stretch"
+                        Padding="0,0,0,0"
+                        x:Name="subredditList">
                         <ListView.ItemsPanel>
                             <ItemsPanelTemplate>
                                 <StackPanel Margin="0" />
@@ -101,21 +101,37 @@
 
                         <ListView.ItemTemplate>
                             <DataTemplate>
-                                <Button BorderThickness="0"
-                                Background="{Binding Selected, Converter={StaticResource alternatingColorConverter}}" 
-                                HorizontalAlignment="Stretch" Margin="12,0,0,0" FontFamily="Segoe UI"
-                                HorizontalContentAlignment="Right" Tapped="SubredditButton_Tapped">
-                                    <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="*" />
-                                        </Grid.ColumnDefinitions>
+                                <Grid Margin="12,0,0,0">
 
-                                        <StackPanel Grid.Column="0" HorizontalAlignment="Right" Orientation="Horizontal"
-                                        VerticalAlignment="Center">
-                                            <TextBlock Text="{Binding Path=DisplayName}" FontSize="18" Margin="0,4,6,4" />
-                                        </StackPanel>
-                                    </Grid>
-                                </Button>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="40" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+
+                                    <Button Grid.Column="0" VerticalContentAlignment="Center" FontFamily="Segoe UI"
+                                        Background="{Binding Selected, Converter={StaticResource alternatingColorConverter}}"
+                                        BorderThickness="0" Margin="0,0,0,0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                                        Command="{Binding CloseSubreddit}" CommandParameter="{Binding}">
+                                        <TextBlock Text="X" />
+                                    </Button>
+
+                                    <Button Grid.Column="1" BorderThickness="0"
+                                        Background="{Binding Selected, Converter={StaticResource alternatingColorConverter}}"
+                                        HorizontalAlignment="Stretch" FontFamily="Segoe UI"
+                                        Tapped="SubredditButton_Tapped">
+                                        <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="200" />
+                                            </Grid.ColumnDefinitions>
+
+                                            <StackPanel Grid.Column="1" HorizontalAlignment="Right" Orientation="Horizontal"
+                                                VerticalAlignment="Center">
+                                                <TextBlock Text="{Binding Path=DisplayName}" FontSize="18" Margin="0,4,6,4" />
+                                            </StackPanel>
+                                        </Grid>
+                                    </Button>
+                                </Grid>
                             </DataTemplate>
                         </ListView.ItemTemplate>
                     </ListView>
