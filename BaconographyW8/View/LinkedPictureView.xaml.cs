@@ -10,6 +10,7 @@ using System.Net;
 using System.Threading.Tasks;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -134,6 +135,50 @@ namespace BaconographyW8.View
 			}
 		}
 
+		private void Image_DoubleTapped(object sender, DoubleTappedRoutedEventArgs e)
+		{
+			var image = sender as Image;
+			var scroller = GetAncestorByType(sender as UIElement, typeof(ScrollViewer)) as ScrollViewer;
+			var bounds = Window.Current.Bounds;
+			var targetHeight = bounds.Height - 175;
+			var targetWidth = bounds.Width - 100;
+
+			if (image != null && scroller != null)
+			{
+				double minScale = 1.0;
+				if (image.ActualHeight > targetHeight || image.ActualWidth > targetWidth)
+				{
+					double heightFactor = targetHeight / image.ActualHeight;
+					double widthFactor = targetWidth / image.ActualWidth;
+					minScale = widthFactor < heightFactor ? widthFactor : heightFactor;
+				}
+				else
+					minScale = scroller.ZoomFactor;
+
+				var point = e.GetPosition(image);
+				var relativeMidpoint = new Point(point.X / image.ActualWidth, point.Y / image.ActualHeight);
+				var xform = image.TransformToVisual(scroller);
+				var screenMidpoint = xform.TransformPoint(point);
+
+				double coercedScale = scroller.ZoomFactor;
+				if (coercedScale >= (minScale * 2.5) || coercedScale < 0)
+				{
+					coercedScale = minScale;
+				}
+				else
+					coercedScale *= 1.75;
+
+				scroller.ZoomToFactor((float)coercedScale);
+
+				var dispatcher = Window.Current.CoreWindow.Dispatcher;
+				dispatcher.RunAsync(CoreDispatcherPriority.High, async () =>
+				{
+					scroller.ScrollToHorizontalOffset(point.X);
+					scroller.ScrollToHorizontalOffset(point.Y);
+				});
+			}
+		}
+
 		private DependencyObject GetAncestorByType(DependencyObject element, Type type)
 		{
 			if (element == null)
@@ -144,6 +189,25 @@ namespace BaconographyW8.View
 
 			var parent = VisualTreeHelper.GetParent(element);
 			return GetAncestorByType(parent, type);
+		}
+
+		private DependencyObject GetDescendentByType(DependencyObject element, Type type)
+		{
+			if (element == null)
+				return null;
+
+			if (element.GetType() == type)
+				return element;
+
+			DependencyObject finalObject = null;
+			for (int i = 0; i < VisualTreeHelper.GetChildrenCount(element); i++)
+			{
+				var child = VisualTreeHelper.GetChild(element, i);
+				finalObject = GetDescendentByType(child, type);
+				if (finalObject != null)
+					break;
+			}
+			return finalObject;
 		}
     }
 }
