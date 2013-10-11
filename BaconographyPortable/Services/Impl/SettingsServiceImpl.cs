@@ -368,6 +368,7 @@ namespace BaconographyPortable.Services.Impl
             await offlineService.StoreSetting("InvertSystemTheme", InvertSystemTheme.ToString());
             await offlineService.StoreSetting("OnlyFlipViewUnread", OnlyFlipViewUnread.ToString());
             await offlineService.StoreSetting("OnlyFlipViewImages2", OnlyFlipViewImages.ToString());
+            await offlineService.StoreSetting("SimpleLayoutMode", SimpleLayoutMode.ToString());
         }
 
 

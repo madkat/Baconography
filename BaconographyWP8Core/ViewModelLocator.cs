@@ -5,6 +5,7 @@ using BaconographyWP8.Converters;
 using BaconographyWP8.PlatformServices;
 using BaconographyWP8.ViewModel;
 using BaconographyWP8Core.ViewModel;
+using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Ioc;
 using GalaSoft.MvvmLight.Messaging;
 using Microsoft.Practices.ServiceLocation;
@@ -24,18 +25,55 @@ namespace BaconographyWP8
         public ViewModelLocatorImpl()
         {
             Messenger.Default.Register<SubredditFocusedMessage>(this, subredditFocused);
+            Messenger.Default.Register<SettingsChangedMessage>(this, settingsChanged);
+        }
+
+        private void settingsChanged(SettingsChangedMessage obj)
+        {
+            if ((obj.InitialLoad || ServiceLocator.Current.GetInstance<ISettingsService>().SimpleLayoutMode != _isSimpleLayoutMode)
+                && LayoutChanged != null)
+            {
+                IsLoaded = true;
+                _isSimpleLayoutMode = ServiceLocator.Current.GetInstance<ISettingsService>().SimpleLayoutMode;
+                if (_isSimpleLayoutMode)
+                {
+                    ServiceLocator.Current.GetInstance<MultipleRedditMainViewModel>().Deactivate();
+                    ServiceLocator.Current.GetInstance<SimpleMainViewModel>().Activate();
+                }
+                else
+                {
+                    ServiceLocator.Current.GetInstance<MultipleRedditMainViewModel>().Activate();
+                    ServiceLocator.Current.GetInstance<SimpleMainViewModel>().Deactivate();
+                }
+                LayoutChanged();
+            }
         }
 
         private void subredditFocused(SubredditFocusedMessage obj)
         {
             Reddit = obj.SelectedViewModel;
         }
+        private bool _isSimpleLayoutMode;
         public RedditViewModel Reddit { get; set; }
+        public bool IsLoaded { get; set; }
+        public event Action LayoutChanged;
     }
 
-    public class ViewModelLocator
+    public class ViewModelLocator : ViewModelBase
     {
         private static IBaconProvider _baconProvider;
+
+        public ViewModelLocator()
+        {
+            var viewModelLocator = _baconProvider.GetService<IViewModelLocator>() as ViewModelLocatorImpl;
+            viewModelLocator.LayoutChanged += viewModelLocator_LayoutChanged;
+        }
+
+        void viewModelLocator_LayoutChanged()
+        {
+            RaisePropertyChanged("MainPage");
+        }
+
         public static void Initialize(IBaconProvider baconProvider)
         {
             if (_baconProvider == null)
@@ -47,10 +85,10 @@ namespace BaconographyWP8
                     ServiceLocator.Current.GetInstance<SimpleMainViewModel>();
                 else
                     ServiceLocator.Current.GetInstance<MultipleRedditMainViewModel>();
-                
+
                 ServiceLocator.Current.GetInstance<RedditViewModel>();
                 ServiceLocator.Current.GetInstance<LinkedWebViewModel>();
-				ServiceLocator.Current.GetInstance<LoginPageViewModel>();
+                ServiceLocator.Current.GetInstance<LoginPageViewModel>();
                 ServiceLocator.Current.GetInstance<FileOpenPickerViewModel>();
                 ServiceLocator.Current.GetInstance<SearchResultsViewModel>();
                 ServiceLocator.Current.GetInstance<ContentPreferencesViewModel>();
@@ -66,28 +104,28 @@ namespace BaconographyWP8
 
         static ViewModelLocator()
         {
-			try
-			{
-				ServiceLocator.SetLocatorProvider(() => SimpleIoc.Default);
-				SimpleIoc.Default.Register<IBaconProvider>(() => _baconProvider);
-				SimpleIoc.Default.Register<RedditViewModel>();
-				SimpleIoc.Default.Register<LoginPageViewModel>();
-				SimpleIoc.Default.Register<LoadIndicatorViewModel>();
-				SimpleIoc.Default.Register<LinkedWebViewModel>();
-				SimpleIoc.Default.Register<SubredditsViewModel>();
-				SimpleIoc.Default.Register<SubredditSelectorViewModel>();
-				SimpleIoc.Default.Register<AboutUserViewModel>();
-				SimpleIoc.Default.Register<FileOpenPickerViewModel>();
-				SimpleIoc.Default.Register<SearchResultsViewModel>();
-				SimpleIoc.Default.Register<ContentPreferencesViewModel>();
-				SimpleIoc.Default.Register<RedditPickerViewModel>();
-				SimpleIoc.Default.Register<MultipleRedditMainViewModel>();
+            try
+            {
+                ServiceLocator.SetLocatorProvider(() => SimpleIoc.Default);
+                SimpleIoc.Default.Register<IBaconProvider>(() => _baconProvider);
+                SimpleIoc.Default.Register<RedditViewModel>();
+                SimpleIoc.Default.Register<LoginPageViewModel>();
+                SimpleIoc.Default.Register<LoadIndicatorViewModel>();
+                SimpleIoc.Default.Register<LinkedWebViewModel>();
+                SimpleIoc.Default.Register<SubredditsViewModel>();
+                SimpleIoc.Default.Register<SubredditSelectorViewModel>();
+                SimpleIoc.Default.Register<AboutUserViewModel>();
+                SimpleIoc.Default.Register<FileOpenPickerViewModel>();
+                SimpleIoc.Default.Register<SearchResultsViewModel>();
+                SimpleIoc.Default.Register<ContentPreferencesViewModel>();
+                SimpleIoc.Default.Register<RedditPickerViewModel>();
+                SimpleIoc.Default.Register<MultipleRedditMainViewModel>();
                 SimpleIoc.Default.Register<SimpleMainViewModel>();
-				SimpleIoc.Default.Register<SearchQueryViewModel>();
-				SimpleIoc.Default.Register<VisitedLinkConverter>();
-				SimpleIoc.Default.Register<VisitedMainLinkConverter>();
-				SimpleIoc.Default.Register<PreviewDataConverter>();
-				SimpleIoc.Default.Register<ReplyViewModel>();
+                SimpleIoc.Default.Register<SearchQueryViewModel>();
+                SimpleIoc.Default.Register<VisitedLinkConverter>();
+                SimpleIoc.Default.Register<VisitedMainLinkConverter>();
+                SimpleIoc.Default.Register<PreviewDataConverter>();
+                SimpleIoc.Default.Register<ReplyViewModel>();
                 SimpleIoc.Default.Register<MessagesViewModel>();
                 SimpleIoc.Default.Register<CaptchaViewModel>();
                 SimpleIoc.Default.Register<LockScreenViewModel>();
@@ -95,17 +133,17 @@ namespace BaconographyWP8
                 SimpleIoc.Default.Register<SubredditPickerViewModel>();
                 SimpleIoc.Default.Register<CombinedSearchViewModel>();
 
-				if (DesignerProperties.IsInDesignTool)
-				{
+                if (DesignerProperties.IsInDesignTool)
+                {
                     var baconProvider = new BaconProvider(new Tuple<Type, Object>[] { new Tuple<Type, Object>(typeof(IDynamicViewLocator), new DynamicViewLocator()) });
-					baconProvider.Initialize(null).Wait();
-					Initialize(baconProvider);
-				}
-			}
-			catch
-			{
-				System.Diagnostics.Debug.WriteLine("uhh, something happend, ignore it");
-			}
+                    baconProvider.Initialize(null).Wait();
+                    Initialize(baconProvider);
+                }
+            }
+            catch
+            {
+                System.Diagnostics.Debug.WriteLine("uhh, something happend, ignore it");
+            }
         }
 
         public PreviewDataConverter PreviewData
@@ -140,16 +178,23 @@ namespace BaconographyWP8
             }
         }
 
-		public SimpleMainViewModel MainPage
-		{
-			get
-			{
-                if (_baconProvider.GetService<ISettingsService>().SimpleLayoutMode)
-                    return ServiceLocator.Current.GetInstance<SimpleMainViewModel>();
+        public SimpleMainViewModel MainPage
+        {
+            get
+            {
+                var viewModelLocator = _baconProvider.GetService<IViewModelLocator>() as ViewModelLocatorImpl;
+
+                if (viewModelLocator.IsLoaded)
+                {
+                    if (_baconProvider.GetService<ISettingsService>().SimpleLayoutMode)
+                        return ServiceLocator.Current.GetInstance<SimpleMainViewModel>();
+                    else
+                        return ServiceLocator.Current.GetInstance<MultipleRedditMainViewModel>();
+                }
                 else
-				    return ServiceLocator.Current.GetInstance<MultipleRedditMainViewModel>();
-			}
-		}
+                    return null;
+            }
+        }
 
         public CommentsViewModel Comments
         {
@@ -175,7 +220,7 @@ namespace BaconographyWP8
             }
         }
 
-		public LoginPageViewModel Login
+        public LoginPageViewModel Login
         {
             get
             {
@@ -191,13 +236,13 @@ namespace BaconographyWP8
             }
         }
 
-		public SubredditSelectorViewModel SubredditSelector
-		{
-			get
-			{
-				return ServiceLocator.Current.GetInstance<SubredditSelectorViewModel>();
-			}
-		}
+        public SubredditSelectorViewModel SubredditSelector
+        {
+            get
+            {
+                return ServiceLocator.Current.GetInstance<SubredditSelectorViewModel>();
+            }
+        }
 
         public AboutUserViewModel UserDetails
         {
@@ -255,13 +300,13 @@ namespace BaconographyWP8
             }
         }
 
-		public ReplyViewModel Reply
-		{
-			get
-			{
-				return ServiceLocator.Current.GetInstance<ReplyViewModel>();
-			}
-		}
+        public ReplyViewModel Reply
+        {
+            get
+            {
+                return ServiceLocator.Current.GetInstance<ReplyViewModel>();
+            }
+        }
 
         public MessagesViewModel Messages
         {

@@ -21,6 +21,7 @@ using BaconographyWP8Core.Common;
 using Windows.ApplicationModel.Store;
 using System.Threading.Tasks;
 using ReviewNotifier.Apollo;
+using BaconographyPortable.Messages;
 
 namespace BaconographyWP8
 {
@@ -143,7 +144,7 @@ namespace BaconographyWP8
             _oomService = _baconProvider.GetService<IOOMService>();
 		}
 
-        private void AfterInit(Task task)
+        private async void AfterInit(Task task)
         {
             if (CurrentApp.LicenseInformation != null)
             {
@@ -158,7 +159,6 @@ namespace BaconographyWP8
                 _baconProvider.GetService<ISettingsService>().AllowAdvertising = true;
             }
             _baconProvider.GetService<ISmartOfflineService>().OffliningOpportunity += BaconProvider_OffliningOpportunity;
-            
         }
 
         async void BaconProvider_OffliningOpportunity(OffliningOpportunityPriority arg1, NetworkConnectivityStatus arg2, System.Threading.CancellationToken arg3)
