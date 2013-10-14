@@ -116,7 +116,8 @@ namespace BaconographyPortable.ViewModel
 				if (!message.DontRefresh)
 				{
 					_links = null;
-					RefreshLinks();
+					if (_settingsService.IsOnline())
+						RefreshLinks();
 					RaisePropertyChanged("Links");
 				}
 

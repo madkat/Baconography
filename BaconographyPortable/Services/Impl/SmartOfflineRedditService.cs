@@ -388,7 +388,10 @@ namespace BaconographyPortable.Services.Impl
 
         public Task<Listing> GetMoreOnListing(IEnumerable<string> childrenIds, string contentId, string subreddit)
         {
-            return _redditService.GetMoreOnListing(childrenIds, contentId, subreddit);
+			if (_settingsService.IsOnline())
+				return _redditService.GetMoreOnListing(childrenIds, contentId, subreddit);
+			else
+				return null;
         }
 
         Dictionary<string, Listing> _currentlyStoringComments = new Dictionary<string, Listing>();

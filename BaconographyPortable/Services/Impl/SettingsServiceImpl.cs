@@ -27,6 +27,19 @@ namespace BaconographyPortable.Services.Impl
             _isOnline = true;
         }
 
+		public SettingsServiceImpl()
+		{
+			Messenger.Default.Register<ConnectionStatusMessage>(this, OnConnectionStatusChanged);
+		}
+
+		private void OnConnectionStatusChanged(ConnectionStatusMessage message)
+		{
+			if (message.IsOnline)
+				SetOnline(message.UserInitiated);
+			else
+				SetOffline(message.UserInitiated);
+		}
+
         public bool AllowOver18 { get; set; }
         public int MaxTopLevelOfflineComments { get; set; }
         public bool OfflineOnlyGetsFirstSet { get; set; }
