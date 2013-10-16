@@ -1,9 +1,11 @@
 ﻿using BaconographyPortable.Messages;
 using BaconographyPortable.Model.Reddit;
+using BaconographyPortable.Services;
 using BaconographyPortable.ViewModel;
 using BaconographyW8.Common;
 using BaconographyW8.Messages;
 using GalaSoft.MvvmLight.Messaging;
+using Microsoft.Practices.ServiceLocation;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;

@@ -199,6 +199,16 @@ namespace BaconographyPortable.ViewModel
             }
         }
 
+		public string LinkTitle
+		{
+			get
+			{
+				if (ParentLink != null)
+					return ParentLink.Title;
+				return null;
+			}
+		}
+
         public VotableViewModel Votable
         {
             get

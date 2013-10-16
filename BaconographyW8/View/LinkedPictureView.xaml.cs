@@ -1,6 +1,7 @@
 ﻿using BaconographyPortable.Services;
 using BaconographyPortable.ViewModel;
 using DXRenderInterop;
+using GalaSoft.MvvmLight;
 using Microsoft.Practices.ServiceLocation;
 using System;
 using System.Collections.Generic;
@@ -31,9 +32,11 @@ namespace BaconographyW8.View
         //cheating a little bit here but its for the best
         LinkedPictureViewModel _pictureViewModel;
 		IEnumerable<Tuple<string, string>> _navData;
+		IViewModelContextService _viewModelContextService;
         public LinkedPictureView()
         {
             this.InitializeComponent();
+			_viewModelContextService = ServiceLocator.Current.GetInstance<IViewModelContextService>();
         }
 
         /// <summary>
@@ -86,6 +89,10 @@ namespace BaconographyW8.View
             }
 
             DataContext = _pictureViewModel;
+			if (DataContext is ViewModelBase)
+			{
+				_viewModelContextService.PushViewModelContext(DataContext as ViewModelBase);
+			}
         }
 
         /// <summary>
@@ -107,6 +114,11 @@ namespace BaconographyW8.View
                     }
                 }
             }
+
+			if (DataContext is ViewModelBase)
+			{
+				_viewModelContextService.PopViewModelContext(DataContext as ViewModelBase);
+			}
         }
 
 

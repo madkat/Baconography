@@ -1,7 +1,10 @@
 ﻿using BaconographyPortable.Messages;
 using BaconographyPortable.Model.Reddit;
+using BaconographyPortable.Services;
 using BaconographyW8.Common;
+using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Messaging;
+using Microsoft.Practices.ServiceLocation;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -47,15 +50,21 @@ namespace BaconographyW8.View
 			set;
 		}
 
+		IViewModelContextService _viewModelContextService;
+
         public RedditView()
         {
             this.InitializeComponent();
 			Messenger.Default.Register<SelectSubredditMessage>(this, OnSubredditChanged);
+			_viewModelContextService = ServiceLocator.Current.GetInstance<IViewModelContextService>();
         }
 
 		private async void OnSubredditChanged(SelectSubredditMessage message)
 		{
 			OnRefresh(this, null);
+
+			if (!_viewModelContextService.ContextStack.Contains(DataContext as ViewModelBase))
+				_viewModelContextService.PushViewModelContext(DataContext as ViewModelBase);
 		}
 
 
@@ -142,6 +151,11 @@ namespace BaconographyW8.View
             {
                 Messenger.Default.Send<SelectSubredditMessage>(null);
             }
+
+			if (DataContext is ViewModelBase)
+			{
+				_viewModelContextService.PushViewModelContext(DataContext as ViewModelBase);
+			}
         }
 
 		public void SetLinksLoadedEvent()
@@ -180,6 +194,11 @@ namespace BaconographyW8.View
 				ScrollOffset = scrollViewer.VerticalOffset;
 				pageState["ScrollOffset"] = ScrollOffset;
             }
+
+			if (DataContext is ViewModelBase)
+			{
+				_viewModelContextService.PopViewModelContext(DataContext as ViewModelBase);
+			}
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)

@@ -82,7 +82,7 @@ namespace BaconographyW8.PlatformServices
 
         public Type LinkedReadabilityView
         {
-            get { throw new NotImplementedException(); }
+			get { return typeof(LinkedReadabilityView); }
         }
 
         public Type SelfPostView
