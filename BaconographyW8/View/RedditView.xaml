@@ -27,11 +27,22 @@
         </Grid.RowDefinitions>
 
         <Grid x:Name="pageHeader" Grid.Row="0" Margin="0,0,0,0">
-            <TextBlock Margin="26,-14,0,0"
-                Text="{Binding Heading}" FontFamily="Segoe UI" FontSize="28" VerticalAlignment="Center" />
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Margin="26,-14,0,0"
+                    Text="{Binding Heading}" FontFamily="Segoe UI" FontSize="28" VerticalAlignment="Center" />
+                <ComboBox x:Name="sort" Margin="12,-14,0,0" FontSize="28" SelectedIndex="{Binding Path=SortOrder, Mode=TwoWay, Converter={StaticResource sortOrderIndexConverter}}"
+                          ItemContainerStyle="{StaticResource TransparentComboBoxItemStyle}" Style="{StaticResource TransparentComboBoxStyle}">
+                    <ComboBoxItem>hot</ComboBoxItem>
+                    <ComboBoxItem>new</ComboBoxItem>
+                    <ComboBoxItem>rising</ComboBoxItem>
+                    <ComboBoxItem>controversial</ComboBoxItem>
+                    <ComboBoxItem>top</ComboBoxItem>
+                </ComboBox>
+            </StackPanel>
+            
             <ComboBox x:Name="offlineSelector" HorizontalAlignment="Right" VerticalAlignment="Top" SelectedIndex="{Binding Path=IsOnline, Mode=TwoWay, Converter={StaticResource booleanToZeroBasedIndexConverter}}" Width="100" ItemContainerStyle="{StaticResource TransparentComboBoxItemStyle}" Style="{StaticResource TransparentComboBoxStyle}">
-                <ComboBoxItem>Online</ComboBoxItem>
-                <ComboBoxItem>Offline</ComboBoxItem>
+                <ComboBoxItem>online</ComboBoxItem>
+                <ComboBoxItem>offline</ComboBoxItem>
             </ComboBox>
         </Grid>
 

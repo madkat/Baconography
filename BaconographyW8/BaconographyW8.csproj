@@ -129,6 +129,7 @@
     <Compile Include="Converters\BooleanVisibilityConverter.cs" />
     <Compile Include="Converters\ColorBrightnessConverter.cs" />
     <Compile Include="Converters\ColorContrastConverter.cs" />
+    <Compile Include="Converters\SortOrderIndexConverter.cs" />
     <Compile Include="Converters\ValueConverterGroup.cs" />
     <Compile Include="Converters\ObjectComparisonConverter.cs" />
     <Compile Include="Converters\DepthColorConverter.cs" />

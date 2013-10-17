@@ -28,6 +28,8 @@
     <converters:DepthColorConverter x:Key="depthColorConverter" />
     <converters:LinkGlyphConverter x:Key="linkGlyphConverter" />
     <converters:ObjectComparisonConverter x:Key="objectComparisonConverter" />
+    <converters:SortOrderIndexConverter x:Key="sortOrderIndexConverter" />
+    
     <common:TypedTemplateSelector x:Key="typedTemplateSelector"
                                  DefaultTemplateKey="Default"/>
 

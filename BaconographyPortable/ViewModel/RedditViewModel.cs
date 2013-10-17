@@ -372,6 +372,7 @@ namespace BaconographyPortable.ViewModel
 					case "new":
 					case "top":
 					case "rising":
+					case "gilded":
 					case "controversial":
 						_sortOrder = "/" + value + "/";
 						break;
