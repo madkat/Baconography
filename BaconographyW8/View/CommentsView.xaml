@@ -26,11 +26,76 @@
         </DataTemplate>
     </common:LayoutAwarePage.Resources>
     
-    <Grid Style="{StaticResource LayoutRootStyle}">
+    <Page.TopAppBar>
+        <AppBar>
+            <AppBar.Background>
+                <SolidColorBrush Color="Black" Opacity="0.95" />
+            </AppBar.Background>
+            <Grid>
+                
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                
+                <Button Grid.Column="0" Grid.Row="0" x:Name="backButton" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="24,24,12,24"
+                    Click="GoBack" IsEnabled="{Binding Frame.CanGoBack, ElementName=pageRoot}" Style="{StaticResource BackButtonStyle}"/>
+
+                <StackPanel Grid.Column="1" Grid.Row="0" Orientation="Horizontal" Margin="24,32,0,24">
+                    <TextBlock FontSize="28" Text="Back to " />
+                    <TextBlock FontSize="28" Text="{Binding Source={Binding Reddit, Source={StaticResource Locator}}, Path=Heading}" Margin="8,0,0,0" />
+                </StackPanel>
+                
+                <!--
+                Would be really cool to do some links here.. if the device can handle it
+                <GridView Grid.Row="1" Grid.Column="1" x:Name="linkGrid" Height="200"
+                          ItemsSource="{Binding Source={Binding Reddit, Source={StaticResource Locator}}, Path=Links, Converter={StaticResource portableAsyncCollectionConverter}}">
+                    <GridView.ItemTemplate>
+                        <DataTemplate>
+                            <Grid Height="200" Width="300" Background="AntiqueWhite">
+
+                            </Grid>
+                        </DataTemplate>
+                    </GridView.ItemTemplate>
+                </GridView>
+                -->
+            </Grid>
+        </AppBar>
+    </Page.TopAppBar>
+
+    <Page.BottomAppBar>
+        <AppBar>
+            <Grid>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" DataContext="{Binding Reddit, Source={StaticResource Locator}}">
+                    <Button Style="{StaticResource LoginAppBarButtonStyle}" 
+                            Command="{Binding ShowLogin, Source={StaticResource StaticCommands}}" CommandParameter="{Binding}"
+                            Visibility="{Binding LoggedIn, Converter={StaticResource invertBooleanVisibilityConverter}}"/>
+                    <Button Style="{StaticResource LogoutAppBarButtonStyle}" 
+                            Command="{Binding DoLogout, Source={StaticResource StaticCommands}}" CommandParameter="{Binding}"
+                            Visibility="{Binding LoggedIn, Converter={StaticResource booleanVisibilityConverter}}"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                    <Button Style="{StaticResource SaveAppBarButtonStyle}"
+                            Command="{Binding Path=SaveLink}" CommandParameter="{Binding}"/>
+                    <Button Style="{StaticResource ReportAppBarButtonStyle}"
+                            Command="{Binding Path=ReportLink}" CommandParameter="{Binding}"/>
+                    <Button Style="{StaticResource ReplyAppBarButtonStyle}"
+                            Command="{Binding Path=GotoReply}" CommandParameter="{Binding}"/>
+                </StackPanel>
+            </Grid>
+        </AppBar>
+    </Page.BottomAppBar>
+
+    <Grid Style="{StaticResource LayoutRootStyle}" Background="{StaticResource ApplicationPageBackgroundThemeBrush}">
 
         <!-- Overall page layout -->
         <Grid.RowDefinitions>
-            <RowDefinition Height="140"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
@@ -38,69 +103,125 @@
         </Grid.RowDefinitions>
 
         <!-- Heading -->
-        <Grid Grid.Row="0">
-            <!-- Main layout for page header -->
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="70"/>
-                <ColumnDefinition Width="*"/>
-            </Grid.ColumnDefinitions>
-            <!-- Back button -->
-            <Button Grid.Column="0" x:Name="backButton" Click="GoBack" IsEnabled="{Binding Frame.CanGoBack, ElementName=pageRoot}" Style="{StaticResource BackButtonStyle}"/>
-            <!-- Up/Down control -->
-            <local:VotableView Grid.Column="1" Margin="0,0,20,0" DataContext="{Binding Votable}" VerticalAlignment="Bottom"/>
-            <!-- Title, etc. -->
+        <Grid Grid.Row="1" DataContext="{Binding Link}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" MinHeight="0" MaxHeight="600" />
+            </Grid.RowDefinitions>
 
-            <Grid Grid.Column="2" VerticalAlignment="Top" Height="140">
-                <Grid.RowDefinitions>
-                    <RowDefinition />
-                    <RowDefinition Height="25" />
-                    <RowDefinition Height="25" />
-                </Grid.RowDefinitions>
-                <Button BorderThickness="0" Command="{Binding GotoLink}">
-                    <Button.Content>
-                        <TextBlock Grid.Row="0" x:Name="pageTitle" VerticalAlignment="Center" Style="{StaticResource SubheaderTextStyle}" Text="{Binding Title}" TextWrapping="Wrap" />
-                    </Button.Content>
-                </Button>
-                <StackPanel Grid.Row="1" Orientation="Horizontal">
-                    <TextBlock Style="{StaticResource BodyTextStyle}" Text="submitted"/>
-                    <TextBlock Style="{StaticResource TitleTextStyle}" Text="{Binding CreatedUTC, Converter={StaticResource timeRelationConverter}}" Margin="5,0,0,0" />
-                    <TextBlock Style="{StaticResource BodyTextStyle}" Text="by" Margin="5,0,0,0"/>
-                    <Button BorderThickness="0" Margin="0,-5,0,0" Padding="0" Command="{Binding GotoUserDetails}">
-                        <Button.Content>
-                            <TextBlock Foreground="Goldenrod" Style="{StaticResource TitleTextStyle}" Text="{Binding Author}"/>
-                        </Button.Content>
-                    </Button>
-                    <TextBlock Style="{StaticResource BodyTextStyle}" Text="to"/>
-                    <Button BorderThickness="0" Margin="0,-5,0,0" Padding="0" Command="{Binding GotoSubreddit}">
-                        <Button.Content>
-                            <TextBlock Foreground="Goldenrod" Style="{StaticResource TitleTextStyle}" Text="{Binding Subreddit}"/>
-                        </Button.Content>
-                    </Button>
-                </StackPanel>
+            <Border Grid.Row="0" Padding="8,8,8,8" Margin="0,0,0,0">
+                <Grid HorizontalAlignment="Stretch">
 
-                <StackPanel Grid.Row="2" Orientation="Horizontal">
-                    <Button Style="{StaticResource TextButtonStyle}" Margin="0,0,0,0" Command="{Binding SaveLink}" CommandParameter="{Binding}">Save</Button>
-                    <Button Style="{StaticResource TextButtonStyle}" Margin="5,0,0,0" Command="{Binding ReportLink}" CommandParameter="{Binding}">Report</Button>
-                    <Button Style="{StaticResource TextButtonStyle}" Margin="5,0,0,0" Command="{Binding GotoReply}" CommandParameter="{Binding}">Reply</Button>
-                </StackPanel>
-            </Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="110" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+
+                    <Button Grid.Column="0" Height="110" VerticalAlignment="Center" Padding="0" Command="{Binding ShowPreview}"
+                            HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" BorderBrush="Transparent"
+                            BorderThickness="0" Visibility="{Binding HasPreview, Converter={StaticResource booleanVisibilityConverter}}">
+                        <Grid Height="110" Width="110">
+                            <Grid Visibility="{Binding HasThumbnail, Converter={StaticResource booleanVisibilityConverter}}">
+                                <Border Height="70" VerticalAlignment="Center" HorizontalAlignment="Center">
+                                    <Image Source="{Binding Thumbnail}" VerticalAlignment="Center" Margin="0" Stretch="None"/>
+                                </Border>
+                                <Border HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,12,12"
+                                BorderThickness="0">
+                                    <Border.Background>
+                                        <SolidColorBrush Color="Black" Opacity="0.4" />
+                                    </Border.Background>
+                                    <TextBlock FontFamily="Segoe UI Symbol" FontSize="26"
+                                Text="{Binding Converter={StaticResource linkGlyphConverter}}" />
+                                </Border>
+                            </Grid>
+                            <TextBlock FontFamily="Segoe UI Symbol" FontSize="55" HorizontalAlignment="Center" VerticalAlignment="Center"
+                                    Text="{Binding Converter={StaticResource linkGlyphConverter}}" Opacity="0.95"
+                                    Visibility="{Binding HasThumbnail, Converter={StaticResource invertBooleanVisibilityConverter}}"/>
+                        </Grid>
+                    </Button>
+
+                    <Button Grid.Column="0" Height="110" VerticalAlignment="Center" Padding="0"
+                            Command="{Binding Source={Binding Comments, Source={StaticResource Locator}}, Path=GotoLink}" CommandParameter="{Binding Comments, Source={StaticResource Locator}}"
+                            HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" BorderBrush="Transparent"
+                            BorderThickness="0" Visibility="{Binding HasPreview, Converter={StaticResource invertBooleanVisibilityConverter}}">
+                        <Grid Height="110" Width="110">
+                            <Grid Visibility="{Binding HasThumbnail, Converter={StaticResource booleanVisibilityConverter}}">
+                                <Border Height="70" VerticalAlignment="Center" HorizontalAlignment="Center">
+                                    <Image Source="{Binding Thumbnail}" VerticalAlignment="Center" Margin="0" Stretch="None"/>
+                                </Border>
+                                <Border HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,12,12"
+                                        BorderThickness="0">
+                                    <Border.Background>
+                                        <SolidColorBrush Color="Black" Opacity="0.4" />
+                                    </Border.Background>
+                                    <TextBlock FontFamily="Segoe UI Symbol" FontSize="26"
+                                Text="{Binding Converter={StaticResource linkGlyphConverter}}" />
+                                </Border>
+                            </Grid>
+                            <TextBlock FontFamily="Segoe UI Symbol" FontSize="55" HorizontalAlignment="Center" VerticalAlignment="Center"
+                                    Text="{Binding Converter={StaticResource linkGlyphConverter}}" Opacity="0.95"
+                                    Visibility="{Binding HasThumbnail, Converter={StaticResource invertBooleanVisibilityConverter}}"/>
+                        </Grid>
+                    </Button>
+
+                    <local:VotableView Grid.Column="1" x:Name="votable" Margin="0,0,12,0"
+                                HorizontalAlignment="Left" DataContext="{Binding Votable}" />
+
+                    <Button Grid.Column="2" Background="#565656" Padding="6,0,12,0" Margin="0"
+                            BorderThickness="0" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="47" />
+                            </Grid.RowDefinitions>
+                            <Border Grid.Row="0" MinHeight="80" HorizontalAlignment="Stretch" VerticalAlignment="Center">
+                                <TextBlock Margin="6,0,6,0" Text="{Binding Title}" TextWrapping="Wrap" Style="{StaticResource SubheaderTextStyle}">
+                                </TextBlock>
+                            </Border>
+                            <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="6,5,0,6">
+                                <TextBlock Style="{StaticResource BodyTextStyle}" Text="submitted" Margin="2,0,0,0" />
+                                <TextBlock Style="{StaticResource TitleTextStyle}" Text="{Binding CreatedUTC, Converter={StaticResource timeRelationConverter}}" Margin="5,0,0,0" />
+                                <TextBlock Style="{StaticResource BodyTextStyle}" Text="by" Margin="5,0,0,0" />
+                                <Button BorderThickness="0" Padding="0" Margin="5,0,0,0" VerticalAlignment="Top" CommandParameter="{Binding Author}" Command="{Binding GotoUserDetails, Source={StaticResource StaticCommands}}">
+                                    <Border Margin="0,0,0,0" BorderThickness="0" Background="{Binding AuthorFlair, Converter={StaticResource authorFlairKindConverter}}">
+                                        <TextBlock Foreground="Goldenrod" Style="{StaticResource BodyTextStyle}" Text="{Binding Author}" Margin="0,-3,0,0" />
+                                    </Border>
+                                </Button>
+                                <TextBlock Style="{StaticResource BodyTextStyle}" Text="to" Margin="5,0,0,0" />
+                                <TextBlock Foreground="Goldenrod" Style="{StaticResource BodyTextStyle}" Text="{Binding Subreddit}" Margin="5,0,0,0" />
+                            </StackPanel>
+                        </Grid>
+                    </Button>
+                </Grid>
+            </Border>
+
+            <Border Grid.Row="1" Margin="48,6,48,6" Padding="12,12,12,12" Background="#131313" HorizontalAlignment="Stretch"
+                    Visibility="{Binding IsPreviewShown, Converter={StaticResource booleanVisibilityConverter}}">
+                <ContentControl Margin="12,0,12,0" HorizontalAlignment="Center" VerticalAlignment="Stretch" MaxHeight="500" Height="Auto"
+                        Content="{Binding PreviewPack, Converter={Binding PreviewData, Source={StaticResource Locator}}}"/>
+            </Border>
+
         </Grid>
 
         <!-- Activity indicator -->
-        <local:LoadIndicatorView Grid.Row="1" />
+        <local:LoadIndicatorView Grid.Row="0" />
 
         <!-- Body -->
 
         <ContentControl Grid.Row="3" Content="{Binding ReplyData, Converter={StaticResource replyConverter}}"/>
 
-        <ScrollViewer Grid.Row="4" Margin="0,0,0,0" HorizontalScrollMode="Disabled" HorizontalScrollBarVisibility="Disabled" Background="{StaticResource ApplicationPageBackgroundThemeBrush}">
-            <StackPanel Orientation="Vertical" Margin="24,0,24,0">
-                <Border BorderBrush="White" BorderThickness="1" CornerRadius="3" Margin="10,5,8,10" Visibility="{Binding IsSelf, Converter={StaticResource booleanVisibilityConverter}}">
-                    <ContentControl Margin="5,5,5,5" Content="{Binding SelfText, Converter={StaticResource markdownConverter}}"/>
+        <ScrollViewer Grid.Row="4" Margin="12,0,12,0" HorizontalScrollMode="Disabled" HorizontalScrollBarVisibility="Disabled" Background="{StaticResource ApplicationPageBackgroundThemeBrush}">
+            <StackPanel Orientation="Vertical" Margin="0,0,0,0">
+                <Border Background="#565656" Padding="24" BorderThickness="0" Visibility="{Binding IsSelf, Converter={StaticResource booleanVisibilityConverter}}">
+                    <StackPanel>
+                        <TextBlock FontSize="28" Margin="0,0,0,6" Text="self" Opacity="0.8" />
+                        <ContentControl Content="{Binding SelfText, Converter={StaticResource markdownConverter}}"/>
+                    </StackPanel>
                 </Border>
-                <ItemsControl ItemsSource="{Binding Path=Comments}" HorizontalAlignment="Stretch" 
-                              HorizontalContentAlignment="Stretch" ItemTemplateSelector="{StaticResource localTypedTemplateSelector}">
+                <ItemsControl 
+                        ItemsSource="{Binding Path=Comments}" HorizontalAlignment="Stretch" 
+                        HorizontalContentAlignment="Stretch" ItemTemplateSelector="{StaticResource localTypedTemplateSelector}">
                     <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
                             <StackPanel />
@@ -114,6 +235,7 @@
                 </ItemsControl>
             </StackPanel>
         </ScrollViewer>
+       
         <VisualStateManager.VisualStateGroups>
 
             <!-- Visual states reflect the application's view state -->
@@ -124,21 +246,11 @@
                 <!-- The entire page respects the narrower 100-pixel margin convention for portrait -->
                 <VisualState x:Name="FullScreenPortrait">
                     <Storyboard>
-                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="backButton" Storyboard.TargetProperty="Style">
-                            <DiscreteObjectKeyFrame KeyTime="0" Value="{StaticResource PortraitBackButtonStyle}"/>
-                        </ObjectAnimationUsingKeyFrames>
                     </Storyboard>
                 </VisualState>
                 <!-- The back button and title have different styles when snapped -->
                 <VisualState x:Name="Snapped">
-                    <Storyboard>
-                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="backButton" Storyboard.TargetProperty="Style">
-                            <DiscreteObjectKeyFrame KeyTime="0" Value="{StaticResource SnappedBackButtonStyle}"/>
-                        </ObjectAnimationUsingKeyFrames>
-                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="pageTitle" Storyboard.TargetProperty="Style">
-                            <DiscreteObjectKeyFrame KeyTime="0" Value="{StaticResource BaconSnappedPageHeaderTextStyle}"/>
-                        </ObjectAnimationUsingKeyFrames>
-                    </Storyboard>
+                    
                 </VisualState>
             </VisualStateGroup>
         </VisualStateManager.VisualStateGroups>

@@ -35,10 +35,17 @@ namespace BaconographyPortable.ViewModel
             MessengerInstance.Register<SelectCommentTreeMessage>(this, OnComentTreeSelection);
             MessengerInstance.Register<ConnectionStatusMessage>(this, OnConnectionStatusChanged);
 
-            _gotoLink = new RelayCommand(GotoLinkImpl);
+            _gotoLink = new RelayCommand(GotoLinkImpl, CanExecuteLink);
             _gotoSubreddit = new RelayCommand(GotoSubredditImpl);
             _gotoUserDetails = new RelayCommand(GotoUserImpl);
         }
+
+		private bool CanExecuteLink()
+		{
+			if (_linkThing != null && _linkThing.Data != null)
+				return !_linkThing.Data.IsSelf;
+			return true;
+		}
 
         private string _sortOrder = "";
         //  hot - ""
@@ -113,8 +120,10 @@ namespace BaconographyPortable.ViewModel
         private void LoadLink(TypedThing<Link> link, TypedThing<Comment> rootComment)
         {
             _linkThing = link;
-            if(_linkThing.Data.IsSelf)
-                SelfText = _baconProvider.GetService<IMarkdownProcessor>().Process(_linkThing.Data.Selftext);
+			if (_linkThing.Data.IsSelf)
+			{
+				SelfText = _baconProvider.GetService<IMarkdownProcessor>().Process(_linkThing.Data.Selftext);
+			}
             SortOrder = "hot"; //load the hot comments
             //Comments = new CommentViewModelCollection(_baconProvider, _linkThing.Data.Permalink, _linkThing.Data.Subreddit, _linkThing.Data.SubredditId, _linkThing.Data.Name);
         }

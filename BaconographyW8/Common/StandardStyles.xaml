@@ -1612,6 +1612,24 @@
         <Setter Property="Content" Value="&#xE11A;"/>
     </Style>
 
+    <Style x:Key="SaveAppBarButtonStyle" TargetType="ButtonBase" BasedOn="{StaticResource AppBarButtonStyle}">
+        <Setter Property="AutomationProperties.AutomationId" Value="SaveAppBarButton"/>
+        <Setter Property="AutomationProperties.Name" Value="Save"/>
+        <Setter Property="Content" Value="&#xE105;"/>
+    </Style>
+
+    <Style x:Key="ReportAppBarButtonStyle" TargetType="ButtonBase" BasedOn="{StaticResource AppBarButtonStyle}">
+        <Setter Property="AutomationProperties.AutomationId" Value="ReportAppBarButton"/>
+        <Setter Property="AutomationProperties.Name" Value="Report"/>
+        <Setter Property="Content" Value="&#xE1E0;"/>
+    </Style>
+
+    <Style x:Key="ReplyAppBarButtonStyle" TargetType="ButtonBase" BasedOn="{StaticResource AppBarButtonStyle}">
+        <Setter Property="AutomationProperties.AutomationId" Value="ReplyAppBarButton"/>
+        <Setter Property="AutomationProperties.Name" Value="Reply"/>
+        <Setter Property="Content" Value="&#xE172;"/>
+    </Style>
+
     <Style x:Key="ListViewStyle1" TargetType="ListView">
         <Setter Property="IsTabStop" Value="False"/>
         <Setter Property="TabNavigation" Value="Once"/>

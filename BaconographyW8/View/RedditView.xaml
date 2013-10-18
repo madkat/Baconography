@@ -22,15 +22,15 @@
     <Grid Style="{StaticResource LayoutRootStyle}">
         <!-- Main page layout -->
         <Grid.RowDefinitions>
-            <RowDefinition Height="80"/>
+            <RowDefinition Height="82"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
         <Grid x:Name="pageHeader" Grid.Row="0" Margin="0,0,0,0">
             <StackPanel Orientation="Horizontal">
-                <TextBlock Margin="26,-14,0,0"
+                <TextBlock Margin="26,-20,0,0"
                     Text="{Binding Heading}" FontFamily="Segoe UI" FontSize="28" VerticalAlignment="Center" />
-                <ComboBox x:Name="sort" Margin="12,-14,0,0" FontSize="28" SelectedIndex="{Binding Path=SortOrder, Mode=TwoWay, Converter={StaticResource sortOrderIndexConverter}}"
+                <ComboBox x:Name="sort" Margin="12,-20,0,0" FontSize="28" SelectedIndex="{Binding Path=SortOrder, Mode=TwoWay, Converter={StaticResource sortOrderIndexConverter}}"
                           ItemContainerStyle="{StaticResource TransparentComboBoxItemStyle}" Style="{StaticResource TransparentComboBoxStyle}">
                     <ComboBoxItem>hot</ComboBoxItem>
                     <ComboBoxItem>new</ComboBoxItem>

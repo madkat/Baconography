@@ -81,7 +81,7 @@ namespace BaconographyW8.Converters
         }
         Brush _forgroundBrush;
         private int _textLengthInCurrent = 0;
-        public RichTextBlock Result = new RichTextBlock { TextWrapping = TextWrapping.Wrap, FontFamily = new FontFamily("Segoe UI"), FontSize = 14, FontStyle = FontStyle.Normal, FontWeight = FontWeights.Normal };
+        public RichTextBlock Result = new RichTextBlock { TextWrapping = TextWrapping.Wrap, FontFamily = new FontFamily("Segoe UI"), FontSize = 15, FontStyle = FontStyle.Normal, FontWeight = FontWeights.Normal };
         public StackPanel ResultGroup = null;
         Windows.UI.Xaml.Documents.Paragraph _currentParagraph;
 
@@ -96,7 +96,7 @@ namespace BaconographyW8.Converters
 
                 }
 
-				ResultGroup.Children.Add(Result = new RichTextBlock { TextWrapping = TextWrapping.Wrap, FontFamily = new FontFamily("Segoe UI"), FontSize = 14 });
+				ResultGroup.Children.Add(Result = new RichTextBlock { TextWrapping = TextWrapping.Wrap, FontFamily = new FontFamily("Segoe UI"), FontSize = 15 });
                 _textLengthInCurrent = 0;
             }
 
@@ -129,7 +129,7 @@ namespace BaconographyW8.Converters
 			}
 			ResultGroup.Children.Add(element);
 
-			ResultGroup.Children.Add(Result = new RichTextBlock { TextWrapping = TextWrapping.Wrap, Margin = new Thickness(0, -2, 0, 3), FontFamily = new FontFamily("Segoe UI"), FontSize = 14 });
+			ResultGroup.Children.Add(Result = new RichTextBlock { TextWrapping = TextWrapping.Wrap, Margin = new Thickness(0, -2, 0, 3), FontFamily = new FontFamily("Segoe UI"), FontSize = 15 });
 			_textLengthInCurrent = 0;
 		}
 
@@ -150,7 +150,7 @@ namespace BaconographyW8.Converters
                 switch (text.HeaderSize)
                 {
                     case 1:
-                        madeRun.FontSize = 14;
+                        madeRun.FontSize = 15;
                         break;
                     case 2:
                         madeRun.FontSize = 16;
@@ -236,7 +236,7 @@ namespace BaconographyW8.Converters
 				return;
 			}
 
-			var inlineContainer = new InlineUIContainer { FontSize = 14 };
+			var inlineContainer = new InlineUIContainer { FontSize = 15 };
             SnuDomCategoryVisitor categoryVisitor = new SnuDomCategoryVisitor();
             if (link.Display != null)
             {
@@ -279,7 +279,7 @@ namespace BaconographyW8.Converters
 						switch (text.HeaderSize)
 						{
 							case 1:
-								inlineContainer.FontSize = 14;
+								inlineContainer.FontSize = 15;
 								break;
 							case 2:
 								inlineContainer.FontSize = 16;
@@ -436,7 +436,7 @@ namespace BaconographyW8.Converters
 						item.Accept(plainTextVisitor);
 					}
 
-					results.Add(new TextBlock { TextWrapping = TextWrapping.Wrap, FontSize = 14, Text = plainTextVisitor.Result, Margin = new Thickness(0, 3, 0, 3) });
+					results.Add(new TextBlock { TextWrapping = TextWrapping.Wrap, FontSize = 15, Text = plainTextVisitor.Result, Margin = new Thickness(0, 3, 0, 3) });
 				}
 				else if (column != null && ((TableColumn)item).Contents.Count() == 1 && (columnFirstContent = ((TableColumn)item).Contents.FirstOrDefault()) != null &&
 					(columnFirstContent is Text))
