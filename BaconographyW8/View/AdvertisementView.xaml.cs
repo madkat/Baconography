@@ -1,4 +1,5 @@
-﻿using Microsoft.Advertising.WinRT.UI;
+﻿using BaconographyW8.Common;
+using Microsoft.Advertising.WinRT.UI;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,7 +9,7 @@ using Windows.UI.Xaml.Controls;
 
 namespace BaconographyW8.View
 {
-    public partial class AdvertisementView : UserControl
+    public partial class AdvertisementView : LayoutAwareUserControl
     {
         public AdvertisementView()
         {

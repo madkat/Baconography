@@ -328,6 +328,14 @@ namespace BaconographyPortable.ViewModel
             RaisePropertyChanged("IsContexted");
         }
 
+		public bool IsReplying
+		{
+			get
+			{
+				return _replyData != null;
+			}
+		}
+
         private ReplyViewModel _replyData;
         public ReplyViewModel ReplyData
         {
@@ -339,6 +347,7 @@ namespace BaconographyPortable.ViewModel
             {
                 _replyData = value;
                 RaisePropertyChanged("ReplyData");
+				RaisePropertyChanged("IsReplying");
             }
         }
     }

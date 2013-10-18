@@ -10,12 +10,11 @@
     d:DesignWidth="400">
 
     <StackPanel Orientation="Horizontal">
-        <ToggleButton IsChecked="{Binding Path=Votable.Like, Mode=TwoWay}" FontFamily="Marlett" FontSize="20" Content="5" Padding="0" BorderThickness="0" />
-        <ToggleButton IsChecked="{Binding Path=Votable.Dislike, Mode=TwoWay}"  FontFamily="Marlett" FontSize="20" Content="6" Padding="0" BorderThickness="0" />
-        <Button BorderThickness="0" Margin="0,0,0,0" Command="{Binding GotoContext}">parent</Button>
-        <Button BorderThickness="0" Margin="0,0,0,0" Command="{Binding Report}">report</Button>
-        <Button BorderThickness="0" Margin="0,0,0,0" Command="{Binding Save}">save</Button>
-        <Button BorderThickness="0" Margin="0,0,0,0" Command="{Binding GotoReply}">reply</Button>
-        <Button BorderThickness="0" Margin="0,0,0,0" Command="{Binding GotoUserDetails}">user</Button>
+        <ToggleButton Margin="-24,0,0,0" Style="{StaticResource UpvoteAppBarToggleButtonStyle}" IsChecked="{Binding Path=Votable.Like, Mode=TwoWay}" />
+        <ToggleButton Margin="-12,0,0,0" Style="{StaticResource DownvoteAppBarToggleButtonStyle}" IsChecked="{Binding Path=Votable.Dislike, Mode=TwoWay}" />
+        <Button Margin="-12,0,0,0" Style="{StaticResource ReportAppBarButtonStyle}" Command="{Binding Report}"/>
+        <Button Margin="-12,0,0,0" Style="{StaticResource SaveAppBarButtonStyle}" Command="{Binding Save}"/>
+        <Button Margin="-12,0,0,0" Style="{StaticResource ReplyAppBarButtonStyle}" Command="{Binding GotoReply}"/>
+        <Button Margin="-12,0,0,0" Style="{StaticResource UserAppBarButtonStyle}" Command="{Binding GotoUserDetails}"/>
     </StackPanel>
 </UserControl>

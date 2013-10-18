@@ -169,7 +169,7 @@
                             <DiscreteObjectKeyFrame KeyTime="0" Value="&#xab;"/>
                         </ObjectAnimationUsingKeyFrames>
 
-                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="sidebarColumn" Storyboard.TargetProperty="Width">
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="sidebarColumn" Storyboard.TargetProperty="Width" Duration="0:0:5">
                             <DiscreteObjectKeyFrame KeyTime="0" Value="320"/>
                         </ObjectAnimationUsingKeyFrames>
                     </Storyboard>
@@ -185,8 +185,8 @@
                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="buttonCaption" Storyboard.TargetProperty="Text">
                             <DiscreteObjectKeyFrame KeyTime="0" Value="&#xbb;"/>
                         </ObjectAnimationUsingKeyFrames>
-                        
-                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="sidebarColumn" Storyboard.TargetProperty="Width">
+
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="sidebarColumn" Storyboard.TargetProperty="Width" Duration="0:0:5">
                             <DiscreteObjectKeyFrame KeyTime="0" Value="20"/>
                         </ObjectAnimationUsingKeyFrames>
                     </Storyboard>

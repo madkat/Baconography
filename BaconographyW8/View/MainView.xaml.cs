@@ -72,6 +72,14 @@ namespace BaconographyW8.View
 			{
 				VisualStateManager.GoToState(this, _sidebarState, false);
 			}
+			else if (viewState == Windows.UI.ViewManagement.ApplicationViewState.Snapped)
+			{
+				VisualStateManager.GoToState(this, "SidebarClosed", false);
+			}
+			else if (viewState == Windows.UI.ViewManagement.ApplicationViewState.Filled)
+			{
+				VisualStateManager.GoToState(this, "SidebarClosed", false);
+			}
 			return base.DetermineVisualState(viewState);
 		}
 

@@ -17,7 +17,8 @@
             <RowDefinition Height="Auto" MinHeight="0" MaxHeight="600" />
         </Grid.RowDefinitions>
     
-        <Border Grid.Row="0" Background="#353535" Padding="8,8,8,8" Margin="0,0,24,0">
+        <Border Grid.Row="0" Background="#353535" Padding="8,8,8,8" Margin="0,0,24,0"
+                x:Name="fullLink">
             <Grid HorizontalAlignment="Stretch">
 
                 <Grid.ColumnDefinitions>
@@ -28,7 +29,8 @@
 
                 <Button Grid.Column="0" Height="110" VerticalAlignment="Center" Padding="0" Command="{Binding ShowPreview}"
                         HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" BorderBrush="Transparent"
-                        BorderThickness="0" Visibility="{Binding HasPreview, Converter={StaticResource booleanVisibilityConverter}}">
+                        BorderThickness="0" Visibility="{Binding HasPreview, Converter={StaticResource booleanVisibilityConverter}}"
+                        x:Name="previewButton">
                     <Grid Height="110" Width="110">
                         <Grid Visibility="{Binding HasThumbnail, Converter={StaticResource booleanVisibilityConverter}}">
                             <Border Height="70" VerticalAlignment="Center" HorizontalAlignment="Center">
@@ -51,7 +53,8 @@
 
                 <Button Grid.Column="0" Height="110" VerticalAlignment="Center" Padding="0" Command="{Binding GotoLink}"  CommandParameter="{Binding}"
                         HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" BorderBrush="Transparent"
-                        BorderThickness="0" Visibility="{Binding HasPreview, Converter={StaticResource invertBooleanVisibilityConverter}}">
+                        BorderThickness="0" Visibility="{Binding HasPreview, Converter={StaticResource invertBooleanVisibilityConverter}}"
+                        x:Name="noPreviewButton">
                     <Grid Height="110" Width="110">
                         <Grid Visibility="{Binding HasThumbnail, Converter={StaticResource booleanVisibilityConverter}}">
                             <Border Height="70" VerticalAlignment="Center" HorizontalAlignment="Center">
@@ -114,36 +117,75 @@
                         </StackPanel>
                     </Grid>
                 </Button>
-
-                <VisualStateManager.VisualStateGroups>
-                    <VisualStateGroup x:Name="ApplicationViewStates">
-                        <VisualState x:Name="FullScreenLandscape">
-                            <Storyboard>
-                            </Storyboard>
-                        </VisualState>
-                        <VisualState x:Name="FullScreenPortrait">
-                            <Storyboard>
-                            </Storyboard>
-                        </VisualState>
-                        <VisualState x:Name="Snapped">
-                            <Storyboard>
-                            </Storyboard>
-                        </VisualState>
-                        <VisualState x:Name="Filled">
-                            <Storyboard>
-                            </Storyboard>
-                        </VisualState>
-                    </VisualStateGroup>
-                </VisualStateManager.VisualStateGroups>
             </Grid>
         </Border>
 
+        <StackPanel Grid.Row="0" Background="#353535" Margin="0,0,12,0"
+                x:Name="snappedLink" Visibility="Collapsed">
+            <Button Height="150" VerticalAlignment="Center" Padding="0" Command="{Binding GotoLink}"
+                        HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" BorderBrush="Transparent"
+                        BorderThickness="0" Background="#121212" Margin="8,8,8,8">
+                <Grid Height="150" Width="266">
+                    <Grid Visibility="{Binding HasThumbnail, Converter={StaticResource booleanVisibilityConverter}}">
+                        <Border Height="150" VerticalAlignment="Center" HorizontalAlignment="Center">
+                            <Image Source="{Binding Thumbnail}" VerticalAlignment="Center" Margin="0" Stretch="UniformToFill"/>
+                        </Border>
+                        <Border HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,12,0"
+                                    BorderThickness="0">
+                            <Border.Background>
+                                <SolidColorBrush Color="Black" Opacity="0.4" />
+                            </Border.Background>
+                            <TextBlock FontFamily="Segoe UI Symbol" FontSize="26"
+                                    Text="{Binding Converter={StaticResource linkGlyphConverter}}" />
+                        </Border>
+                    </Grid>
+                    <TextBlock FontFamily="Segoe UI Symbol" FontSize="55" HorizontalAlignment="Center" VerticalAlignment="Center"
+                            Text="{Binding Converter={StaticResource linkGlyphConverter}}" Opacity="0.95"
+                            Visibility="{Binding HasThumbnail, Converter={StaticResource invertBooleanVisibilityConverter}}"/>
+                </Grid>
+            </Button>
+
+            <Grid Background="#565656" MinHeight="75">
+                <TextBlock Margin="8,8,8,12" Text="{Binding Title}" TextWrapping="Wrap" FontFamily="SegoeUI" FontSize="20">
+                    <TextBlock.Foreground>
+                        <Binding Path="Url" Converter="{Binding VisitedMainLink, Source={StaticResource Locator}}"/>
+                    </TextBlock.Foreground>
+                </TextBlock>
+            </Grid>
+        </StackPanel>
+
         <Border Grid.Row="1" Margin="50,0,74,0" Padding="12,12,12,12" Background="#111111" HorizontalAlignment="Stretch"
-                Visibility="{Binding IsPreviewShown, Converter={StaticResource booleanVisibilityConverter}}">
-            <ContentControl Margin="12,0,12,0" HorizontalAlignment="Center" VerticalAlignment="Stretch" MaxHeight="500" Height="Auto"
-                        Content="{Binding PreviewPack, Converter={Binding PreviewData, Source={StaticResource Locator}}}"/>
+            Visibility="{Binding IsPreviewShown, Converter={StaticResource booleanVisibilityConverter}}">
+        <ContentControl Margin="12,0,12,0" HorizontalAlignment="Center" VerticalAlignment="Stretch" MaxHeight="500" Height="Auto"
+                    Content="{Binding PreviewPack, Converter={Binding PreviewData, Source={StaticResource Locator}}}"/>
         </Border>
-        
+
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup x:Name="ApplicationViewStates">
+                <VisualState x:Name="FullScreenLandscape">
+                    <Storyboard>
+                    </Storyboard>
+                </VisualState>
+                <VisualState x:Name="FullScreenPortrait">
+                    <Storyboard>
+                    </Storyboard>
+                </VisualState>
+                <VisualState x:Name="Snapped">
+                    <Storyboard>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="fullLink" Storyboard.TargetProperty="Visibility">
+                            <DiscreteObjectKeyFrame KeyTime="0" Value="Collapsed" />
+                        </ObjectAnimationUsingKeyFrames>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="snappedLink" Storyboard.TargetProperty="Visibility">
+                            <DiscreteObjectKeyFrame KeyTime="0" Value="Visible" />
+                        </ObjectAnimationUsingKeyFrames>
+                    </Storyboard>
+                </VisualState>
+                <VisualState x:Name="Filled">
+                    <Storyboard>
+                    </Storyboard>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
     </Grid>
 
 </common:LayoutAwareUserControl>

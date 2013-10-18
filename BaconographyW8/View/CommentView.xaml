@@ -72,9 +72,10 @@
         </Button>
         <ContentPresenter Grid.Row="1" Grid.Column="2" Visibility="{Binding IsMinimized, Converter={StaticResource invertBooleanVisibilityConverter}}" Content="{Binding BodyMD, Converter={StaticResource markdownConverter}}"
                           Margin="0,5,0,0" FontSize="15" HorizontalAlignment="Stretch"/>
-        <ContentControl Grid.Row="2" Grid.Column="2" Visibility="{Binding IsMinimized, Converter={StaticResource invertBooleanVisibilityConverter}}" Content="{Binding ExtendedData, Converter={StaticResource extendedCommentConverter}}"/>
+        <ContentControl Grid.Row="2" Grid.Column="2" Visibility="{Binding IsMinimized, Converter={StaticResource invertBooleanVisibilityConverter}}" Content="{Binding ExtendedData, Converter={StaticResource extendedCommentConverter}}"
+                        x:Name="extendedView" Margin="0,24,0,0"/>
         <ContentControl Grid.Row="3" Grid.Column="2" Visibility="{Binding IsMinimized, Converter={StaticResource invertBooleanVisibilityConverter}}" Content="{Binding ReplyData, Converter={StaticResource replyConverter}}"
-                        Margin="0,0,0,10"/>
+                        Margin="0,12,12,6" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch"/>
         <Border Grid.Row="4" Grid.Column="2" BorderThickness="0" Height="1" Margin="0,0,0,10"/>
     </Grid>
 </UserControl>

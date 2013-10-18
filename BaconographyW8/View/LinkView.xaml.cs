@@ -23,5 +23,10 @@ namespace BaconographyW8.View
         {
             this.InitializeComponent();
         }
+
+		protected override string DetermineVisualState(Windows.UI.ViewManagement.ApplicationViewState viewState)
+		{
+			return base.DetermineVisualState(viewState);
+		}
     }
 }
