@@ -273,9 +273,9 @@ namespace BaconographyPortable.Common
                             {
                                 SimpleIoc.Default.Unregister<WebVideoViewModel>();
                             }
-                            var videoVM = new WebVideoViewModel(videoResults);
+                            var videoVM = new WebVideoViewModel(videoResults, sourceLink != null ? sourceLink.Data.Id : "");
                             SimpleIoc.Default.Register<WebVideoViewModel>(() => videoVM, true);
-                            navigationService.Navigate(baconProvider.GetService<IDynamicViewLocator>().LinkedVideoView, null);
+                            navigationService.Navigate(baconProvider.GetService<IDynamicViewLocator>().LinkedVideoView, videoVM.Url);
                         }
                         else if (settingsService.ApplyReadabliltyToLinks && LinkGlyphUtility.GetLinkGlyph(str) == LinkGlyphUtility.WebGlyph)
                         {

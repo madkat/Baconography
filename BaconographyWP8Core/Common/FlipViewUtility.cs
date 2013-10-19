@@ -30,6 +30,8 @@ namespace BaconographyWP8Core.Common
                 return ((CommentsViewModel)viewModel).Link;
             else if (viewModel is LinkViewModel)
                 return ((LinkViewModel)viewModel).ParentLink;
+            else if (viewModel is WebVideoViewModel)
+                return ((WebVideoViewModel)viewModel).ParentLink;
             else
                 throw new ArgumentException();
         }
@@ -48,6 +50,17 @@ namespace BaconographyWP8Core.Common
 
             SimpleIoc.Default.Register<ReadableArticleViewModel>(() => vm, true);
             return Tuple.Create(vm.ArticleUrl, vm.LinkId);
+        }
+
+        private static object MakeSerializable(WebVideoViewModel vm)
+        {
+            if (SimpleIoc.Default.IsRegistered<WebVideoViewModel>())
+            {
+                SimpleIoc.Default.Unregister<WebVideoViewModel>();
+            }
+
+            SimpleIoc.Default.Register<WebVideoViewModel>(() => vm, true);
+            return Tuple.Create(vm.Url, vm.LinkId);
         }
 
         private static object MakeSerializable(LinkViewModel vm)
@@ -96,6 +109,10 @@ namespace BaconographyWP8Core.Common
                                     {
                                         ServiceLocator.Current.GetInstance<INavigationService>().Navigate(typeof(LinkedSelfTextPageView), MakeSerializable(next as LinkViewModel));
                                     }
+                                    else if (next is WebVideoViewModel)
+                                    {
+                                        ServiceLocator.Current.GetInstance<INavigationService>().Navigate(typeof(LinkedVideoView), MakeSerializable(next as WebVideoViewModel));
+                                    }
                                 }
                             }
                         }
@@ -125,6 +142,10 @@ namespace BaconographyWP8Core.Common
                                 else if (previous is LinkViewModel)
                                 {
                                     ServiceLocator.Current.GetInstance<INavigationService>().Navigate(typeof(LinkedSelfTextPageView), MakeSerializable(previous as LinkViewModel));
+                                }
+                                else if (previous is WebVideoViewModel)
+                                {
+                                    ServiceLocator.Current.GetInstance<INavigationService>().Navigate(typeof(LinkedVideoView), MakeSerializable(previous as WebVideoViewModel));
                                 }
                             }
                         }

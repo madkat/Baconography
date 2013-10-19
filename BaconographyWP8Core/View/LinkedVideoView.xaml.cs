@@ -9,6 +9,10 @@ using Microsoft.Phone.Controls;
 using Microsoft.Phone.Shell;
 using GalaSoft.MvvmLight.Ioc;
 using BaconographyPortable.ViewModel;
+using Microsoft.Practices.ServiceLocation;
+using BaconographyPortable.Services;
+using BaconographyWP8Core.Common;
+using GalaSoft.MvvmLight;
 
 namespace BaconographyWP8Core.View
 {
@@ -41,13 +45,29 @@ namespace BaconographyWP8Core.View
             }
             else
             {
-                if (SimpleIoc.Default.IsRegistered<ReadableArticleViewModel>())
+                if (e.NavigationMode == NavigationMode.New && e.IsNavigationInitiator)
+                {
+
+                    var absPath = e.Uri.ToString().Contains('?') ? e.Uri.ToString().Substring(0, e.Uri.ToString().IndexOf("?")) : e.Uri.ToString();
+                    if (absPath == "/BaconographyWP8Core;component/View/LinkedPictureView.xaml" || absPath == "/BaconographyWP8Core;component/View/LinkedReadabilityView.xaml" ||
+                        absPath == "/BaconographyWP8Core;component/View/LinkedSelfTextPageView.xaml" || absPath == "/BaconographyWP8Core;component/View/LinkedVideoView.xaml")
+                    {
+                        ServiceLocator.Current.GetInstance<INavigationService>().RemoveBackEntry();
+                    }
+                }
+
+                if (SimpleIoc.Default.IsRegistered<WebVideoViewModel>())
                 {
                     var preloadedDataContext = SimpleIoc.Default.GetInstance<WebVideoViewModel>();
                     DataContext = preloadedDataContext;
-                    SimpleIoc.Default.Unregister<ReadableArticleViewModel>();
+                    SimpleIoc.Default.Unregister<WebVideoViewModel>();
                 }
             }
+        }
+
+        public void myGridGestureListener_Flick(object sender, FlickGestureEventArgs e)
+        {
+            FlipViewUtility.FlickHandler(sender, e, DataContext as ViewModelBase, this);
         }
     }
 }

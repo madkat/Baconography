@@ -1,4 +1,5 @@
-﻿using GalaSoft.MvvmLight;
+﻿using BaconographyPortable.Common;
+using GalaSoft.MvvmLight;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,11 +10,12 @@ namespace BaconographyPortable.ViewModel
 {
     public class WebVideoViewModel : ViewModelBase
     {
-        public WebVideoViewModel(IEnumerable<Dictionary<string, string>> avalableStreams)
+        public WebVideoViewModel(IEnumerable<Dictionary<string, string>> avalableStreams, string linkId)
         {
             _availableStreams = avalableStreams;
             _url = MakeUsableUrl(avalableStreams.First());
             _selectedStream = AvailableStreams.First();
+            LinkId = linkId;
         }
 
         string MakeUsableUrl(Dictionary<string, string> raw)
@@ -31,6 +33,8 @@ namespace BaconographyPortable.ViewModel
                 return _url;
             }
         }
+
+        public string LinkId { get; private set; }
         IEnumerable<Dictionary<string, string>> _availableStreams;
         public IEnumerable<string> AvailableStreams
         {
@@ -77,6 +81,23 @@ namespace BaconographyPortable.ViewModel
                     return "mobile";
                 default:
                     return "unknown";
+            }
+        }
+
+        LinkViewModel _parentLink;
+        public LinkViewModel ParentLink
+        {
+            get
+            {
+                if (_parentLink == null)
+                {
+                    if (string.IsNullOrWhiteSpace(LinkId))
+                        return null;
+
+                    _parentLink = StreamViewUtility.FindSelfFromLink(LinkId) as LinkViewModel;
+                }
+
+                return _parentLink;
             }
         }
     }
