@@ -12,8 +12,15 @@ namespace BaconographyPortable.ViewModel
         public WebVideoViewModel(IEnumerable<Dictionary<string, string>> avalableStreams)
         {
             _availableStreams = avalableStreams;
-            _url = avalableStreams.First()["url"];
+            _url = MakeUsableUrl(avalableStreams.First());
             _selectedStream = AvailableStreams.First();
+        }
+
+        string MakeUsableUrl(Dictionary<string, string> raw)
+        {
+            var rawUrl = Uri.UnescapeDataString(raw["url"]);
+            var rawSig = raw["sig"];
+            return rawUrl + "&signature=" + rawSig;
         }
 
         private string _url;
@@ -49,7 +56,7 @@ namespace BaconographyPortable.ViewModel
                     var selectedStream = _availableStreams.FirstOrDefault(stream => (CleanName(stream["type"]) + " : " + stream["quality"]) == _selectedStream);
                     if (selectedStream != null)
                     {
-                        _url = selectedStream["url"];
+                        _url = MakeUsableUrl(selectedStream);
                         RaisePropertyChanged("Url");
                     }
                 }

@@ -35,7 +35,7 @@ namespace BaconographyWP8.PlatformServices
 
         public Task<string> SendPost(string cookie, Dictionary<string, string> urlEncodedData, string uri)
         {
-            var stringData = string.Join("&", urlEncodedData.Select(kvp => string.Format("{0}={1}", kvp.Key, kvp.Value)));
+            var stringData = string.Join("&", urlEncodedData.Select(kvp => string.Format("{0}={1}", HttpUtility.UrlEncode(kvp.Key), HttpUtility.UrlEncode(kvp.Value))));
 
             return SendPost(cookie, Encoding.UTF8.GetBytes(stringData), uri, "application/x-www-form-urlencoded");
         }

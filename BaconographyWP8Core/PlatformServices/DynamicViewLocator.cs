@@ -58,7 +58,7 @@ namespace BaconographyWP8.PlatformServices
 
 		public Type LinkedVideoView
 		{
-			get { throw new NotImplementedException(); }
+			get { return typeof(LinkedVideoView) }
 		}
 
 		public Type MainView
