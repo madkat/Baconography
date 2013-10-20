@@ -88,6 +88,7 @@ namespace BaconographyWP8.Common
 				case PageOrientation.LandscapeLeft:
 				case PageOrientation.LandscapeRight:
 					SystemTrayVisible = false;
+                    ShowAppBarVertical = true;
 					break;
 				case PageOrientation.None:
 				case PageOrientation.Portrait:
@@ -95,6 +96,7 @@ namespace BaconographyWP8.Common
 				case PageOrientation.PortraitUp:
 				default:
 					SystemTrayVisible = true;
+                    ShowAppBarVertical = false;
 					break;
 			}
 
@@ -144,6 +146,20 @@ namespace BaconographyWP8.Common
 				RaisePropertyChanged("OrientationLocked");
 			}
 		}
+
+        private bool _showAppBarVertical = false;
+        public bool ShowAppBarVertical
+        {
+            get
+            {
+                return _showAppBarVertical;
+            }
+            set
+            {
+                _showAppBarVertical = value;
+                RaisePropertyChanged("ShowAppBarVertical");
+            }
+        }
 
 		private PageOrientation _orientation = PageOrientation.Portrait;
 		public PageOrientation Orientation

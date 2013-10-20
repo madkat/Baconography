@@ -46,10 +46,10 @@
     </phone:PhoneApplicationPage.Resources>
 
     <!--LayoutRoot is the root grid where all page content is placed-->
-    <Grid>
-        <Grid UseOptimizedManipulationRouting="False">
+    <Grid >
+        <Grid x:Name="LayoutRoot" UseOptimizedManipulationRouting="False">
             <toolkit:GestureService.GestureListener>
-                <toolkit:GestureListener x:Name="myGridGestureListener" Flick="myGridGestureListener_Flick" />
+                <toolkit:GestureListener x:Name="myGridGestureListener" Flick="myGridGestureListener_Flick" Tap="myGridGestureListener_Handle" Hold="myGridGestureListener_Handle" />
             </toolkit:GestureService.GestureListener>
             <common:FixedLongListSelector 
                 Name="articleView"

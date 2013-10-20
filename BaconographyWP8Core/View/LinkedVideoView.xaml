@@ -8,6 +8,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:mmppf="clr-namespace:Microsoft.PlayerFramework;assembly=Microsoft.PlayerFramework"
     xmlns:toolkit="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone.Controls.Toolkit"
+    xmlns:localc="clr-namespace:BaconographyWP8Core.View"
     FontFamily="{StaticResource PhoneFontFamilyNormal}"
     FontSize="{StaticResource PhoneFontSizeNormal}"
     Foreground="{StaticResource PhoneForegroundBrush}"
@@ -16,11 +17,13 @@
     shell:SystemTray.ProgressIndicator="{Binding ProgressActive, Source={StaticResource orientationManager}}"
     SupportedOrientations="{Binding Source={StaticResource orientationManager}, Path=SupportedOrientation}"  Orientation="{Binding Source={StaticResource orientationManager}, Path=Orientation}">
     <toolkit:GestureService.GestureListener>
-        <toolkit:GestureListener x:Name="myGridGestureListener" Flick="myGridGestureListener_Flick" />
+        <toolkit:GestureListener x:Name="myGridGestureListener" Flick="myGridGestureListener_Flick" Tap="myGridGestureListener_Handle" Hold="myGridGestureListener_Handle" />
     </toolkit:GestureService.GestureListener>
     <!--LayoutRoot is the root grid where all page content is placed-->
     <Grid x:Name="LayoutRoot" Background="Transparent">
-        <mmppf:MediaPlayer x:Name="player" Source="{Binding Url}"/>
+        
+        <mmppf:MediaPlayer x:Name="player" Source="{Binding Url}" />
+        <localc:ExtendedAppBar x:Name="appBar" DataContext="{Binding}" Text="{Binding Title}" Opacity="1" LastButtonSymbol="&#xE12B;" LastButtonText="Web" LastButtonCommand="{Binding LaunchBrowser}"/>
     </Grid>
 
 </phone:PhoneApplicationPage>

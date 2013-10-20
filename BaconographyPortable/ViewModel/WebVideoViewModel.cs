@@ -100,5 +100,18 @@ namespace BaconographyPortable.ViewModel
                 return _parentLink;
             }
         }
+
+        public string Title
+        {
+            get
+            {
+                if (ParentLink != null)
+                {
+                    return ParentLink.Title;
+                }
+                else
+                    return null;
+            }
+        }
     }
 }

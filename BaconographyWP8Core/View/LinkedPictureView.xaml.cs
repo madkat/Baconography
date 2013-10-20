@@ -4,6 +4,7 @@ using BaconographyPortable.Services;
 using BaconographyPortable.ViewModel;
 using BaconographyWP8.Common;
 using BaconographyWP8.Converters;
+using BaconographyWP8.Messages;
 using BaconographyWP8.PlatformServices;
 using BaconographyWP8Core;
 using BaconographyWP8Core.Common;
@@ -61,8 +62,14 @@ namespace BaconographyWP8.View
             _saveCommand = new RelayCommand(SaveImage_Tap);
         }
 
+        void myGridGestureListener_Handle(object sender, Microsoft.Phone.Controls.GestureEventArgs e)
+        {
+            appBar.Interact();
+        }
+
 		protected override void OnNavigatedTo(NavigationEventArgs e)
 		{
+            this.AdjustForOrientation(this.Orientation);
 			if (this.State != null && this.State.ContainsKey("PictureViewModelData"))
 			{
 				_pictureData = this.State["PictureViewModelData"] as string;
@@ -121,6 +128,30 @@ namespace BaconographyWP8.View
                 e.Cancel = true;
             }
             _viewModelContextService.PopViewModelContext(DataContext as ViewModelBase);
+        }
+
+        private void AdjustForOrientation(PageOrientation orientation)
+        {
+            Messenger.Default.Send<OrientationChangedMessage>(new OrientationChangedMessage { Orientation = orientation });
+            lastKnownOrientation = orientation;
+
+            if (albumPivot != null)
+            {
+                if (orientation == PageOrientation.LandscapeRight)
+                    albumPivot.Margin = new Thickness(0, 0, 60, 0);
+                else if (orientation == PageOrientation.LandscapeLeft)
+                    albumPivot.Margin = new Thickness(0, 0, 60, 0);
+                else
+                    albumPivot.Margin = new Thickness(0, 0, 0, 90);
+            }
+        }
+
+        PageOrientation lastKnownOrientation;
+
+        protected override void OnOrientationChanged(OrientationChangedEventArgs e)
+        {
+            AdjustForOrientation(e.Orientation);
+            base.OnOrientationChanged(e);
         }
 
 		protected override void OnNavigatedFrom(NavigationEventArgs e)

@@ -16,6 +16,8 @@ using BaconographyPortable.Services;
 using Newtonsoft.Json;
 using BaconographyPortable.Messages;
 using BaconographyPortable.Model.Reddit;
+using BaconographyWP8.Messages;
+using GalaSoft.MvvmLight.Messaging;
 
 namespace BaconographyWP8Core.View
 {
@@ -25,6 +27,11 @@ namespace BaconographyWP8Core.View
         public LinkedSelfTextPageView()
         {
             InitializeComponent();
+        }
+
+        void myGridGestureListener_Handle(object sender, Microsoft.Phone.Controls.GestureEventArgs e)
+        {
+            appBar.Interact();
         }
 
         private void DefocusContent()
@@ -88,8 +95,33 @@ namespace BaconographyWP8Core.View
             }
         }
 
+        private void AdjustForOrientation(PageOrientation orientation)
+        {
+            Messenger.Default.Send<OrientationChangedMessage>(new OrientationChangedMessage { Orientation = orientation });
+            lastKnownOrientation = orientation;
+
+            if (LayoutRoot != null)
+            {
+                if (orientation == PageOrientation.LandscapeRight)
+                    LayoutRoot.Margin = new Thickness(0, 0, 60, 0);
+                else if (orientation == PageOrientation.LandscapeLeft)
+                    LayoutRoot.Margin = new Thickness(0, 0, 60, 0);
+                else
+                    LayoutRoot.Margin = new Thickness(0, 0, 0, 90);
+            }
+        }
+
+        PageOrientation lastKnownOrientation;
+
+        protected override void OnOrientationChanged(OrientationChangedEventArgs e)
+        {
+            AdjustForOrientation(e.Orientation);
+            base.OnOrientationChanged(e);
+        }
+
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
+            this.AdjustForOrientation(this.Orientation);
             base.OnNavigatedTo(e);
             if (e.NavigationMode == NavigationMode.Back)
             {
