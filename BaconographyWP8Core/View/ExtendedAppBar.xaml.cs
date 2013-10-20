@@ -77,7 +77,7 @@ namespace BaconographyWP8Core.View
                 DoubleAnimation moveAnim = new DoubleAnimation();
                 moveAnim.EasingFunction = new ExponentialEase();
                 moveAnim.Duration = TimeSpan.FromMilliseconds(350);
-                moveAnim.From = overlay.ActualHeight;
+                moveAnim.From = -overlay.ActualHeight;
                 moveAnim.To = 0;
                 Storyboard.SetTarget(moveAnim, overlay);
                 Storyboard.SetTargetProperty(moveAnim, new PropertyPath("(UIElement.RenderTransform).(TranslateTransform.Y)"));
