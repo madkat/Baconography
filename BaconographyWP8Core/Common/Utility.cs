@@ -225,29 +225,28 @@ namespace BaconographyWP8.Common
 
         public static void StartPeriodicAgent()
         {
-
-
             // Obtain a reference to the period task, if one exists
             var periodicTask = ScheduledActionService.Find(periodicTaskName) as PeriodicTask;
 
             // If the task already exists and background agents are enabled for the
             // application, you must remove the task and then add it again to update 
             // the schedule
+
+            var disableBackground = ServiceLocator.Current.GetInstance<ISettingsService>().DisableBackground;
+                
+
             if (periodicTask != null)
             {
-                if (periodicTask.LastExitReason == AgentExitReason.None && periodicTask.IsScheduled)
+                if (periodicTask.LastExitReason == AgentExitReason.None && periodicTask.IsScheduled && !disableBackground)
                 {
-                    //ScheduledActionService.LaunchForTest(periodicTaskName, TimeSpan.FromSeconds(20));
                     return;
                 }
 
-                //if (periodicTask.LastExitReason != AgentExitReason.Completed)
-                //{
-                    //MessageBox.Show(periodicTask.LastExitReason.ToString());
-                //}
-
                 RemoveAgent(periodicTaskName);
             }
+
+            if (disableBackground)
+                return;
 
             periodicTask = new PeriodicTask(periodicTaskName);
             // The description is required for periodic agents. This is the string that the user
@@ -293,6 +292,9 @@ namespace BaconographyWP8.Common
             {
                 RemoveAgent(intensiveTaskName);
             }
+
+            if (ServiceLocator.Current.GetInstance<ISettingsService>().DisableBackground)
+                return;
 
             intensiveTask = new ResourceIntensiveTask(intensiveTaskName);
             // The description is required for periodic agents. This is the string that the user

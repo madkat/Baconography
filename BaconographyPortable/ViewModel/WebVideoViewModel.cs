@@ -1,5 +1,6 @@
 ﻿using BaconographyPortable.Common;
 using GalaSoft.MvvmLight;
+using GalaSoft.MvvmLight.Command;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -112,6 +113,41 @@ namespace BaconographyPortable.ViewModel
                 else
                     return null;
             }
+        }
+
+        public bool HasContext
+        {
+            get
+            {
+                return ParentLink != null;
+            }
+        }
+
+        public int CommentCount
+        {
+            get
+            {
+                if (HasContext)
+                    return ParentLink.LinkThing.Data.CommentCount;
+                return 0;
+            }
+        }
+
+        public VotableViewModel Votable
+        {
+            get
+            {
+                if (ParentLink != null)
+                    return ParentLink.Votable;
+                return null;
+            }
+        }
+
+        public RelayCommand<WebVideoViewModel> NavigateToComments { get { return _navigateToComments; } }
+        static RelayCommand<WebVideoViewModel> _navigateToComments = new RelayCommand<WebVideoViewModel>(NavigateToCommentsImpl);
+        private static void NavigateToCommentsImpl(WebVideoViewModel vm)
+        {
+            vm.ParentLink.NavigateToComments.Execute(vm.ParentLink);
         }
     }
 }
