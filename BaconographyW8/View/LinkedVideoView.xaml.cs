@@ -1,4 +1,5 @@
 ﻿using BaconographyPortable.ViewModel;
+using GalaSoft.MvvmLight.Ioc;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -40,14 +41,19 @@ namespace BaconographyW8.View
         protected override void LoadState(Object navigationParameter, Dictionary<String, Object> pageState)
         {
             _navParam = navigationParameter as IEnumerable<Dictionary<string, string>>;
-            if (_navParam == null && pageState.ContainsKey("NavParam"))
+            if (_navParam == null && pageState != null && pageState.ContainsKey("NavParam"))
             {
                 _navParam = pageState["NavParam"] as IEnumerable<Dictionary<string, string>>;
             }
 
             if (_navParam is IEnumerable<Dictionary<string, string>>)
             {
-                DataContext = new WebVideoViewModel(_navParam);
+				if (SimpleIoc.Default.IsRegistered<WebVideoViewModel>())
+				{
+					var preloadedDataContext = SimpleIoc.Default.GetInstance<WebVideoViewModel>();
+					DataContext = preloadedDataContext;
+					SimpleIoc.Default.Unregister<WebVideoViewModel>();
+				}
             }
         }
 

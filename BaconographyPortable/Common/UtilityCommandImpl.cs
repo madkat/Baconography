@@ -267,7 +267,9 @@ namespace BaconographyPortable.Common
 
                         Messenger.Default.Send<LongNavigationMessage>(new LongNavigationMessage { Finished = true, TargetUrl = str });
                         var videoResults = await baconProvider.GetService<IVideoService>().GetPlayableStreams(str);
-                        if (videoResults != null)
+
+						Type videoType = baconProvider.GetService<IDynamicViewLocator>().LinkedVideoView;
+                        if (videoType != null && videoResults != null)
                         {
                             if (SimpleIoc.Default.IsRegistered<WebVideoViewModel>())
                             {
