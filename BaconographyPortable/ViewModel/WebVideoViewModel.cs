@@ -1,6 +1,8 @@
 ﻿using BaconographyPortable.Common;
+using BaconographyPortable.Services;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
+using Microsoft.Practices.ServiceLocation;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -148,6 +150,21 @@ namespace BaconographyPortable.ViewModel
         private static void NavigateToCommentsImpl(WebVideoViewModel vm)
         {
             vm.ParentLink.NavigateToComments.Execute(vm.ParentLink);
+        }
+
+        private RelayCommand _launchBrowser;
+        public RelayCommand LaunchBrowser
+        {
+            get
+            {
+                return _launchBrowser;
+            }
+        }
+
+        private void LaunchBrowserImpl()
+        {
+            if (ParentLink != null)
+                ServiceLocator.Current.GetInstance<INavigationService>().NavigateToExternalUri(new Uri(ParentLink.Url));
         }
     }
 }
