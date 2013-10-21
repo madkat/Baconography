@@ -263,6 +263,7 @@ namespace BaconographyWP8.View
 
 		private async void albumPivot_LoadingPivotItem(object sender, PivotItemEventArgs e)
 		{
+            appBar.Interact();
             if (e.Item != null)
             {
                 var itemTpl = GenerateItemTripplet(e.Item);

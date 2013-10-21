@@ -131,7 +131,7 @@
     <Grid>
         <Grid x:Name="overlay" VerticalAlignment="Top" Opacity="{Binding Opacity, ElementName=theControl}" Background="{StaticResource PhoneChromeBrush}">
 
-            <TextBlock Margin="12,36,12,6" FontSize="22" Foreground="{StaticResource PhoneForegroundBrush}" 
+            <TextBlock HorizontalAlignment="Right"  Margin="12,36,12,6" FontSize="22" Foreground="{StaticResource PhoneForegroundBrush}" 
                        Text="{Binding Text, ElementName=theControl}" TextWrapping="Wrap"
                        x:Name="caption" />
         </Grid>
