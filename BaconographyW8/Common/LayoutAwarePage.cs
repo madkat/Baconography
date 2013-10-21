@@ -240,18 +240,25 @@ namespace BaconographyW8.Common
         /// <seealso cref="InvalidateVisualState"/>
         public void StartLayoutUpdates(object sender, RoutedEventArgs e)
         {
-            var control = sender as Control;
-            if (control == null) return;
-            if (this._layoutAwareControls == null)
-            {
-                // Start listening to view state changes when there are controls interested in updates
-                Window.Current.SizeChanged += this.WindowSizeChanged;
-                this._layoutAwareControls = new List<Control>();
-            }
-            this._layoutAwareControls.Add(control);
+			try
+			{
+				var control = sender as Control;
+				if (control == null) return;
+				if (this._layoutAwareControls == null)
+				{
+					// Start listening to view state changes when there are controls interested in updates
+					Window.Current.SizeChanged += this.WindowSizeChanged;
+					this._layoutAwareControls = new List<Control>();
+				}
+				this._layoutAwareControls.Add(control);
 
-            // Set the initial visual state of the control
-            VisualStateManager.GoToState(control, DetermineVisualState(ApplicationView.Value), false);
+				// Set the initial visual state of the control
+				VisualStateManager.GoToState(control, DetermineVisualState(ApplicationView.Value), false);
+			}
+			catch
+			{
+
+			}
         }
 
         private void WindowSizeChanged(object sender, WindowSizeChangedEventArgs e)

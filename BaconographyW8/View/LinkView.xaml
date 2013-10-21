@@ -120,9 +120,10 @@
             </Grid>
         </Border>
 
+        <!-- Special Link arrangement for Snapped View -->
         <StackPanel Grid.Row="0" Background="#353535" Margin="0,0,12,0"
                 x:Name="snappedLink" Visibility="Collapsed">
-            <Button Height="150" VerticalAlignment="Center" Padding="0" Command="{Binding GotoLink}"
+            <Button Height="150" VerticalAlignment="Center" Padding="0" Command="{Binding GotoLink}" CommandParameter="{Binding}"
                         HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" BorderBrush="Transparent"
                         BorderThickness="0" Background="#121212" Margin="8,8,8,8">
                 <Grid Height="150" Width="266">

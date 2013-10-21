@@ -34,7 +34,16 @@ namespace BaconographyW8.View
         {
             this.InitializeComponent();
 			Messenger.Default.Register<CloseSubredditsMessage>(this, OnCloseSubreddits);
+			Messenger.Default.Register<SelectSubredditMessage>(this, OnSubredditSelected);
         }
+
+		private async void OnSubredditSelected(SelectSubredditMessage message)
+		{
+			if (_lastViewState != null && _lastViewState == Windows.UI.ViewManagement.ApplicationViewState.Snapped)
+			{
+				VisualStateManager.GoToState(this, "SidebarClosed", false);
+			}
+		}
 
 		private async void OnCloseSubreddits(CloseSubredditsMessage message)
 		{
@@ -62,6 +71,7 @@ namespace BaconographyW8.View
 			VisualStateManager.GoToState(this, _sidebarState, false);
 		}
 
+		private Windows.UI.ViewManagement.ApplicationViewState _lastViewState;
 		protected override string DetermineVisualState(Windows.UI.ViewManagement.ApplicationViewState viewState)
 		{
 			if (viewState == Windows.UI.ViewManagement.ApplicationViewState.FullScreenPortrait)
@@ -80,6 +90,7 @@ namespace BaconographyW8.View
 			{
 				VisualStateManager.GoToState(this, "SidebarClosed", false);
 			}
+			_lastViewState = viewState;
 			return base.DetermineVisualState(viewState);
 		}
 
