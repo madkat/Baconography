@@ -28,11 +28,7 @@ namespace BaconographyPortable.ViewModel
             }
         }
 
-        private async void OnSettingsChanged(SettingsChangedMessage message)
-        {
-            if (!message.InitialLoad)
-                await _baconProvider.GetService<ISettingsService>().Persist();
-        }
+       
 
         private void OnReorderSubreddit(ReorderSubredditMessage message)
         {
@@ -160,6 +156,14 @@ namespace BaconographyPortable.ViewModel
                         Index = 0
                     }
                 );
+
+                if (CurrentViewModel.Links.Count > 0)
+                    FireInitialItemsLoaded();
+                else
+                {
+                    CurrentViewModel.InitialItemsLoaded += () => FireInitialItemsLoaded();
+                }
+                
             }
             catch
             {
@@ -176,7 +180,7 @@ namespace BaconographyPortable.ViewModel
             catch { }
         }
 
-        private void OnSubredditChanged(SelectSubredditMessage message)
+        protected override void OnSubredditChanged(SelectSubredditMessage message)
         {
             ChangeSubreddit(message, !message.AddOnly);
         }
@@ -229,14 +233,15 @@ namespace BaconographyPortable.ViewModel
             }
         }
 
+
         public override void Activate()
         {
-            base.Activate();
             MessengerInstance.Register<SelectTemporaryRedditMessage>(this, OnSelectTemporarySubreddit);
             MessengerInstance.Register<CloseSubredditMessage>(this, OnCloseSubreddit);
             MessengerInstance.Register<ReorderSubredditMessage>(this, OnReorderSubreddit);
-            MessengerInstance.Register<SettingsChangedMessage>(this, OnSettingsChanged);
             _pivotItems = new RedditViewModelCollection();
+            base.Activate();
+            RaisePropertyChanged("PivotItems");
         }
 
         public override void Deactivate()
@@ -245,7 +250,6 @@ namespace BaconographyPortable.ViewModel
             MessengerInstance.Unregister<SelectTemporaryRedditMessage>(this);
             MessengerInstance.Unregister<CloseSubredditMessage>(this);
             MessengerInstance.Unregister<ReorderSubredditMessage>(this);
-            MessengerInstance.Unregister<SettingsChangedMessage>(this);
             _pivotItems = null;
         }
     }

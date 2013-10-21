@@ -8,6 +8,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:resources="clr-namespace:BaconographyWP8.Resources"
     xmlns:local="clr-namespace:BaconographyWP8.View"
+    xmlns:localc="clr-namespace:BaconographyWP8Core.View"
     xmlns:common="clr-namespace:BaconographyWP8.Common"
     mc:Ignorable="d"
     xmlns:toolkit="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone.Controls.Toolkit"
@@ -19,18 +20,19 @@
     shell:SystemTray.Opacity="0"
     shell:SystemTray.ProgressIndicator="{Binding ProgressActive, Source={StaticResource orientationManager}}"
     toolkit:TiltEffect.IsTiltEnabled="True"
-    DataContext="{Binding MainPage, Source={StaticResource Locator}}">
+    DataContext="{Binding MainPage, Source={StaticResource Locator}}"
+    x:Name="theControl">
 
     <phone:PhoneApplicationPage.Resources>
         <DataTemplate x:Key="Type:MultipleRedditMainViewModel">
             <common:RedditViewPivotControl x:Name="pivot" toolkit:TurnstileFeatherEffect.FeatheringIndex="0"
-                     ItemsSource="{Binding PivotItems, Converter={StaticResource reifiedSubredditTemplateCollectionConverter}}"
-                     HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
-                     Margin="0,-20,-16,0" Padding="0" LoadedPivotItem="OnLoadedPivotItem"
-                     DoubleTap="pivot_DoubleTap"/>
+                         ItemsSource="{Binding PivotItems, Converter={StaticResource reifiedSubredditTemplateCollectionConverter}}"
+                         HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                         Margin="0,-20,-16,0" Padding="0" LoadedPivotItem="OnLoadedPivotItem"
+                         DoubleTap="pivot_DoubleTap" CurrentRedditView="{Binding CurrentRedditView, ElementName=theControl, Mode=TwoWay}" />
         </DataTemplate>
         <DataTemplate x:Key="Type:SimpleMainViewModel">
-            <local:RedditView HorizontalAlignment="Stretch" VerticalAlignment="Stretch" DataContext="{Binding CurrentViewModel}" toolkit:TurnstileFeatherEffect.FeatheringIndex="0"/>
+            <localc:RedditViewSingle HorizontalAlignment="Stretch" VerticalAlignment="Stretch" DataContext="{Binding CurrentViewModel}" toolkit:TurnstileFeatherEffect.FeatheringIndex="0" CurrentRedditView="{Binding CurrentRedditView, ElementName=theControl, Mode=TwoWay}"/>
         </DataTemplate>
         <DataTemplate x:Name="TypedTemplateSelector">
             <common:TypedTemplateSelector HorizontalContentAlignment="Stretch" Content="{Binding}" />
@@ -88,7 +90,7 @@
                      HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
                      Margin="0,-20,-16,0" Padding="0" LoadedPivotItem="OnLoadedPivotItem"
                      DoubleTap="pivot_DoubleTap"/>-->
-        <ContentControl HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch"
+        <ContentControl x:Name="contentControl" HorizontalAlignment="Stretch" VerticalAlignment="Top" HorizontalContentAlignment="Stretch"
                         Content="{Binding MainPage, Source={StaticResource Locator}}" ContentTemplate="{StaticResource TypedTemplateSelector}"/>
         <Popup x:Name="sortPopup" HorizontalAlignment="Center" VerticalAlignment="Center"/>
 

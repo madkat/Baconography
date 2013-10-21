@@ -24,7 +24,7 @@
         <!-- Comment out the AdvertisementView to disable advertising -->
         
     </UserControl.Resources>
-    <Grid VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Margin="0">
+    <Grid VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Margin="0" toolkit:TurnstileFeatherEffect.FeatheringIndex="0">
         <common:FixedLongListSelector Name="linksView"
                 toolkit:TurnstileFeatherEffect.FeatheringIndex="1"
                 Margin="0"

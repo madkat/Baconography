@@ -37,6 +37,20 @@ namespace BaconographyWP8.Common
             Messenger.Default.Register<SelectIndexMessage>(this, selectIndex);
         }
 
+
+
+        public RedditView CurrentRedditView
+        {
+            get { return (RedditView)GetValue(CurrentRedditViewProperty); }
+            set { SetValue(CurrentRedditViewProperty, value); }
+        }
+
+        // Using a DependencyProperty as the backing store for CurrentRedditView.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty CurrentRedditViewProperty =
+            DependencyProperty.Register("CurrentRedditView", typeof(RedditView), typeof(RedditViewPivotControl), new PropertyMetadata(null));
+
+
+
         private void selectIndex(SelectIndexMessage message)
         {
             if (message.Index < Items.Count && message.Index >= 0)
@@ -75,6 +89,7 @@ namespace BaconographyWP8.Common
 
                 if (item.Content is RedditView)
                 {
+                    CurrentRedditView = item.Content as RedditView;
                     return;
                 }
 
@@ -105,6 +120,7 @@ namespace BaconographyWP8.Common
                     imageControl.Source = null;
 
                 item.Content = madeControl;
+                CurrentRedditView = madeControl;
                 madeControl.LoadWithScroll();
             }
         }

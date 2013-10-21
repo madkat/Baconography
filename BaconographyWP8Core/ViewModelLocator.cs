@@ -15,6 +15,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using Windows.ApplicationModel;
 
 namespace BaconographyWP8
@@ -33,19 +34,24 @@ namespace BaconographyWP8
             if ((obj.InitialLoad || ServiceLocator.Current.GetInstance<ISettingsService>().SimpleLayoutMode != _isSimpleLayoutMode)
                 && LayoutChanged != null)
             {
-                IsLoaded = true;
-                _isSimpleLayoutMode = ServiceLocator.Current.GetInstance<ISettingsService>().SimpleLayoutMode;
-                if (_isSimpleLayoutMode)
-                {
-                    ServiceLocator.Current.GetInstance<MultipleRedditMainViewModel>().Deactivate();
-                    ServiceLocator.Current.GetInstance<SimpleMainViewModel>().Activate();
-                }
+                if (IsLoaded)
+                    MessageBox.Show("Switching layout modes requires application restart.");
                 else
                 {
-                    ServiceLocator.Current.GetInstance<MultipleRedditMainViewModel>().Activate();
-                    ServiceLocator.Current.GetInstance<SimpleMainViewModel>().Deactivate();
+                    IsLoaded = true;
+                    _isSimpleLayoutMode = ServiceLocator.Current.GetInstance<ISettingsService>().SimpleLayoutMode;
+                    if (_isSimpleLayoutMode)
+                    {
+                        ServiceLocator.Current.GetInstance<MultipleRedditMainViewModel>().Deactivate();
+                        ServiceLocator.Current.GetInstance<SimpleMainViewModel>().Activate();
+                    }
+                    else
+                    {
+                        ServiceLocator.Current.GetInstance<MultipleRedditMainViewModel>().Activate();
+                        ServiceLocator.Current.GetInstance<SimpleMainViewModel>().Deactivate();
+                    }
+                    LayoutChanged();
                 }
-                LayoutChanged();
             }
         }
 

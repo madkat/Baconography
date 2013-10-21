@@ -27,6 +27,8 @@ using BaconographyWP8Core.Common;
 using BaconographyWP8.Converters;
 using BaconographyWP8Core.View;
 using ReviewNotifier.Apollo;
+using System.Windows.Data;
+using System.Collections.Specialized;
 
 namespace BaconographyWP8
 {
@@ -59,8 +61,6 @@ namespace BaconographyWP8
         {
             ReviewNotification.TriggerAsync("Like what we're doing? Please leave us a review on the store\n\nGot a Nag? Let us know what we can improve on /r/baconography", "Review", 5);
         }
-
-
 
         public RedditView CurrentRedditView
         {
@@ -104,6 +104,7 @@ namespace BaconographyWP8
 
 		protected override void OnNavigatedTo(NavigationEventArgs e)
 		{
+
 			this.AdjustForOrientation(this.Orientation);
 
 			if (e.NavigationMode == NavigationMode.Back)
@@ -121,6 +122,7 @@ namespace BaconographyWP8
             {
                 if(DataContext is ViewModelBase)
                     _viewModelContextService.PushViewModelContext(DataContext as ViewModelBase);
+
                 _smartOfflineService.NavigatedToView(typeof(MainPage), (e.NavigationMode == NavigationMode.New));
 
                 if (this.NavigationContext.QueryString.ContainsKey("data") && !string.IsNullOrWhiteSpace(this.NavigationContext.QueryString["data"]))

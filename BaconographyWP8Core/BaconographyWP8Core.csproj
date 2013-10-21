@@ -258,6 +258,9 @@
     <Compile Include="View\PullToRefreshView.xaml.cs">
       <DependentUpon>PullToRefreshView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="View\RedditViewSingle.xaml.cs">
+      <DependentUpon>RedditViewSingle.xaml</DependentUpon>
+    </Compile>
     <Compile Include="View\ScalingGifView.xaml.cs">
       <DependentUpon>ScalingGifView.xaml</DependentUpon>
     </Compile>
@@ -402,6 +405,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="View\PullToRefreshView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\RedditViewSingle.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
