@@ -114,6 +114,7 @@ namespace BaconographyPortable.Common
                     RepositionContextScroll(parentLink);
 
                     var imagesService = ServiceLocator.Current.GetInstance<IImagesService>();
+                    var videoService = ServiceLocator.Current.GetInstance<IVideoService>();
                     var offlineService = ServiceLocator.Current.GetInstance<IOfflineService>();
                     var settingsService = ServiceLocator.Current.GetInstance<ISettingsService>();
                     //need to go backwards in time, not paying attention to the unread rules
@@ -130,7 +131,7 @@ namespace BaconographyPortable.Common
                     {
                         var currentLinkPos = firstRedditViewModel.Links.IndexOf(parentLink);
                         var linksEnumerator = new NeverEndingRedditView(firstRedditViewModel, currentLinkPos, false);
-                        return await MakeContextedTuple(imagesService, offlineService, settingsService, linksEnumerator);
+                        return await MakeContextedTuple(videoService, imagesService, offlineService, settingsService, linksEnumerator);
                     }
 
                 }
@@ -148,6 +149,7 @@ namespace BaconographyPortable.Common
                 {
                     RepositionContextScroll(parentLink);
 
+                    var videoService = ServiceLocator.Current.GetInstance<IVideoService>();
                     var imagesService = ServiceLocator.Current.GetInstance<IImagesService>();
                     var offlineService = ServiceLocator.Current.GetInstance<IOfflineService>();
                     var settingsService = ServiceLocator.Current.GetInstance<ISettingsService>();
@@ -160,7 +162,7 @@ namespace BaconographyPortable.Common
                     {
                         var currentLinkPos = firstRedditViewModel.Links.IndexOf(parentLink);
                         var linksEnumerator = new NeverEndingRedditView(firstRedditViewModel, currentLinkPos, true);
-                        var result = await MakeContextedTuple(imagesService, offlineService, settingsService, linksEnumerator);
+                        var result = await MakeContextedTuple(videoService, imagesService, offlineService, settingsService, linksEnumerator);
                         LinkHistory.Push(currentActual);
                         return result;
                     }
@@ -169,7 +171,7 @@ namespace BaconographyPortable.Common
             return null;
         }
 
-        private static async Task<ViewModelBase> MakeContextedTuple(IImagesService imagesService, IOfflineService offlineService, ISettingsService settingsService, NeverEndingRedditView linksEnumerator)
+        private static async Task<ViewModelBase> MakeContextedTuple(IVideoService videoService, IImagesService imagesService, IOfflineService offlineService, ISettingsService settingsService, NeverEndingRedditView linksEnumerator)
         {
             ViewModelBase vm;
             while ((vm = await linksEnumerator.Next()) != null)
@@ -219,6 +221,23 @@ namespace BaconographyPortable.Common
                     smartOfflineService.NavigatedToOfflineableThing(targetViewModel.LinkThing, true);
                     await ServiceLocator.Current.GetInstance<IOfflineService>().StoreHistory(targetViewModel.Url);
                     return vm;
+                }
+                else if (vm is LinkViewModel && LinkGlyphUtility.GetLinkGlyph(vm) == LinkGlyphUtility.VideoGlyph && (!settingsService.OnlyFlipViewUnread || !offlineService.HasHistory(((LinkViewModel)vm).Url)))
+                {
+                    var targetViewModel = vm as LinkViewModel;
+                    var smartOfflineService = ServiceLocator.Current.GetInstance<ISmartOfflineService>();
+                    try
+                    {
+                        var playableStreams = await ServiceLocator.Current.GetInstance<IVideoService>().GetPlayableStreams(targetViewModel.Url);
+                        if (playableStreams != null)
+                        {
+                            smartOfflineService.NavigatedToOfflineableThing(targetViewModel.LinkThing, true);
+                            await ServiceLocator.Current.GetInstance<IOfflineService>().StoreHistory(targetViewModel.Url);
+                            return new WebVideoViewModel(playableStreams, targetViewModel.Id);
+                        }
+                    }
+                        //it was invalid for the stream, so ignore it
+                    catch { }
                 }
             }
             return null;

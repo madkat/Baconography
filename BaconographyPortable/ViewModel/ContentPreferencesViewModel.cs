@@ -375,6 +375,19 @@ namespace BaconographyPortable.ViewModel
             }
         }
 
+        public bool DisableBackground
+        {
+            get
+            {
+                return _settingsService.DisableBackground;
+            }
+            set
+            {
+                _settingsService.DisableBackground = value;
+                RaisePropertyChanged("DisableBackground");
+            }
+        }
+
         public bool OnlyFlipViewUnread
         {
             get

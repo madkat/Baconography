@@ -234,6 +234,9 @@
     <Compile Include="View\LinkedSelfTextPageView.xaml.cs">
       <DependentUpon>LinkedSelfTextPageView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="View\LinkedVideoView.xaml.cs">
+      <DependentUpon>LinkedVideoView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="View\LockScreen.xaml.cs">
       <DependentUpon>LockScreen.xaml</DependentUpon>
     </Compile>
@@ -254,6 +257,9 @@
     </Compile>
     <Compile Include="View\PullToRefreshView.xaml.cs">
       <DependentUpon>PullToRefreshView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\RedditViewSingle.xaml.cs">
+      <DependentUpon>RedditViewSingle.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\ScalingGifView.xaml.cs">
       <DependentUpon>ScalingGifView.xaml</DependentUpon>
@@ -370,6 +376,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="View\LinkedVideoView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="View\LockScreen.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -395,6 +405,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="View\PullToRefreshView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\RedditViewSingle.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -494,11 +508,6 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="README_FIRST.txt" />
-    <Content Include="Toolkit.Content\ApplicationBar.Add.png" />
-    <Content Include="Toolkit.Content\ApplicationBar.Cancel.png" />
-    <Content Include="Toolkit.Content\ApplicationBar.Check.png" />
-    <Content Include="Toolkit.Content\ApplicationBar.Delete.png" />
-    <Content Include="Toolkit.Content\ApplicationBar.Select.png" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\BaconographyPortable\BaconographyPortable.csproj">
@@ -561,12 +570,11 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Toolkit.Content\ApplicationBar.Cancel.png" />
-    <Content Include="Toolkit.Content\ApplicationBar.Check.png" />
-  </ItemGroup>
-  <ItemGroup>
     <SDKReference Include="KitaroDBSDK_WP8, Version=2.0.0.0">
       <Name>KitaroDB for Windows Phone 8</Name>
+    </SDKReference>
+    <SDKReference Include="Microsoft.PlayerFramework.WP8.Core, Version=1.8.2.2">
+      <Name>Microsoft Player Framework</Name>
     </SDKReference>
     <SDKReference Include="MSAdvertising, Version=6.1">
       <Name>Microsoft Advertising SDK for Windows Phone 8 %28XAML%29</Name>

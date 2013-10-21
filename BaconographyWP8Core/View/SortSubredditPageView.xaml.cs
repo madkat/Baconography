@@ -195,7 +195,7 @@ namespace BaconographyWP8.View
 					else
 					{
 						subredditVM.Pinned = true;
-						Messenger.Default.Send<SelectSubredditMessage>(new SelectSubredditMessage { Subreddit = subredditVM.Thing, AddOnly = true });
+						Messenger.Default.Send<SelectSubredditMessage>(new SelectSubredditMessage { Subreddit = subredditVM.Thing, AddOnly = false });
 					}
 				}
 			}

@@ -19,6 +19,7 @@ using BaconographyWP8;
 using GalaSoft.MvvmLight.Ioc;
 using Newtonsoft.Json;
 using System.Threading.Tasks;
+using BaconographyWP8.Messages;
 
 namespace BaconographyWP8Core.View
 {
@@ -28,6 +29,11 @@ namespace BaconographyWP8Core.View
         public LinkedReadabilityView()
         {
             InitializeComponent();
+        }
+
+        void myGridGestureListener_Handle(object sender, Microsoft.Phone.Controls.GestureEventArgs e)
+        {
+            appBar.Interact();
         }
 
         private void DeFocusContent()
@@ -76,7 +82,7 @@ namespace BaconographyWP8Core.View
 
                 var absPath = e.Uri.ToString().Contains('?') ? e.Uri.ToString().Substring(0, e.Uri.ToString().IndexOf("?")) : e.Uri.ToString();
                 if (absPath == "/BaconographyWP8Core;component/View/LinkedPictureView.xaml" || absPath == "/BaconographyWP8Core;component/View/LinkedReadabilityView.xaml" ||
-                    absPath == "/BaconographyWP8Core;component/View/LinkedSelfTextPageView.xaml")
+                    absPath == "/BaconographyWP8Core;component/View/LinkedSelfTextPageView.xaml" || absPath == "/BaconographyWP8Core;component/View/LinkedVideoView.xaml")
                 {
                     ServiceLocator.Current.GetInstance<INavigationService>().RemoveBackEntry();
                 }
@@ -91,8 +97,33 @@ namespace BaconographyWP8Core.View
             }
         }
 
+        private void AdjustForOrientation(PageOrientation orientation)
+        {
+            Messenger.Default.Send<OrientationChangedMessage>(new OrientationChangedMessage { Orientation = orientation });
+            lastKnownOrientation = orientation;
+
+            if (LayoutRoot != null)
+            {
+                if (orientation == PageOrientation.LandscapeRight)
+                    LayoutRoot.Margin = new Thickness(0, 0, 60, 0);
+                else if (orientation == PageOrientation.LandscapeLeft)
+                    LayoutRoot.Margin = new Thickness(0, 0, 60, 0);
+                else
+                    LayoutRoot.Margin = new Thickness(0, 0, 0, 90);
+            }
+        }
+
+        PageOrientation lastKnownOrientation;
+
+        protected override void OnOrientationChanged(OrientationChangedEventArgs e)
+        {
+            AdjustForOrientation(e.Orientation);
+            base.OnOrientationChanged(e);
+        }
+
         protected override async void OnNavigatedTo(NavigationEventArgs e)
         {
+            this.AdjustForOrientation(this.Orientation);
             base.OnNavigatedTo(e);
             if (e.NavigationMode == NavigationMode.Back)
 			{

@@ -48,7 +48,7 @@
         </toolkit:NavigationOutTransition>
     </toolkit:TransitionService.NavigationOutTransition>
     <toolkit:GestureService.GestureListener>
-        <toolkit:GestureListener x:Name="myGridGestureListener" Flick="myGridGestureListener_Flick" />
+        <toolkit:GestureListener x:Name="myGridGestureListener" Flick="myGridGestureListener_Flick" Tap="myGridGestureListener_Handle" Hold="myGridGestureListener_Handle" />
     </toolkit:GestureService.GestureListener>
     <Grid>
         <phone:Pivot HorizontalAlignment="Stretch" VerticalAlignment="Stretch"

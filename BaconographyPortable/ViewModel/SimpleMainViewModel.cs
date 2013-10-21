@@ -4,6 +4,7 @@ using BaconographyPortable.Services;
 using BaconographyPortable.ViewModel.Collections;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Messaging;
+using Microsoft.Practices.ServiceLocation;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -49,6 +50,8 @@ namespace BaconographyPortable.ViewModel
 			//MessengerInstance.Send<UserLoggedInMessage>(new UserLoggedInMessage { CurrentUser = _userService.GetUser().Result, UserTriggered = false });
         }
 
+        public event Action InitialItemsLoaded;
+
 		private Subreddit _currentSubreddit;
 		public Subreddit CurrentSubreddit
 		{
@@ -88,7 +91,7 @@ namespace BaconographyPortable.ViewModel
 			}
 		}
 
-		private async void OnSubredditChanged(SelectSubredditMessage message)
+		protected virtual void OnSubredditChanged(SelectSubredditMessage message)
 		{
 			CheckSelections();
 		}
@@ -103,7 +106,8 @@ namespace BaconographyPortable.ViewModel
 				_initialLoad = false;
 			}
 
-			SubscribedSubreddits.Refresh();
+            if (LoggedIn)
+			    SubscribedSubreddits.Refresh();
 		}
 
 		protected async void _subreddits_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
@@ -142,6 +146,12 @@ namespace BaconographyPortable.ViewModel
 
 		}
 
+        protected void FireInitialItemsLoaded()
+        {
+            if (InitialItemsLoaded != null)
+                InitialItemsLoaded();
+        }
+
 		public virtual async Task LoadSubreddits()
 		{
 			try
@@ -168,6 +178,7 @@ namespace BaconographyPortable.ViewModel
 				RaisePropertyChanged("Subreddits");
 
 				_subreddits.CollectionChanged += _subreddits_CollectionChanged;
+                FireInitialItemsLoaded();
 			}
 			catch
 			{
@@ -261,16 +272,28 @@ namespace BaconographyPortable.ViewModel
 			RefreshDisplaySubreddits();
 		}
 
-        public virtual void Activate()
+        private async void OnSettingsChanged(SettingsChangedMessage message)
+        {
+            if (!message.InitialLoad)
+                await _baconProvider.GetService<ISettingsService>().Persist();
+        }
+
+        public virtual async void Activate()
         {
             MessengerInstance.Register<UserLoggedInMessage>(this, OnUserLoggedIn);
             MessengerInstance.Register<SelectSubredditMessage>(this, OnSubredditChanged);
+            MessengerInstance.Register<SettingsChangedMessage>(this, OnSettingsChanged);
+            if (_initialLoad)
+            {
+                OnUserLoggedIn(new UserLoggedInMessage { CurrentUser = await _userService.GetUser(), UserTriggered = false });
+            }
         }
 
         public virtual void Deactivate()
         {
             MessengerInstance.Unregister<UserLoggedInMessage>(this);
             MessengerInstance.Unregister<SelectSubredditMessage>(this);
+            MessengerInstance.Unregister<SettingsChangedMessage>(this);
         }
     }
 }

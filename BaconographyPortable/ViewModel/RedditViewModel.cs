@@ -45,6 +45,8 @@ namespace BaconographyPortable.ViewModel
             IsTemporary = false;
         }
 
+        public event Action InitialItemsLoaded;
+
         //doesnt need to fire events since its just holding data for the view
         public object TopVisibleLink { get; set; }
         private bool _isTemporary = false;
@@ -209,9 +211,19 @@ namespace BaconographyPortable.ViewModel
                 subredditId = _selectedSubreddit.Data.Name;
             }
 
+            var newCollection = new LinkViewModelCollection(_baconProvider, subreddit, subredditId);
+            newCollection.CollectionChanged += newCollection_CollectionChanged;
+            return newCollection;
+        }
 
-
-            return new LinkViewModelCollection(_baconProvider, subreddit, subredditId);
+        void newCollection_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            var typedSender = sender as LinkViewModelCollection;
+            if (InitialItemsLoaded != null)
+            {
+                InitialItemsLoaded();
+            }
+            typedSender.CollectionChanged -= newCollection_CollectionChanged;
         }
 
 

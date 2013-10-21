@@ -85,6 +85,8 @@ namespace BaconographyPortable.Services.Impl
         public bool SimpleLayoutMode { get; set; }
         public bool OneTouchVoteMode { get; set; }
 
+        public bool DisableBackground { get; set; }
+
         public void ShowSettings()
         {
 
@@ -332,6 +334,12 @@ namespace BaconographyPortable.Services.Impl
                 else
                     OneTouchVoteMode = false;
 
+                var disableBackground = await offlineService.GetSetting("DisableBackground");
+                if (!string.IsNullOrWhiteSpace(disableBackground))
+                    DisableBackground = bool.Parse(disableBackground);
+                else
+                    DisableBackground = false;
+
                 Messenger.Default.Send<SettingsChangedMessage>(new SettingsChangedMessage { InitialLoad = true });
             }
             catch
@@ -382,6 +390,7 @@ namespace BaconographyPortable.Services.Impl
             await offlineService.StoreSetting("OnlyFlipViewUnread", OnlyFlipViewUnread.ToString());
             await offlineService.StoreSetting("OnlyFlipViewImages2", OnlyFlipViewImages.ToString());
             await offlineService.StoreSetting("SimpleLayoutMode", SimpleLayoutMode.ToString());
+            await offlineService.StoreSetting("DisableBackground", DisableBackground.ToString());
         }
 
 

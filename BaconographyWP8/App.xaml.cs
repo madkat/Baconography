@@ -22,6 +22,7 @@ using Windows.ApplicationModel.Store;
 using System.Threading.Tasks;
 using ReviewNotifier.Apollo;
 using BaconographyPortable.Messages;
+using System.IO.IsolatedStorage;
 
 namespace BaconographyWP8
 {
@@ -42,7 +43,10 @@ namespace BaconographyWP8
         /// </summary>
         public App()
         {
-            
+            if (IsolatedStorageSettings.ApplicationSettings.Contains("InvertTheme"))
+            {
+                ThemeManager.InvertTheme();
+            }
             Styles.Resources = this.Resources;
             // Global handler for uncaught exceptions.
             UnhandledException += Application_UnhandledException;

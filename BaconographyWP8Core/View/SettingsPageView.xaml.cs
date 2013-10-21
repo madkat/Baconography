@@ -22,6 +22,7 @@ using BaconographyWP8BackgroundControls.View;
 using System.Text;
 using Windows.ApplicationModel.Store;
 using BaconographyWP8Core.ViewModel;
+using System.IO.IsolatedStorage;
 
 namespace BaconographyWP8.View
 {
@@ -111,6 +112,23 @@ namespace BaconographyWP8.View
 		protected override void OnNavigatedFrom(NavigationEventArgs e)
 		{
 			Messenger.Default.Send<SettingsChangedMessage>(new SettingsChangedMessage());
+            var settingsService = ServiceLocator.Current.GetInstance<ISettingsService>();
+            if (settingsService.InvertSystemTheme)
+            {
+                if (!IsolatedStorageSettings.ApplicationSettings.Contains("InvertTheme"))
+                {
+                    IsolatedStorageSettings.ApplicationSettings.Add("InvertTheme", "");
+                    MessageBox.Show("Theme changes require you to restart the application before they take effect.");
+                }
+            }
+            else
+            {
+                if (IsolatedStorageSettings.ApplicationSettings.Contains("InvertTheme"))
+                {
+                    IsolatedStorageSettings.ApplicationSettings.Remove("InvertTheme");
+                    MessageBox.Show("Theme changes require you to restart the application before they take effect.");
+                }
+            }
 			base.OnNavigatedFrom(e);
 		}
 

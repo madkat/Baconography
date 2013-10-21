@@ -269,7 +269,13 @@ namespace BaconographyPortable.Common
                         var videoResults = await baconProvider.GetService<IVideoService>().GetPlayableStreams(str);
                         if (videoResults != null)
                         {
-                            navigationService.Navigate(baconProvider.GetService<IDynamicViewLocator>().LinkedVideoView, videoResults);
+                            if (SimpleIoc.Default.IsRegistered<WebVideoViewModel>())
+                            {
+                                SimpleIoc.Default.Unregister<WebVideoViewModel>();
+                            }
+                            var videoVM = new WebVideoViewModel(videoResults, sourceLink != null ? sourceLink.Data.Id : "");
+                            SimpleIoc.Default.Register<WebVideoViewModel>(() => videoVM, true);
+                            navigationService.Navigate(baconProvider.GetService<IDynamicViewLocator>().LinkedVideoView, null);
                         }
                         else if (settingsService.ApplyReadabliltyToLinks && LinkGlyphUtility.GetLinkGlyph(str) == LinkGlyphUtility.WebGlyph)
                         {

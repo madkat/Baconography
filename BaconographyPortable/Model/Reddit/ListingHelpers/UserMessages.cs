@@ -23,7 +23,7 @@ namespace BaconographyPortable.Model.Reddit.ListingHelpers
 
         public Task<Listing> GetAdditionalListing(string after, Dictionary<object, object> state)
         {
-            throw new NotImplementedException();
+            return _redditService.GetAdditionalFromListing("http://www.reddit.com/message/inbox/", after, 100);
         }
 
         public Task<Listing> GetMore(IEnumerable<string> ids, Dictionary<object, object> state)
