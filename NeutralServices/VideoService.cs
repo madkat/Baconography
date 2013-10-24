@@ -60,7 +60,7 @@ namespace Baconography.NeutralServices
                     .Select(str => MakeUniqueDictionary(SplitAmp(str)))
                     .Where(elem => elem.ContainsKey("itag") && elem.ContainsKey("type") && elem.ContainsKey("sig") && elem.ContainsKey("url"))
                     //need to take video stream type into account for preference, mp4 is the most playable stream available here
-                    .OrderByDescending(elem => int.Parse(elem["itag"]) * scoreFileType(elem["type"]))
+                    .OrderByDescending(elem => scoreFileType(elem["type"]))
                     .ToList();
 
                 if (parsedStreamMap.Count > 0)
