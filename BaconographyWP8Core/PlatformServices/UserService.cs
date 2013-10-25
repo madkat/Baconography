@@ -18,11 +18,16 @@ namespace BaconographyWP8.PlatformServices
     {
         IRedditService _redditService;
         User _currentUser;
+        TaskCompletionSource<bool> _taskCompletionSource;
+        public UserService()
+        {
+            _taskCompletionSource = new TaskCompletionSource<bool>();
+        }
 
         public async Task<User> GetUser()
         {
-            //if (!_initTask.IsCompleted)
-            //    await _initTask;
+            if (!_taskCompletionSource.Task.IsCompleted)
+                await _taskCompletionSource.Task;
 
 			if(_currentUser == null)
 				_currentUser = CreateAnonUser();
@@ -79,8 +84,16 @@ namespace BaconographyWP8.PlatformServices
             _redditService = redditService;
 
             _currentUser = await TryDefaultUser();
+
             if (_currentUser == null)
+            {
+                _taskCompletionSource.SetResult(false);
                 _currentUser = CreateAnonUser();
+            }
+            else
+            {
+                _taskCompletionSource.SetResult(true);
+            }
 
             Messenger.Default.Send<UserLoggedInMessage>(new UserLoggedInMessage { CurrentUser = _currentUser, UserTriggered = false });
         }
