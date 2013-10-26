@@ -104,6 +104,7 @@ namespace BaconographyWP8
                 ServiceLocator.Current.GetInstance<CaptchaViewModel>();
                 ServiceLocator.Current.GetInstance<LockScreenViewModel>();
                 ServiceLocator.Current.GetInstance<SubredditPickerViewModel>();
+                ServiceLocator.Current.GetInstance<SubredditManagementViewModel>();
                 SimpleIoc.Default.Register<IDynamicViewLocator>(() => _baconProvider.GetService<IDynamicViewLocator>());
             }
         }
@@ -138,6 +139,7 @@ namespace BaconographyWP8
                 SimpleIoc.Default.Register<ComposePostViewModel>();
                 SimpleIoc.Default.Register<SubredditPickerViewModel>();
                 SimpleIoc.Default.Register<CombinedSearchViewModel>();
+                SimpleIoc.Default.Register<SubredditManagementViewModel>();
 
                 if (DesignerProperties.IsInDesignTool)
                 {
@@ -176,6 +178,14 @@ namespace BaconographyWP8
             }
         }
 
+        public SubredditManagementViewModel SubredditManagement
+        {
+            get
+            {
+                return ServiceLocator.Current.GetInstance<SubredditManagementViewModel>();
+            }
+        }
+
         public RedditViewModel Reddit
         {
             get
@@ -188,7 +198,7 @@ namespace BaconographyWP8
         {
             get
             {
-                var viewModelLocator = _baconProvider.GetService<IViewModelLocator>() as ViewModelLocatorImpl;
+                var viewModelLocator = _baconProvider.GetService<IViewModelLocator>();
 
                 if (viewModelLocator.IsLoaded)
                 {
