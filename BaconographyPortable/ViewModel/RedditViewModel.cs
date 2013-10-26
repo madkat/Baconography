@@ -321,17 +321,6 @@ namespace BaconographyPortable.ViewModel
 			}
 		}
 
-        public bool IsMulti
-        {
-            get
-            {
-                if (_selectedSubreddit == null || _selectedSubreddit.Data.Url == "/")
-                    return true;
-                else
-                    return _selectedSubreddit.Data.Url.Contains("/m/") || _selectedSubreddit.Data.Url.Contains("+");
-            }
-        }
-
 		public bool IsTilePinned
         {
             get
@@ -413,6 +402,117 @@ namespace BaconographyPortable.ViewModel
                     return "/";
                 else
                     return _selectedSubreddit.Data.Url;
+            }
+        }
+
+        public bool IsMultiReddit
+        {
+            get
+            {
+                if (_selectedSubreddit == null || _selectedSubreddit.Data.Url == "/")
+                    return true;
+                else
+                    return _selectedSubreddit.Data.Url.Contains("/m/") || _selectedSubreddit.Data.Url.Contains("+");
+            }
+        }
+
+        public bool IsUserMultiReddit
+        {
+            get
+            {
+                if (_selectedSubreddit == null || _selectedSubreddit.Data.Url == "/")
+                    return false;
+                else
+                    return _selectedSubreddit.Data.Url.Contains("/m/") || _selectedSubreddit.Data.Url.Contains("+");
+            }
+        }
+
+        public string MultiRedditUser
+        {
+            get
+            {
+                if (IsMultiReddit && _selectedSubreddit.Data.Url.Length > 2)
+                {
+                    if (_selectedSubreddit.Data.Url.Contains("/me/"))
+                    {
+                        return _userService.GetUser().Result.Username;
+                    }
+                    int endOfSlashU = _selectedSubreddit.Data.Url.IndexOf("/", 2);
+                    int startOfSlashM = _selectedSubreddit.Data.Url.IndexOf("/m/", endOfSlashU);
+                    return _selectedSubreddit.Data.Url.Substring(endOfSlashU + 1, startOfSlashM - endOfSlashU - 1);
+                }
+                else
+                    return "";
+            }
+        }
+
+        public bool Over18
+        {
+            get
+            {
+                return _selectedSubreddit.Data.Over18;
+            }
+        }
+
+        public long Subscribers
+        {
+            get
+            {
+                return _selectedSubreddit.Data.Subscribers;
+            }
+        }
+
+        public DateTime CreatedUTC
+        {
+            get
+            {
+                return _selectedSubreddit.Data.CreatedUTC;
+            }
+        }
+
+        public string DisplayName
+        {
+            get
+            {
+                return _selectedSubreddit.Data.DisplayName;
+            }
+        }
+
+        public MarkdownData PublicDescription
+        {
+            get
+            {
+                return _baconProvider.GetService<IMarkdownProcessor>().Process(_selectedSubreddit.Data.Description);
+            }
+        }
+
+        public string HeaderImage
+        {
+            get
+            {
+                return _selectedSubreddit.Data.HeaderImage;
+            }
+        }
+
+        public int HeaderImageHeight
+        {
+            get
+            {
+                if (_selectedSubreddit.Data.HeaderSize == null)
+                    return 50;
+                else
+                    return _selectedSubreddit.Data.HeaderSize[0];
+            }
+        }
+
+        public int HeaderImageWidth
+        {
+            get
+            {
+                if (_selectedSubreddit.Data.HeaderSize == null)
+                    return 128;
+                else
+                    return _selectedSubreddit.Data.HeaderSize[0];
             }
         }
 

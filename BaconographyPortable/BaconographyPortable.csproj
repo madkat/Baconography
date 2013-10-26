@@ -187,6 +187,7 @@
     <Compile Include="ViewModel\SearchQueryViewModel.cs" />
     <Compile Include="ViewModel\SearchResultsViewModel.cs" />
     <Compile Include="ViewModel\SimpleMainViewModel.cs" />
+    <Compile Include="ViewModel\SubredditManagementViewModel.cs" />
     <Compile Include="ViewModel\SubredditsViewModel.cs" />
     <Compile Include="ViewModel\AboutSubredditViewModel.cs" />
     <Compile Include="ViewModel\VotableViewModel.cs" />

@@ -10,5 +10,6 @@ namespace BaconographyPortable.Services
     public interface IViewModelLocator
     {
         RedditViewModel Reddit { get; }
+        bool IsLoaded { get; }
     }
 }

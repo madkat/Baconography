@@ -36,10 +36,10 @@
                            Visibility="{Binding Over18, Converter={StaticResource booleanVisibilityConverter}}"/>
                 <TextBlock FontSize="15" Foreground="Goldenrod"  Margin="8,0,0,0" Text="multi"
                            VerticalAlignment="Center"
-                           Visibility="{Binding IsMultiReddit, Converter={StaticResource booleanVisibilityConverter}}" />
+                           Visibility="{Binding IsUserMultiReddit, Converter={StaticResource booleanVisibilityConverter}}" />
             </StackPanel>
             <Grid Margin="0,6,0,0"
-                  Visibility="{Binding IsMultiReddit, Converter={StaticResource invertBooleanVisibilityConverter}}">
+                  Visibility="{Binding IsUserMultiReddit, Converter={StaticResource invertBooleanVisibilityConverter}}">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="*" />
