@@ -19,6 +19,8 @@ namespace BaconographyPortable.ViewModel
             _url = MakeUsableUrl(avalableStreams.First());
             _selectedStream = AvailableStreams.First();
             LinkId = linkId;
+
+            _launchBrowser = new RelayCommand(LaunchBrowserImpl);
         }
 
         string MakeUsableUrl(Dictionary<string, string> raw)
