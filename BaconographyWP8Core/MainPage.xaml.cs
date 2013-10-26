@@ -273,7 +273,7 @@ namespace BaconographyWP8
 		private void MenuManage_Click(object sender, EventArgs e)
 		{
 			var _navigationService = ServiceLocator.Current.GetInstance<INavigationService>();
-			_navigationService.Navigate(typeof(SortSubredditPageView), null);
+			_navigationService.Navigate(typeof(SimpleSubredditManagerView), null);
 		}
 
 		private void MenuSort_Click(object sender, EventArgs e)
@@ -485,7 +485,7 @@ namespace BaconographyWP8
 
             var selectedViewModel = CurrentRedditView == null ? null : CurrentRedditView.DataContext as RedditViewModel;
 
-            if (selectedViewModel != null && selectedViewModel.IsMulti)
+            if (selectedViewModel != null && selectedViewModel.IsMultiReddit)
             {
                 if(ApplicationBar.MenuItems.Contains(appMenuItems[(int)MenuEnum.Sidebar]))
                     ApplicationBar.MenuItems.Remove(appMenuItems[(int)MenuEnum.Sidebar]);
