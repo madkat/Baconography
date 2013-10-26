@@ -21,11 +21,6 @@ namespace BaconographyPortable.Model.Reddit.ListingHelpers
 
         public async Task<Listing> GetInitialListing(Dictionary<object, object> state)
         {
-            var sublist = await _redditService.GetSubscribedSubreddits();
-            if(sublist != null)
-                state["SubscribedSubreddits"] = sublist;
-           
-
             var subreddits = await _redditService.GetSubreddits(null);
             subreddits.Data.Children.Insert(0, ThingUtility.GetFrontPageThing());
             return subreddits;

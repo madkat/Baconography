@@ -13,6 +13,7 @@ using BaconographyPortable.Messages;
 using BaconographyWP8Core.ViewModel;
 using System.Windows.Data;
 using BaconographyPortable.ViewModel;
+using BaconographyWP8.Common;
 
 namespace BaconographyWP8Core.View
 {
@@ -46,6 +47,21 @@ namespace BaconographyWP8Core.View
 
         void newList_ItemRealized(object sender, ItemRealizationEventArgs e)
         {
+            newListLastItem = e.Container.Content;
+            var linksView = sender as FixedLongListSelector;
+            if (linksView.ItemsSource != null && linksView.ItemsSource.Count >= _offsetKnob)
+            {
+                if (e.ItemKind == LongListSelectorItemKind.Item)
+                {
+                    if ((e.Container.Content).Equals(linksView.ItemsSource[linksView.ItemsSource.Count - _offsetKnob]))
+                    {
+                        if (DataContext is SubredditManagementViewModel)
+                        {
+                            ((SubredditManagementViewModel)DataContext).LoadMore();
+                        }
+                    }
+                }
+            }
         }
 
         private void manualBox_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)

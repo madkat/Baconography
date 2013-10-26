@@ -38,6 +38,10 @@ namespace BaconographyPortable.ViewModel.Collections
 
         protected override async Task<IEnumerable<ViewModelBase>> InitialLoad(Dictionary<object, object> state)
         {
+            if (!state.ContainsKey("SubscribedSubreddits"))
+            {
+                state.Add("SubscribedSubreddits", await _redditService.GetSubscribedSubreddits());
+            }
             return MapListing(await GetInitialListing(state), state);
         }
         bool _hasLoadedAdditional = false;

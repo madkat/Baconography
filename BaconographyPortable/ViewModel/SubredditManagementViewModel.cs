@@ -114,6 +114,7 @@ namespace BaconographyPortable.ViewModel
 
                     if (_searchString.Length < 3)
                     {
+                        SearchResults = null;
                         SearchSubNewGroup.Clear();
                         if (MainViewModel != null && MainViewModel is MultipleRedditMainViewModel)
                         {
@@ -215,7 +216,7 @@ namespace BaconographyPortable.ViewModel
                     {
                         subscribedGroup.Visible = false;
                     }
-
+                    SearchSubNewGroup.Clear();
                     SearchSubNewGroup.Add(pivotGroup);
                     SearchSubNewGroup.Add(subscribedGroup);
                     SearchSubNewGroup.Add(searchGroup);
@@ -227,6 +228,22 @@ namespace BaconographyPortable.ViewModel
                 }
             }
         }
-        
+
+
+        public bool LoadMore()
+        {
+            if (SearchResults != null)
+            {
+                if (SearchResults.HasMoreItems)
+                    SearchResults.LoadMoreItemsAsync(50);
+                return SearchResults.HasMoreItems;
+            }
+            else
+            {
+                if (PlainSubreddits.HasMoreItems)
+                    PlainSubreddits.LoadMoreItemsAsync(50);
+                return PlainSubreddits.HasMoreItems;
+            }
+        }
     }
 }
