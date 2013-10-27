@@ -29,6 +29,16 @@ namespace BaconographyPortable.ViewModel
             PlainSubreddits = new SubredditViewModelCollection(_baconProvider);
             PlainSubreddits.LoadMoreItemsAsync(50);
             SearchSubNewGroup.Add(new SubredditGroupBridge(PlainSubreddits, "Reddit", false));
+            MessengerInstance.Register<InvalidateSubredditManagmentStateMessage>(this, onInvalidateState);
+        }
+
+        private void onInvalidateState(InvalidateSubredditManagmentStateMessage obj)
+        {
+            //if search results wasnt the original source of the items then everything is going to be handled automatically
+            if (SearchResults != null)
+            {
+                SplitSearchResults();
+            }
         }
 
         private void userLoggedIn(UserLoggedInMessage obj)
@@ -89,6 +99,9 @@ namespace BaconographyPortable.ViewModel
                     case System.Collections.Specialized.NotifyCollectionChangedAction.Add:
                         Add(e.NewItems[0] as ViewModelBase);
                         break;
+                    case System.Collections.Specialized.NotifyCollectionChangedAction.Remove:
+                        Remove(e.OldItems[0] as ViewModelBase);
+                        break;
                 }
             }
             public string Title { get; set; }
@@ -98,16 +111,6 @@ namespace BaconographyPortable.ViewModel
         private SubredditViewModelCollection PlainSubreddits { get; set; }
         private SearchResultsViewModelCollection SearchResults { get; set; }
         public ObservableCollection<SubredditGroupBridge> SearchSubNewGroup { get; private set; }
-
-        public void InvalidateSubscribed()
-        {
-
-        }
-
-        public void InvalidatePinned()
-        {
-
-        }
 
         private string _searchString;
         public string SearchString
@@ -193,45 +196,7 @@ namespace BaconographyPortable.ViewModel
                     await SearchResults.LoadMoreItemsAsync(100);
 
 
-                    var pivotGroup = new SubredditGroupBridge(new ViewModelBase[0], "Pivot", true);
-                    var subscribedGroup = new SubredditGroupBridge(new ViewModelBase[0], "Subscribed", true);
-                    var searchGroup = new SubredditGroupBridge(new ViewModelBase[0], "Search", true);
-
-                    foreach (var item in SearchResults)
-                    {
-                        var subredditViewModel = item as AboutSubredditViewModel;
-                        if (subredditViewModel.Pinned)
-                        {
-                            pivotGroup.Add(subredditViewModel);
-                        }
-                        else if (subredditViewModel.Subscribed)
-                        {
-                            subscribedGroup.Add(subredditViewModel);
-                        }
-                        else
-                        {
-                            searchGroup.Add(subredditViewModel);
-                        }
-                    }
-
-                    if (pivotGroup.Count == 0 && subscribedGroup.Count == 0)
-                    {
-                        searchGroup.Visible = false;
-                    }
-
-                    if (pivotGroup.Count == 0)
-                    {
-                        pivotGroup.Visible = false;
-                    }
-
-                    if (subscribedGroup.Count == 0)
-                    {
-                        subscribedGroup.Visible = false;
-                    }
-                    SearchSubNewGroup.Clear();
-                    SearchSubNewGroup.Add(pivotGroup);
-                    SearchSubNewGroup.Add(subscribedGroup);
-                    SearchSubNewGroup.Add(searchGroup);
+                    SplitSearchResults();
 
                 }
                 finally
@@ -239,6 +204,51 @@ namespace BaconographyPortable.ViewModel
                     _searchLoadInProgress = false;
                 }
             }
+        }
+
+        private void SplitSearchResults()
+        {
+            var pivotGroup = new SubredditGroupBridge(new ViewModelBase[0], "Pivot", true);
+            var subscribedGroup = new SubredditGroupBridge(new ViewModelBase[0], "Subscribed", true);
+            var searchGroup = new SubredditGroupBridge(new ViewModelBase[0], "Search", true);
+
+            foreach (var item in SearchResults)
+            {
+                var subredditViewModel = item as AboutSubredditViewModel;
+                if (subredditViewModel.Pinned || 
+                    (MainViewModel is MultipleRedditMainViewModel && ((MultipleRedditMainViewModel)MainViewModel).PivotItems.Any(pivotItem => ((RedditViewModel)pivotItem).Url ==  subredditViewModel.Url)))
+                {
+                    subredditViewModel.Pinned = true;
+                    pivotGroup.Add(subredditViewModel);
+                }
+                else if (subredditViewModel.Subscribed)
+                {
+                    subscribedGroup.Add(subredditViewModel);
+                }
+                else
+                {
+                    searchGroup.Add(subredditViewModel);
+                }
+            }
+
+            if (pivotGroup.Count == 0 && subscribedGroup.Count == 0)
+            {
+                searchGroup.Visible = false;
+            }
+
+            if (pivotGroup.Count == 0)
+            {
+                pivotGroup.Visible = false;
+            }
+
+            if (subscribedGroup.Count == 0)
+            {
+                subscribedGroup.Visible = false;
+            }
+            SearchSubNewGroup.Clear();
+            SearchSubNewGroup.Add(pivotGroup);
+            SearchSubNewGroup.Add(subscribedGroup);
+            SearchSubNewGroup.Add(searchGroup);
         }
 
 

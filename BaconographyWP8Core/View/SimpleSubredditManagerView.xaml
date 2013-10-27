@@ -67,7 +67,7 @@
                         ItemsSource="{Binding Path=SearchSubNewGroup}"
                         ListHeader="{Binding}"
                         ItemRealized="newList_ItemRealized"
-                        GridCellSize="350,80"
+                        GridCellSize="350,90"
                         Tap="FixedLongListSelector_Tap">
                 <common:FixedLongListSelector.GroupHeaderTemplate>
                     <DataTemplate>
@@ -79,12 +79,12 @@
                 </common:FixedLongListSelector.GroupHeaderTemplate>
                 <common:FixedLongListSelector.ItemTemplate>
                     <DataTemplate>
-                        <Grid>
+                        <Button BorderThickness="0">
                             <toolkit:ContextMenuService.ContextMenu>
                                 <toolkit:ContextMenu IsZoomEnabled="True" ItemsSource="{Binding Converter={StaticResource subredditManagmentContextMenuConverter}}"/>
                             </toolkit:ContextMenuService.ContextMenu>
                             <local:SubredditView />
-                        </Grid>
+                        </Button>
                     </DataTemplate>
                 </common:FixedLongListSelector.ItemTemplate>
                 <common:FixedLongListSelector.ListHeaderTemplate>

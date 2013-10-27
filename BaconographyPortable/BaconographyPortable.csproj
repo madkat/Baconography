@@ -53,6 +53,7 @@
     <Compile Include="Common\UtilityCommandImpl.cs" />
     <Compile Include="Messages\CloseSettingsMessage.cs" />
     <Compile Include="Messages\CloseSubredditMessage.cs" />
+    <Compile Include="Messages\InvalidateSubredditManagmentStateMessage.cs" />
     <Compile Include="Messages\LongNavigationMessage.cs" />
     <Compile Include="Messages\ReorderSubredditMessage.cs" />
     <Compile Include="Messages\SelectIndexMessage.cs" />

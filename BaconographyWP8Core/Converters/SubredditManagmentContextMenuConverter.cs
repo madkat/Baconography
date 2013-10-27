@@ -20,11 +20,12 @@ namespace BaconographyWP8.Converters
     {
         private void _invalidateSubscribed()
         {
-
+            Messenger.Default.Send<InvalidateSubredditManagmentStateMessage>(new InvalidateSubredditManagmentStateMessage { InvalidateSubscribed = true });
         }
 
         private void _invalidatePinned()
         {
+            Messenger.Default.Send<InvalidateSubredditManagmentStateMessage>(new InvalidateSubredditManagmentStateMessage { InvalidatePivot = true });
         }
 
         public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
@@ -45,10 +46,14 @@ namespace BaconographyWP8.Converters
             if(aboutSubreddit != null)
             {
                 thing = aboutSubreddit.Thing;
+                pinned = aboutSubreddit.Pinned;
+                subscribed = aboutSubreddit.Subscribed;
             }
             else if(reddit != null)
             {
                 thing = reddit.SelectedSubreddit;
+                pinned = true;
+                subscribed = reddit.Subscribed;
             }
 
             var navigationService = ServiceLocator.Current.GetInstance<INavigationService>();
@@ -74,6 +79,9 @@ namespace BaconographyWP8.Converters
                     Header = "Unpin",
                     Command = new RelayCommand(() =>
                         {
+                            if (aboutSubreddit != null)
+                                aboutSubreddit.Pinned = false;
+
                             Messenger.Default.Send<CloseSubredditMessage>(new CloseSubredditMessage { Subreddit = thing });
                             _invalidatePinned();
                         })
@@ -86,6 +94,9 @@ namespace BaconographyWP8.Converters
                     Header = "Pin",
                     Command = new RelayCommand(() =>
                     {
+                        if (aboutSubreddit != null)
+                            aboutSubreddit.Pinned = true;
+
                         Messenger.Default.Send<SelectSubredditMessage>(new SelectSubredditMessage { Subreddit = thing });
                         _invalidatePinned();
                     })
@@ -99,7 +110,13 @@ namespace BaconographyWP8.Converters
                     Header = "Unsubscribe",
                     Command = new RelayCommand(() =>
                         {
-                            redditService.AddSubredditSubscription(thing.Data.Name, false);
+                            if (aboutSubreddit != null)
+                                aboutSubreddit.Subscribed = false;
+                            else if (reddit != null)
+                            {
+                                reddit.Subscribed = false;
+                                redditService.AddSubredditSubscription(thing.Data.Name, true);
+                            }
                             _invalidateSubscribed();
                         })
                 });
@@ -111,7 +128,13 @@ namespace BaconographyWP8.Converters
                     Header = "Subscribe",
                     Command = new RelayCommand(() =>
                     {
-                        redditService.AddSubredditSubscription(thing.Data.Name, true);
+                        if (aboutSubreddit != null)
+                            aboutSubreddit.Subscribed = true;
+                        else if (reddit != null)
+                        {
+                            reddit.Subscribed = true;
+                            redditService.AddSubredditSubscription(thing.Data.Name, true);
+                        }
                         _invalidateSubscribed();
                     })
                 });
