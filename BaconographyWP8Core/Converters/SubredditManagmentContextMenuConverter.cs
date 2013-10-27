@@ -115,6 +115,7 @@ namespace BaconographyWP8.Converters
                             else if (reddit != null)
                             {
                                 reddit.Subscribed = false;
+                                Messenger.Default.Send<SubredditSubscriptionChangeMessage>(new SubredditSubscriptionChangeMessage { ChangedUrl = thing.Data.Url, Added = false });
                                 redditService.AddSubredditSubscription(thing.Data.Name, true);
                             }
                             _invalidateSubscribed();
@@ -133,6 +134,7 @@ namespace BaconographyWP8.Converters
                         else if (reddit != null)
                         {
                             reddit.Subscribed = true;
+                            Messenger.Default.Send<SubredditSubscriptionChangeMessage>(new SubredditSubscriptionChangeMessage { ChangedUrl = thing.Data.Url, Added = true }); 
                             redditService.AddSubredditSubscription(thing.Data.Name, true);
                         }
                         _invalidateSubscribed();

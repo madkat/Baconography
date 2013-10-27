@@ -38,6 +38,29 @@ namespace BaconographyPortable.Services.Impl
 
             _smartOfflineService.OffliningOpportunity += _smartOfflineService_OffliningOpportunity;
             Messenger.Default.Register<UserLoggedInMessage>(this, UserLoggedIn);
+            Messenger.Default.Register<SubredditSubscriptionChangeMessage>(this, SubscriptionChanged);
+        }
+
+        private async void SubscriptionChanged(SubredditSubscriptionChangeMessage obj)
+        {
+            var user = await _userService.GetUser();
+            if (user != null && user.Username != null)
+            {
+                var currentListing = await _offlineService.RetrieveOrderedThings("sublist:" + user.Username, TimeSpan.FromDays(1024));
+                var listingList = currentListing.ToList();
+                if (obj.Added && obj.ViewModel != null)
+                {
+                    listingList.Add(obj.ViewModel.Thing);
+                }
+                else
+                {
+                    listingList.RemoveAll(thing => ((Subreddit)thing.Data).Url == obj.ChangedUrl);
+                }
+
+                await _offlineService.StoreOrderedThings("sublist:" + user.Username, listingList);
+                _subscribedSubredditListing = null;
+                _subscribedSubreddits = null;
+            }
         }
 
         private void UserLoggedIn(UserLoggedInMessage obj)
@@ -48,7 +71,6 @@ namespace BaconographyPortable.Services.Impl
 
         Stack<Link> _linkThingsAwaitingOfflining = new Stack<Link>();
         HashSet<string> _recentlyLoadedComments = new HashSet<string>();
-        bool _isOfflining = false;
 
         DateTime _lastMeCheck = DateTime.MinValue;
         DateTime _nextOffliningTime = DateTime.MinValue;
@@ -141,10 +163,6 @@ namespace BaconographyPortable.Services.Impl
             }
             catch (Exception ex)
             {
-            }
-            finally
-            {
-                _isOfflining = false;
             }
         }
 
@@ -270,19 +288,29 @@ namespace BaconographyPortable.Services.Impl
         {
             if (_subscribedSubredditListing != null)
                 return _subscribedSubredditListing;
-            
-            var result = await _redditService.GetSubscribedSubredditListing();
-            if (result != null && result.Data.Children.Count > 0)
-            {
-                _subscribedSubredditListing = result;
-            }
-            else
-            {
-                _subscribedSubredditListing = await GetDefaultSubreddits();
-            }
 
-            await MaybeStoreSubscribedSubredditListing(result, await _userService.GetUser());
+            Monitor.Enter(this);
+            try
+            {
+                if (_subscribedSubredditListing != null)
+                    return _subscribedSubredditListing;
 
+                var result = await _redditService.GetSubscribedSubredditListing();
+                if (result != null && result.Data.Children.Count > 0)
+                {
+                    _subscribedSubredditListing = result;
+                }
+                else
+                {
+                    _subscribedSubredditListing = await GetDefaultSubreddits();
+                }
+
+                await MaybeStoreSubscribedSubredditListing(result, await _userService.GetUser());
+            }
+            finally
+            {
+                Monitor.Exit(this);
+            }
             return _subscribedSubredditListing;
         }
 

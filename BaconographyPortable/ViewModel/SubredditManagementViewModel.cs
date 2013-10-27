@@ -39,6 +39,10 @@ namespace BaconographyPortable.ViewModel
             {
                 SplitSearchResults();
             }
+            else if (obj.InvalidateSubscribed)
+            {
+
+            }
         }
 
         private void userLoggedIn(UserLoggedInMessage obj)
@@ -100,7 +104,7 @@ namespace BaconographyPortable.ViewModel
                         Add(e.NewItems[0] as ViewModelBase);
                         break;
                     case System.Collections.Specialized.NotifyCollectionChangedAction.Remove:
-                        Remove(e.OldItems[0] as ViewModelBase);
+                        RemoveAt(e.OldStartingIndex);
                         break;
                 }
             }

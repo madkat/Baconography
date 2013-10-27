@@ -149,6 +149,7 @@ namespace BaconographyPortable.ViewModel
             set
             {
                 _subscribed = value;
+                MessengerInstance.Send<SubredditSubscriptionChangeMessage>(new SubredditSubscriptionChangeMessage { ChangedUrl = Thing.Data.Url, Added = value, ViewModel = this });
                 _redditService.AddSubredditSubscription(Thing.Data.Name, !value);
                 RaisePropertyChanged("Subscribed");
             }

@@ -70,6 +70,7 @@
     <Compile Include="Messages\SelectTemporaryRedditMessage.cs" />
     <Compile Include="Messages\SelectUserAccountMessage.cs" />
     <Compile Include="Messages\SubredditFocusedMessage.cs" />
+    <Compile Include="Messages\SubredditSubscriptionChangeMessage.cs" />
     <Compile Include="Messages\UserLoggedInMessage.cs" />
     <Compile Include="Model\Compression\CompressionService.cs" />
     <Compile Include="Model\Compression\LZ4Codec.cs" />

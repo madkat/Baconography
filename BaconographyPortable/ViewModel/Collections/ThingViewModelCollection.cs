@@ -188,7 +188,8 @@ namespace BaconographyPortable.ViewModel.Collections
             if (targetListing != null && targetListing.Data.Children.Count > 0)
             {
                 ViewModelBase[] mappedListing;
-                lock (_ids)
+                Monitor.Enter(_ids);
+                try
                 {
                     foreach (var vm in this)
                     {
@@ -198,7 +199,17 @@ namespace BaconographyPortable.ViewModel.Collections
                             _ids.Remove(linkViewModel.Id);
                         }
                     }
+
+                    if (!state.ContainsKey("SubscribedSubreddits"))
+                    {
+                        state.Add("SubscribedSubreddits", await _redditService.GetSubscribedSubreddits());
+                    }
+
                     mappedListing = MapListing(targetListing, state).ToArray();
+                }
+                finally
+                {
+                    Monitor.Exit(_ids);
                 }
 
                 //remove the ones we're not replacing, otherwise we end up with state results
