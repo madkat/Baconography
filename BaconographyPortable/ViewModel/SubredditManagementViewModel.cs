@@ -320,7 +320,7 @@ namespace BaconographyPortable.ViewModel
 
         public void DoGoSubreddit(TypedThing<Subreddit> target, bool pin)
         {
-            if (target != null || String.IsNullOrEmpty(target.Data.Url))
+            if (target == null || String.IsNullOrEmpty(target.Data.Url))
                 return;
 
             if (pin)

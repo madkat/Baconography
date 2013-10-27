@@ -58,7 +58,7 @@ namespace BaconographyWP8Core.View
 
             if (targetSubreddit != null)
             {
-                ((SubredditManagementViewModel)DataContext).DoGoSubreddit(targetSubreddit, false);
+                ((SubredditManagementViewModel)DataContext).DoGoSubreddit(targetSubreddit, true);
                 ServiceLocator.Current.GetInstance<INavigationService>().GoBack();
             }
         }
