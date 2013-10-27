@@ -39,7 +39,21 @@ namespace BaconographyPortable.ViewModel
         {
             get
             {
-                return Thing.Data.Url.Contains("/m/");
+                if (Thing == null || Thing.Data.Url == "/")
+                    return false;
+                else
+                    return Thing.Data.Url.Contains("/m/") || Thing.Data.Url.Contains("+");
+            }
+        }
+
+        public bool IsUserMultiReddit
+        {
+            get
+            {
+                if (Thing == null || Thing.Data.Url == "/")
+                    return false;
+                else
+                    return Thing.Data.Url.Contains("/m/") || Thing.Data.Url.Contains("+");
             }
         }
 
