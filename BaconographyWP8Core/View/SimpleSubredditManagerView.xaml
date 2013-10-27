@@ -20,7 +20,26 @@
     shell:SystemTray.ProgressIndicator="{Binding ProgressActive, Source={StaticResource orientationManager}}"
     DataContext="{Binding SubredditManagement, Source={StaticResource Locator}}"
     x:Name="controlRoot">
-
+    <toolkit:TransitionService.NavigationInTransition>
+        <toolkit:NavigationInTransition>
+            <toolkit:NavigationInTransition.Backward>
+                <toolkit:TurnstileTransition Mode="BackwardIn"/>
+            </toolkit:NavigationInTransition.Backward>
+            <toolkit:NavigationInTransition.Forward>
+                <toolkit:TurnstileTransition Mode="ForwardIn"/>
+            </toolkit:NavigationInTransition.Forward>
+        </toolkit:NavigationInTransition>
+    </toolkit:TransitionService.NavigationInTransition>
+    <toolkit:TransitionService.NavigationOutTransition>
+        <toolkit:NavigationOutTransition>
+            <toolkit:NavigationOutTransition.Backward>
+                <toolkit:TurnstileFeatherTransition Mode="BackwardOut"/>
+            </toolkit:NavigationOutTransition.Backward>
+            <toolkit:NavigationOutTransition.Forward>
+                <toolkit:TurnstileFeatherTransition Mode="ForwardOut"/>
+            </toolkit:NavigationOutTransition.Forward>
+        </toolkit:NavigationOutTransition>
+    </toolkit:TransitionService.NavigationOutTransition>
     <!--LayoutRoot is the root grid where all page content is placed-->
     <Grid x:Name="LayoutRoot" Background="Transparent">
         <Grid.RowDefinitions>
@@ -29,7 +48,7 @@
         </Grid.RowDefinitions>
 
         <!--TitlePanel contains the name of the application and page title-->
-        <StackPanel Grid.Row="0" Margin="12,17,0,28">
+        <StackPanel Grid.Row="0" Margin="12,17,0,28" toolkit:TurnstileFeatherEffect.FeatheringIndex="0">
             <TextBlock Text="BACONOGRAPHY" Style="{StaticResource PhoneTextNormalStyle}"/>
             <TextBlock Text="Subreddits" Margin="9,-7,0,0" Style="{StaticResource PhoneTextTitle1Style}"/>
         </StackPanel>
@@ -37,17 +56,19 @@
         <!--ContentPanel - place additional content here-->
         <Grid x:Name="ContentPanel" Grid.Row="1" Margin="12,0,12,0">
             <common:FixedLongListSelector
+                        toolkit:TurnstileFeatherEffect.FeatheringIndex="1"
                         BorderThickness="0" VerticalAlignment="Stretch" 
                         ScrollViewer.VerticalScrollBarVisibility="Auto"
                         ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                         HorizontalContentAlignment="Stretch"
                         GotFocus="FixedLongListSelector_GotFocus"
-                        DataContext="{Binding SubredditManagement, Source={StaticResource Locator}}"
-                        LayoutMode="List"
+                        LayoutMode="Grid"
                         IsGroupingEnabled="True"
                         ItemsSource="{Binding Path=SearchSubNewGroup}"
                         ListHeader="{Binding}"
-                        ItemRealized="newList_ItemRealized">
+                        ItemRealized="newList_ItemRealized"
+                        GridCellSize="350,80"
+                        Tap="FixedLongListSelector_Tap">
                 <common:FixedLongListSelector.GroupHeaderTemplate>
                     <DataTemplate>
                         <Border BorderBrush="{StaticResource PhoneChromeBrush}" HorizontalAlignment="Stretch" BorderThickness="0,0,0,2" Margin="0,0,18,0" Visibility="{Binding Visible, Converter={StaticResource booleanVisibilityConverter}}">
@@ -62,9 +83,7 @@
                             <toolkit:ContextMenuService.ContextMenu>
                                 <toolkit:ContextMenu IsZoomEnabled="True" ItemsSource="{Binding Converter={StaticResource subredditManagmentContextMenuConverter}}"/>
                             </toolkit:ContextMenuService.ContextMenu>
-                            <Button BorderThickness="0" Click="Subreddit_Click">
-                                <local:SubredditView />
-                            </Button>
+                            <local:SubredditView />
                         </Grid>
                     </DataTemplate>
                 </common:FixedLongListSelector.ItemTemplate>

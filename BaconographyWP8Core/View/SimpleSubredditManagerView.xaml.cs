@@ -39,29 +39,6 @@ namespace BaconographyWP8Core.View
             else
                 base.OnNavigatingFrom(e);
         }
-        private void Subreddit_Click(object sender, RoutedEventArgs e)
-        {
-            TypedThing<Subreddit> targetSubreddit = null; 
-            var senderElement = sender as FrameworkElement;
-            if (senderElement != null)
-            {
-                var context = senderElement.DataContext as AboutSubredditViewModel;
-                if (context != null)
-                {
-                    targetSubreddit = context.Thing;
-                }
-                else if (senderElement.DataContext is RedditViewModel)
-                {
-                    targetSubreddit = ((RedditViewModel)senderElement.DataContext).SelectedSubreddit;
-                }
-            }
-
-            if (targetSubreddit != null)
-            {
-                ((SubredditManagementViewModel)DataContext).DoGoSubreddit(targetSubreddit, true);
-                ServiceLocator.Current.GetInstance<INavigationService>().GoBack();
-            }
-        }
 
         void newList_ItemRealized(object sender, ItemRealizationEventArgs e)
         {
@@ -128,6 +105,30 @@ namespace BaconographyWP8Core.View
             {
                 _needToHackFocus = false;
                 _manualBox.Focus();
+            }
+        }
+
+        private void FixedLongListSelector_Tap(object sender, System.Windows.Input.GestureEventArgs e)
+        {
+            TypedThing<Subreddit> targetSubreddit = null;
+            var senderElement = e.OriginalSource as FrameworkElement;
+            if (senderElement != null)
+            {
+                var context = senderElement.DataContext as AboutSubredditViewModel;
+                if (context != null)
+                {
+                    targetSubreddit = context.Thing;
+                }
+                else if (senderElement.DataContext is RedditViewModel)
+                {
+                    targetSubreddit = ((RedditViewModel)senderElement.DataContext).SelectedSubreddit;
+                }
+            }
+
+            if (targetSubreddit != null)
+            {
+                ((SubredditManagementViewModel)DataContext).DoGoSubreddit(targetSubreddit, true);
+                ServiceLocator.Current.GetInstance<INavigationService>().GoBack();
             }
         }
     }
