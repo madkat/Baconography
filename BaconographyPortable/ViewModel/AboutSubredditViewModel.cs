@@ -40,7 +40,7 @@ namespace BaconographyPortable.ViewModel
             get
             {
                 if (Thing == null || Thing.Data.Url == "/")
-                    return false;
+                    return true;
                 else
                     return Thing.Data.Url.Contains("/m/") || Thing.Data.Url.Contains("+");
             }
@@ -61,7 +61,7 @@ namespace BaconographyPortable.ViewModel
         {
             get
             {
-                if (IsMultiReddit)
+                if (IsUserMultiReddit)
                 {
                     if (Thing.Data.Url.Contains("/me/"))
                     {
