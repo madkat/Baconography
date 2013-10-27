@@ -14,6 +14,9 @@ using BaconographyWP8Core.ViewModel;
 using System.Windows.Data;
 using BaconographyPortable.ViewModel;
 using BaconographyWP8.Common;
+using BaconographyPortable.Model.Reddit;
+using GalaSoft.MvvmLight.Messaging;
+using BaconographyWP8.Converters;
 
 namespace BaconographyWP8Core.View
 {
@@ -26,7 +29,8 @@ namespace BaconographyWP8Core.View
         }
         const int _offsetKnob = 7;
         private object newListLastItem;
-        private object subbedListLastItem;
+
+        
 
         protected override void OnNavigatingFrom(NavigatingCancelEventArgs e)
         {
@@ -37,12 +41,26 @@ namespace BaconographyWP8Core.View
         }
         private void Subreddit_Click(object sender, RoutedEventArgs e)
         {
+            TypedThing<Subreddit> targetSubreddit = null; 
+            var senderElement = sender as FrameworkElement;
+            if (senderElement != null)
+            {
+                var context = senderElement.DataContext as AboutSubredditViewModel;
+                if (context != null)
+                {
+                    targetSubreddit = context.Thing;
+                }
+                else if (senderElement.DataContext is RedditViewModel)
+                {
+                    targetSubreddit = ((RedditViewModel)senderElement.DataContext).SelectedSubreddit;
+                }
+            }
 
-        }
-
-        private void Subreddit_Hold(object sender, System.Windows.Input.GestureEventArgs e)
-        {
-
+            if (targetSubreddit != null)
+            {
+                ((SubredditManagementViewModel)DataContext).DoGoSubreddit(targetSubreddit, false);
+                ServiceLocator.Current.GetInstance<INavigationService>().GoBack();
+            }
         }
 
         void newList_ItemRealized(object sender, ItemRealizationEventArgs e)
@@ -70,8 +88,8 @@ namespace BaconographyWP8Core.View
             {
                 this.Focus();
                 var ssvm = this.DataContext as SubredditManagementViewModel;
-                //if (ssvm != null)
-                //    ssvm.PinSubreddit.Execute(ssvm);
+                if (ssvm != null)
+                    ssvm.DoGoSubreddit(ssvm.SearchString, true);
             }
             else
             {

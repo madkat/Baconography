@@ -43,6 +43,7 @@
     <converters:TotalPointsConverter x:Key="totalPointsConverter"/>
     <converters:CachedImageConverter x:Key="cachedImageConverter"/>
     <converters:BoolToAccentBrushConverter x:Key="boolToAccentBrushConverter"/>
+    <converters:SubredditManagmentContextMenuConverter x:Key="subredditManagmentContextMenuConverter"/>
     <common:LinkViewLayoutManager x:Key="linkViewLayoutManager" />
     <common:OrientationManager x:Key="orientationManager" />
     

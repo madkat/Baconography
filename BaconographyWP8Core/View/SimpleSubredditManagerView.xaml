@@ -18,7 +18,8 @@
     shell:SystemTray.IsVisible="{Binding Source={StaticResource orientationManager}, Path=SystemTrayVisible}"
     shell:SystemTray.Opacity="0"
     shell:SystemTray.ProgressIndicator="{Binding ProgressActive, Source={StaticResource orientationManager}}"
-    DataContext="{Binding SubredditManagement, Source={StaticResource Locator}}">
+    DataContext="{Binding SubredditManagement, Source={StaticResource Locator}}"
+    x:Name="controlRoot">
 
     <!--LayoutRoot is the root grid where all page content is placed-->
     <Grid x:Name="LayoutRoot" Background="Transparent">
@@ -57,9 +58,14 @@
                 </common:FixedLongListSelector.GroupHeaderTemplate>
                 <common:FixedLongListSelector.ItemTemplate>
                     <DataTemplate>
-                        <Button BorderThickness="0" Click="Subreddit_Click" Hold="Subreddit_Hold">
-                            <local:SubredditView />
-                        </Button>
+                        <Grid>
+                            <toolkit:ContextMenuService.ContextMenu>
+                                <toolkit:ContextMenu IsZoomEnabled="True" ItemsSource="{Binding Converter={StaticResource subredditManagmentContextMenuConverter}}"/>
+                            </toolkit:ContextMenuService.ContextMenu>
+                            <Button BorderThickness="0" Click="Subreddit_Click">
+                                <local:SubredditView />
+                            </Button>
+                        </Grid>
                     </DataTemplate>
                 </common:FixedLongListSelector.ItemTemplate>
                 <common:FixedLongListSelector.ListHeaderTemplate>

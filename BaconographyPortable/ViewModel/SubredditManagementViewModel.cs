@@ -17,10 +17,12 @@ namespace BaconographyPortable.ViewModel
     public class SubredditManagementViewModel : ViewModelBase
     {
         ISystemServices _systemServices;
+        IUserService _userService;
         IBaconProvider _baconProvider;
         public SubredditManagementViewModel(IBaconProvider baconProvider)
         {
             _baconProvider = baconProvider;
+            _userService = baconProvider.GetService<IUserService>();
             _systemServices = baconProvider.GetService<ISystemServices>();
             MessengerInstance.Register<UserLoggedInMessage>(this, userLoggedIn);
             SearchSubNewGroup = new ObservableCollection<SubredditGroupBridge>();
@@ -96,6 +98,16 @@ namespace BaconographyPortable.ViewModel
         private SubredditViewModelCollection PlainSubreddits { get; set; }
         private SearchResultsViewModelCollection SearchResults { get; set; }
         public ObservableCollection<SubredditGroupBridge> SearchSubNewGroup { get; private set; }
+
+        public void InvalidateSubscribed()
+        {
+
+        }
+
+        public void InvalidatePinned()
+        {
+
+        }
 
         private string _searchString;
         public string SearchString
@@ -244,6 +256,77 @@ namespace BaconographyPortable.ViewModel
                     PlainSubreddits.LoadMoreItemsAsync(50);
                 return PlainSubreddits.HasMoreItems;
             }
+        }
+
+        private static string CleanRedditLink(string userInput, User user)
+        {
+            if (string.IsNullOrWhiteSpace(userInput))
+                return "/";
+
+            if (userInput == "/")
+                return userInput;
+
+            if (user != null && !string.IsNullOrWhiteSpace(user.Username))
+            {
+                var selfMulti = "/" + user.Username + "/m/";
+                if (userInput.Contains(selfMulti))
+                {
+                    return "/me/m/" + userInput.Substring(userInput.IndexOf(selfMulti) + selfMulti.Length);
+                }
+            }
+
+            if (userInput.StartsWith("me/m/"))
+                return "/" + userInput;
+            else if (userInput.StartsWith("/m/"))
+                return "/me" + userInput;
+            else if (userInput.StartsWith("/me/m/"))
+                return userInput;
+
+            if (userInput.StartsWith("/u/"))
+            {
+                return userInput.Replace("/u/", "/user/");
+            }
+
+            if (userInput.StartsWith("r/"))
+                return "/" + userInput;
+            else if (userInput.StartsWith("/") && !userInput.StartsWith("/r/"))
+                return "/r" + userInput;
+            else if (userInput.StartsWith("/r/"))
+                return userInput;
+            else
+                return "/r/" + userInput;
+        }
+
+        public async void DoGoSubreddit(string target, bool pin)
+        {
+            var subredditName = CleanRedditLink(target, await _userService.GetUser()).Replace("/r/", "");
+            if (String.IsNullOrEmpty(subredditName))
+                return;
+
+            var _redditService = ServiceLocator.Current.GetInstance<IRedditService>();
+            if (_redditService == null)
+                return;
+
+            var subreddit = await _redditService.GetSubreddit(subredditName);
+            if (subreddit == null)
+            {
+                return;
+            }
+            if (pin)
+                MessengerInstance.Send<SelectSubredditMessage>(new SelectSubredditMessage { Subreddit = subreddit });
+            else
+                MessengerInstance.Send<SelectTemporaryRedditMessage>(new SelectTemporaryRedditMessage { Subreddit = subreddit });
+        }
+
+        public void DoGoSubreddit(TypedThing<Subreddit> target, bool pin)
+        {
+            if (target != null || String.IsNullOrEmpty(target.Data.Url))
+                return;
+
+            if (pin)
+                MessengerInstance.Send<SelectSubredditMessage>(new SelectSubredditMessage { Subreddit = target });
+            else
+                MessengerInstance.Send<SelectTemporaryRedditMessage>(new SelectTemporaryRedditMessage { Subreddit = target });
         }
     }
 }
