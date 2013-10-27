@@ -48,9 +48,8 @@
         </Grid.RowDefinitions>
 
         <!--TitlePanel contains the name of the application and page title-->
-        <StackPanel Grid.Row="0" Margin="12,17,0,28" toolkit:TurnstileFeatherEffect.FeatheringIndex="0">
-            <TextBlock Text="BACONOGRAPHY" Style="{StaticResource PhoneTextNormalStyle}"/>
-            <TextBlock Text="Subreddits" Margin="9,-7,0,0" Style="{StaticResource PhoneTextTitle1Style}"/>
+        <StackPanel Grid.Row="0" Margin="12,17,0,12" toolkit:TurnstileFeatherEffect.FeatheringIndex="0">
+            <TextBlock Text="BACONOGRAPHY > SUBREDDITS" Style="{StaticResource PhoneTextNormalStyle}"/>
         </StackPanel>
 
         <!--ContentPanel - place additional content here-->
@@ -89,7 +88,7 @@
                 </common:FixedLongListSelector.ItemTemplate>
                 <common:FixedLongListSelector.ListHeaderTemplate>
                     <DataTemplate>
-                        <StackPanel>
+                        <StackPanel Margin="12,0,0,0">
                             <TextBlock TextWrapping="Wrap" FontSize="17" Margin="0,5,0,3">
                                         Enter a subreddit:
                             </TextBlock>

@@ -19,6 +19,7 @@ namespace BaconographyPortable.ViewModel
         ISystemServices _systemServices;
         IUserService _userService;
         IBaconProvider _baconProvider;
+        bool _loggedInUser = false;
         public SubredditManagementViewModel(IBaconProvider baconProvider)
         {
             _baconProvider = baconProvider;
@@ -39,21 +40,18 @@ namespace BaconographyPortable.ViewModel
             {
                 SplitSearchResults();
             }
-            else if (obj.InvalidateSubscribed)
-            {
-
-            }
         }
 
         private void userLoggedIn(UserLoggedInMessage obj)
         {
+            _loggedInUser = obj.CurrentUser != null && obj.CurrentUser.Username != null;
             _searchString = "";
             SearchSubNewGroup.Clear();
             if (MainViewModel != null && MainViewModel is MultipleRedditMainViewModel)
             {
                 SearchSubNewGroup.Add(new SubredditGroupBridge(((MultipleRedditMainViewModel)MainViewModel).PivotItems, "Pivot", true));
             }
-            if (MainViewModel != null)
+            if (MainViewModel != null && _loggedInUser)
             {
                 SearchSubNewGroup.Add(new SubredditGroupBridge(MainViewModel.SubscribedSubreddits, "Subscribed", true));
             }
@@ -139,7 +137,7 @@ namespace BaconographyPortable.ViewModel
                         {
                             SearchSubNewGroup.Add(new SubredditGroupBridge(((MultipleRedditMainViewModel)MainViewModel).PivotItems, "Pivot", true));
                         }
-                        if (MainViewModel != null)
+                        if (MainViewModel != null && _loggedInUser)
                         {
                             SearchSubNewGroup.Add(new SubredditGroupBridge(MainViewModel.SubscribedSubreddits, "Subscribed", true));
                         }
