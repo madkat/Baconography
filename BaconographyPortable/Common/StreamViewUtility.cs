@@ -209,10 +209,17 @@ namespace BaconographyPortable.Common
                     var smartOfflineService = ServiceLocator.Current.GetInstance<ISmartOfflineService>();
                     smartOfflineService.NavigatedToOfflineableThing(targetViewModel.LinkThing, true);
                     await ServiceLocator.Current.GetInstance<IOfflineService>().StoreHistory(targetViewModel.Url);
-                    var result = await ReadableArticleViewModel.LoadAtLeastOne(ServiceLocator.Current.GetInstance<ISimpleHttpService>(), targetViewModel.Url, targetViewModel.LinkThing.Data.Id);
-                    result.WasStreamed = true;
-                    result.ContentIsFocused = false;
-                    return result;
+                    try
+                    {
+                        var result = await ReadableArticleViewModel.LoadAtLeastOne(ServiceLocator.Current.GetInstance<ISimpleHttpService>(), targetViewModel.Url, targetViewModel.LinkThing.Data.Id);
+                        if (result != null)
+                        {
+                            result.WasStreamed = true;
+                            result.ContentIsFocused = false;
+                            return result;
+                        }
+                    }
+                    catch { }
                 }
                 else if (vm is LinkViewModel && ((LinkViewModel)vm).IsSelfPost && !settingsService.OnlyFlipViewImages && (!settingsService.OnlyFlipViewUnread || !offlineService.HasHistory(((LinkViewModel)vm).Url)))
                 {
