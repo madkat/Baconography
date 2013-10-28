@@ -264,28 +264,36 @@ namespace BaconographyPortable.Common
                     {
                         var uri = new Uri(str);
                         var targetHost = uri.DnsSafeHost.ToLower();
-
+                        
                         Messenger.Default.Send<LongNavigationMessage>(new LongNavigationMessage { Finished = true, TargetUrl = str });
-                        var videoResults = await baconProvider.GetService<IVideoService>().GetPlayableStreams(str);
+                        try
+                        {
+                            var videoResults = await baconProvider.GetService<IVideoService>().GetPlayableStreams(str);
 
-						Type videoType = baconProvider.GetService<IDynamicViewLocator>().LinkedVideoView;
-                        if (videoType != null && videoResults != null)
-                        {
-                            if (SimpleIoc.Default.IsRegistered<WebVideoViewModel>())
+
+                            Type videoType = baconProvider.GetService<IDynamicViewLocator>().LinkedVideoView;
+                            if (videoType != null && videoResults != null)
                             {
-                                SimpleIoc.Default.Unregister<WebVideoViewModel>();
+                                if (SimpleIoc.Default.IsRegistered<WebVideoViewModel>())
+                                {
+                                    SimpleIoc.Default.Unregister<WebVideoViewModel>();
+                                }
+                                var videoVM = new WebVideoViewModel(videoResults, sourceLink != null ? sourceLink.Data.Id : "");
+                                SimpleIoc.Default.Register<WebVideoViewModel>(() => videoVM, true);
+                                navigationService.Navigate(baconProvider.GetService<IDynamicViewLocator>().LinkedVideoView, null);
                             }
-                            var videoVM = new WebVideoViewModel(videoResults, sourceLink != null ? sourceLink.Data.Id : "");
-                            SimpleIoc.Default.Register<WebVideoViewModel>(() => videoVM, true);
-                            navigationService.Navigate(baconProvider.GetService<IDynamicViewLocator>().LinkedVideoView, null);
+                            else if (settingsService.ApplyReadabliltyToLinks && LinkGlyphUtility.GetLinkGlyph(str) == LinkGlyphUtility.WebGlyph)
+                            {
+                                navigationService.Navigate(baconProvider.GetService<IDynamicViewLocator>().LinkedReadabilityView, Tuple.Create<string, string>(str, sourceLink != null ? sourceLink.Data.Id : ""));
+                            }
+                            else
+                            {
+                                //its not an image/video url we can understand so whatever it is just show it in the browser
+                                navigationService.Navigate(baconProvider.GetService<IDynamicViewLocator>().LinkedWebView, new NavigateToUrlMessage { TargetUrl = str, Title = str });
+                            }
                         }
-                        else if (settingsService.ApplyReadabliltyToLinks && LinkGlyphUtility.GetLinkGlyph(str) == LinkGlyphUtility.WebGlyph)
+                        catch
                         {
-                            navigationService.Navigate(baconProvider.GetService<IDynamicViewLocator>().LinkedReadabilityView, Tuple.Create<string, string>(str, sourceLink != null ? sourceLink.Data.Id : ""));
-                        }
-                        else
-                        {
-                            //its not an image/video url we can understand so whatever it is just show it in the browser
                             navigationService.Navigate(baconProvider.GetService<IDynamicViewLocator>().LinkedWebView, new NavigateToUrlMessage { TargetUrl = str, Title = str });
                         }
                     }
