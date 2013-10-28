@@ -113,6 +113,7 @@ namespace BaconographyWP8.View
 			if (DataContext == null || e == null)
             {
 				DataContext = _pictureViewModel;
+                albumPivot.DataContext = _pictureViewModel.Pictures;
             }
 
             
@@ -124,7 +125,6 @@ namespace BaconographyWP8.View
         {
             if (e.NavigationMode == NavigationMode.New && e.Uri.ToString() == "/BaconographyWP8Core;component/MainPage.xaml" && e.IsCancelable)
             {
-                OnNavigatedTo(null);
                 e.Cancel = true;
             }
             _viewModelContextService.PopViewModelContext(DataContext as ViewModelBase);
@@ -175,13 +175,12 @@ namespace BaconographyWP8.View
 				var absPath = e.Uri.ToString().Contains('?') ? e.Uri.ToString().Substring(0, e.Uri.ToString().IndexOf("?")) : e.Uri.ToString();
 				if (absPath == "app://external/")
 				{
-					CleanupImageSource();
-					ServiceLocator.Current.GetInstance<INavigationService>().RemoveBackEntry();
+                    ReifiedAlbumItemConverter.CancelSource.Cancel();
+                    ReifiedAlbumItemConverter.CancelSource = new CancellationTokenSource();
 				}
 			}
 		}
 
-        Task _cleanup;
         private void CleanupImageSource()
         {
             try
@@ -219,6 +218,7 @@ namespace BaconographyWP8.View
                 {
                     ((ObservableCollection<PivotItem>)albumPivot.ItemsSource).Clear();
                 }
+                DataContext = null;
                 this.Content = null;
                 if (_gcCount <= 0)
                     Task.Factory.StartNew(RunGC, TaskCreationOptions.LongRunning);
