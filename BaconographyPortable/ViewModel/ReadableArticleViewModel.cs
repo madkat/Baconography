@@ -121,7 +121,9 @@ namespace BaconographyPortable.ViewModel
             string nextUrl = url;
             string title = null;
             List<object> result = new List<object>();
-            while (!string.IsNullOrEmpty(nextUrl))
+            int i = 0;
+            //max out at 8 pages so we dont run forever on wierd page designs
+            while (!string.IsNullOrEmpty(nextUrl) && i++ < 8)
             {
                 var loadResult = await LoadOneImpl(httpService, nextUrl, result);
                 if (title == null)
