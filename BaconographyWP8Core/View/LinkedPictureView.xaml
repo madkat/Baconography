@@ -52,7 +52,7 @@
     </toolkit:GestureService.GestureListener>
     <Grid>
         <phone:Pivot HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
-                    Margin="0" Padding="0" x:Name="albumPivot"
+                    Margin="0,40,0,0" Padding="0" x:Name="albumPivot"
                     ItemsSource="{Binding Converter={StaticResource reifiedAlbumItemConverter}}"
                     LoadingPivotItem="albumPivot_LoadingPivotItem"
                     UnloadingPivotItem="albumPivot_UnloadingPivotItem"

@@ -130,10 +130,9 @@
 
     <Grid>
         <Grid x:Name="overlay" VerticalAlignment="Top" Opacity="{Binding Opacity, ElementName=theControl}" Background="{StaticResource PhoneChromeBrush}">
-
             <TextBlock HorizontalAlignment="Right"  Margin="12,36,12,6" FontSize="22" Foreground="{StaticResource PhoneForegroundBrush}" 
-                       Text="{Binding Text, ElementName=theControl}" TextWrapping="Wrap"
-                       x:Name="caption" />
+                        Text="{Binding Text, ElementName=theControl}" TextWrapping="Wrap"
+                        x:Name="caption"/>
         </Grid>
         <Rectangle VerticalAlignment="Bottom" HorizontalAlignment="Stretch" Height="90" Fill="{StaticResource PhoneChromeBrush}"
                    Visibility="{Binding Source={StaticResource orientationManager}, Path=ShowAppBarVertical, Converter={StaticResource invertBooleanVisibilityConverter}}"/>

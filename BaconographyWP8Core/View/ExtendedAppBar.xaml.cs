@@ -12,6 +12,7 @@ using System.Windows.Input;
 using System.Windows.Threading;
 using System.Windows.Media.Animation;
 using System.Windows.Media;
+using GalaSoft.MvvmLight.Command;
 
 namespace BaconographyWP8Core.View
 {
@@ -58,6 +59,7 @@ namespace BaconographyWP8Core.View
 
         DateTime overlayEndTime = DateTime.Now.AddSeconds(5);
         bool overlayTimerRunning = false;
+        
 
         internal void Interact()
         {
@@ -141,8 +143,5 @@ namespace BaconographyWP8Core.View
         public static readonly DependencyProperty LastButtonTextProperty =
             DependencyProperty.Register("LastButtonText", typeof(string), typeof(ExtendedAppBar), new PropertyMetadata(""));
 
-
-
-        
     }
 }
