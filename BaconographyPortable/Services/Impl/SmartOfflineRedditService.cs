@@ -283,6 +283,21 @@ namespace BaconographyPortable.Services.Impl
             return _subscribedSubreddits;
         }
 
+        private async void MaybeRefreshSubscribedSubredditListing(User user)
+        {
+            var result = await _redditService.GetSubscribedSubredditListing();
+            if (result != null && result.Data.Children.Count > 0)
+            {
+                _subscribedSubredditListing = result;
+                _subscribedSubreddits = ThingUtility.HashifyListing(result.Data.Children);
+            }
+            else
+            {
+                _subscribedSubredditListing = await GetDefaultSubreddits();
+            }
+
+            await MaybeStoreSubscribedSubredditListing(result, user);
+        }
         
         public async Task<Listing> GetSubscribedSubredditListing()
         {
@@ -295,17 +310,28 @@ namespace BaconographyPortable.Services.Impl
                 if (_subscribedSubredditListing != null)
                     return _subscribedSubredditListing;
 
-                var result = await _redditService.GetSubscribedSubredditListing();
-                if (result != null && result.Data.Children.Count > 0)
+                var user = await _userService.GetUser();
+
+                var offlineSublist = await _offlineService.RetrieveOrderedThings("sublist:" + user.Username, TimeSpan.FromDays(30));
+                if(offlineSublist != null)
                 {
-                    _subscribedSubredditListing = result;
+                    MaybeRefreshSubscribedSubredditListing(user);
+                    return new Listing { Data = new ListingData { Children = new List<Thing>(offlineSublist) } };
                 }
                 else
                 {
-                    _subscribedSubredditListing = await GetDefaultSubreddits();
-                }
+                    var result = await _redditService.GetSubscribedSubredditListing();
+                    if (result != null && result.Data.Children.Count > 0)
+                    {
+                        _subscribedSubredditListing = result;
+                    }
+                    else
+                    {
+                        _subscribedSubredditListing = await GetDefaultSubreddits();
+                    }
 
-                await MaybeStoreSubscribedSubredditListing(result, await _userService.GetUser());
+                    await MaybeStoreSubscribedSubredditListing(result, user);
+                }
             }
             finally
             {
