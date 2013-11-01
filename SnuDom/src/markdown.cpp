@@ -232,7 +232,7 @@ free_link_refs(struct link_ref **references)
 			next = r->next;
 			bufrelease(r->link);
 			bufrelease(r->title);
-			free(r);
+			//free(r);
 			r = next;
 		}
 	}
