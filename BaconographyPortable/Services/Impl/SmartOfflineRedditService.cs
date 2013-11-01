@@ -3,6 +3,7 @@ using BaconographyPortable.Model.Reddit;
 using GalaSoft.MvvmLight.Messaging;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -285,18 +286,26 @@ namespace BaconographyPortable.Services.Impl
 
         private async void MaybeRefreshSubscribedSubredditListing(User user)
         {
-            var result = await _redditService.GetSubscribedSubredditListing();
-            if (result != null && result.Data.Children.Count > 0)
+            try
             {
-                _subscribedSubredditListing = result;
-                _subscribedSubreddits = ThingUtility.HashifyListing(result.Data.Children);
-            }
-            else
-            {
-                _subscribedSubredditListing = await GetDefaultSubreddits();
-            }
+                var result = await _redditService.GetSubscribedSubredditListing();
+                if (result != null && result.Data.Children.Count > 0)
+                {
+                    _subscribedSubredditListing = result;
+                    _subscribedSubreddits = ThingUtility.HashifyListing(result.Data.Children);
+                }
+                else
+                {
+                    _subscribedSubredditListing = await GetDefaultSubreddits();
+                }
 
-            await MaybeStoreSubscribedSubredditListing(result, user);
+                await MaybeStoreSubscribedSubredditListing(result, user);
+            }
+            catch(Exception ex) 
+            {
+                //this runs off the main thread so failure here takes out the entire application without warning
+                Debug.WriteLine(ex);
+            }
         }
         
         public async Task<Listing> GetSubscribedSubredditListing()
