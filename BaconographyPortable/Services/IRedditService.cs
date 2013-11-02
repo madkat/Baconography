@@ -45,7 +45,7 @@ namespace BaconographyPortable.Services
         Task SubmitCaptcha(string captcha);
         void AddFlairInfo(string linkId, string opName);
         Task ReadMessage(string id);
-        Task MarkVisited(string id);
+        Task MarkVisited(IEnumerable<string> ids);
 
         AuthorFlairKind GetUsernameModifiers(string username, string linkid, string subreddit);
     }

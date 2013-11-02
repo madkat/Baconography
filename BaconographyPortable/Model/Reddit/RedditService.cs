@@ -1082,16 +1082,17 @@ namespace BaconographyPortable.Model.Reddit
             ProcessJsonErrors(await _simpleHttpService.SendPost(await GetCurrentLoginCookie(), content, targetUri));
         }
 
-        public async Task MarkVisited(string id)
+        public async Task MarkVisited(IEnumerable<string> ids)
         {
             var modhash = await GetCurrentModhash();
 
             var arguments = new Dictionary<string, string>
             {
-                {"id", id}
+                {"links", string.Join(",", ids)},
+                { "uh", modhash}
             };
 
-            ProcessJsonErrors(await this.SendPost(await GetCurrentLoginCookie(), arguments, "http://www.reddit.com/api/visited"));
+            ProcessJsonErrors(await this.SendPost(await GetCurrentLoginCookie(), arguments, "http://www.reddit.com/api/store_visits"));
         }
     }
 }

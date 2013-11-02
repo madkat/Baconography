@@ -866,9 +866,9 @@ namespace BaconographyPortable.Services.Impl
                 await _offlineService.EnqueueAction("UnSaveThing", new Dictionary<string, string> { { "thingId", thingId } });
         }
 
-        public Task MarkVisited(string id)
+        public Task MarkVisited(IEnumerable<string> ids)
         {
-            return _redditService.MarkVisited(id);
+            return _redditService.MarkVisited(ids);
         }
     }
 }
