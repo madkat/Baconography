@@ -63,5 +63,8 @@ namespace BaconographyPortable.Services
         Task<Thing> GetSubreddit(string name);
         Task StoreSubreddit(TypedThing<Subreddit> subreddit);
         uint GetHash(string name);
+
+        Task StoreBlob(string name, object serializable);
+        Task<T> RetriveBlob<T>(string name, TimeSpan maxAge);
     }
 }

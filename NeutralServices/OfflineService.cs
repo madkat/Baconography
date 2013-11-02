@@ -926,6 +926,77 @@ namespace Baconography.NeutralServices
             return await _comments.GetCommentMetadata(permalink);
 
         }
+
+
+        public async Task StoreBlob(string name, object serializable)
+        {
+            try
+            {
+                await Initialize();
+                var compressor = new BaconographyPortable.Model.Compression.CompressionService();
+                var compressedBytes = compressor.Compress(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(serializable)));
+                var recordBytes = new byte[compressedBytes.Length + 12];
+                Array.Copy(compressedBytes, 0, recordBytes, 12, compressedBytes.Length);
+                //the 8 bytes not written here will be filled with the current time stamp by kdb
+                Array.Copy(BitConverter.GetBytes(name.GetHashCode()), recordBytes, 4);
+
+                if (_terminateSource.IsCancellationRequested)
+                    return;
+
+                using (var blobCursor = await _blobStoreDb.SeekAsync(_blobStoreDb.GetKeys()[0], BitConverter.GetBytes(name.GetHashCode()), DBReadFlags.WaitOnLock))
+                {
+                    if (_terminateSource.IsCancellationRequested)
+                        return;
+                    if (blobCursor != null)
+                    {
+                        await blobCursor.UpdateAsync(recordBytes);
+                    }
+                    else
+                    {
+                        await _blobStoreDb.InsertAsync(recordBytes);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                var errorText = DBError.TranslateError((uint)ex.HResult);
+                //throw new Exception(errorText);
+                Debug.WriteLine(errorText);
+                Debug.WriteLine(ex.ToString());
+            }
+        }
+
+        public async Task<T> RetriveBlob<T>(string name, TimeSpan maxAge)
+        {
+            await Initialize();
+            try
+            {
+                using (var blobCursor = await _blobStoreDb.SeekAsync(_blobStoreDb.GetKeys()[0], BitConverter.GetBytes(name.GetHashCode()), DBReadFlags.WaitOnLock))
+                {
+                    if (blobCursor != null)
+                    {
+                        var gottenBlob = blobCursor.Get();
+                        var microseconds = BitConverter.ToInt64(gottenBlob, 4);
+                        var updatedTime = new DateTime(microseconds * 10).AddYears(1969);
+                        var blobAge = DateTime.Now - updatedTime;
+                        if (blobAge <= maxAge)
+                        {
+                            var compressor = new BaconographyPortable.Model.Compression.CompressionService();
+                            var decompressedBytes = compressor.Decompress(gottenBlob, 12);
+                            T result = JsonConvert.DeserializeObject<T>(Encoding.UTF8.GetString(decompressedBytes, 0, decompressedBytes.Length));
+                            return result;
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                var errorString = DBError.TranslateError((uint)ex.HResult);
+                Debug.WriteLine(errorString);
+            }
+
+            return default(T);
+        }
     }
 
 }
