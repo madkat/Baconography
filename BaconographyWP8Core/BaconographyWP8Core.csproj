@@ -133,6 +133,7 @@
     <Compile Include="PlatformServices\ImageAPI\Deviantart.cs" />
     <Compile Include="PlatformServices\ImageAPI\Flickr.cs" />
     <Compile Include="PlatformServices\ImageAPI\Imgur.cs" />
+    <Compile Include="PlatformServices\ImageAPI\Livememe.cs" />
     <Compile Include="PlatformServices\ImageAPI\Memecrunch.cs" />
     <Compile Include="PlatformServices\ImageAPI\Minus.cs" />
     <Compile Include="PlatformServices\ImageAPI\Picsarus.cs" />

@@ -69,6 +69,10 @@ namespace BaconographyWP8.PlatformServices
                     case "flickr.com":
                         imageAPIResults = await Flickr.GetImagesFromUri("", uri);
                         break;
+                    case "livememe.com":
+                    case "www.livememe.com":
+                        imageAPIResults = Livememe.GetImagesFromUri("", uri);
+                        break;
                 }
 
                 if (imageAPIResults != null)
