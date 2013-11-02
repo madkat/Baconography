@@ -188,9 +188,9 @@ namespace BaconographyPortable.ViewModel
             }
         }
 
-        LinkViewModelCollection _links;
+        ThingViewModelCollection _links;
 
-        public LinkViewModelCollection Links
+        public ThingViewModelCollection Links
         {
             get
             {
@@ -202,7 +202,7 @@ namespace BaconographyPortable.ViewModel
             }
         }
 
-        private LinkViewModelCollection LinksImpl()
+        private ThingViewModelCollection LinksImpl()
         {
             string subreddit = "/", subredditId = null;
             if(_selectedSubreddit != null)
@@ -211,9 +211,19 @@ namespace BaconographyPortable.ViewModel
                 subredditId = _selectedSubreddit.Data.Name;
             }
 
-            var newCollection = new LinkViewModelCollection(_baconProvider, subreddit, subredditId);
-            newCollection.CollectionChanged += newCollection_CollectionChanged;
-            return newCollection;
+            if (subredditId == "offline")
+            {
+                var newCollection = new OfflineContentCollection(_baconProvider);
+                return newCollection;
+            }
+            else
+            {
+                var newCollection = new LinkViewModelCollection(_baconProvider, subreddit, subredditId);
+                newCollection.CollectionChanged += newCollection_CollectionChanged;
+                return newCollection;
+            }
+
+            
         }
 
         void newCollection_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)

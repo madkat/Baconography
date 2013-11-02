@@ -927,6 +927,15 @@ namespace Baconography.NeutralServices
 
         }
 
+        public async Task<Tuple<IEnumerable<Listing>, DateTime>> GetCommentsByDate(DateTime? olderThan, int count)
+        {
+            await SecondaryInitialize();
+            if (_terminateSource.IsCancellationRequested)
+                return null;
+
+            return await _comments.GetCommentsByDate(olderThan, count);
+        }
+
 
         public async Task StoreBlob(string name, object serializable)
         {

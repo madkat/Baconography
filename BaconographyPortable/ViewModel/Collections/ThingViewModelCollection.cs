@@ -166,9 +166,10 @@ namespace BaconographyPortable.ViewModel.Collections
 
                 if (initialListing == null || initialListing.Data.Children.Count == 0)
                 {
-                    initialListing = await _onlineListingProvider.GetInitialListing(state);
+                    if (_onlineListingProvider != null)
+                        initialListing = await _onlineListingProvider.GetInitialListing(state);
                 }
-                else if (!(_offlineListingProvider is IDontRefreshAutomatically))
+                else if (!(_offlineListingProvider is IDontRefreshAutomatically) && _onlineListingProvider != null)
                 {
                     BackgroundUpdate(state);
                 }
@@ -180,7 +181,7 @@ namespace BaconographyPortable.ViewModel.Collections
         private async Task UpdateImpl(Dictionary<object, object> state, CancellationToken token)
         {
             Messenger.Default.Send<LoadingMessage>(new LoadingMessage { Loading = true });
-            var targetListing = await _onlineListingProvider.GetInitialListing(state);
+            var targetListing = await (_onlineListingProvider ?? _offlineListingProvider).GetInitialListing(state);
 
             if (token.IsCancellationRequested)
                 return;
@@ -262,7 +263,7 @@ namespace BaconographyPortable.ViewModel.Collections
 
         private Task<Listing> GetAdditionalListing(string after, Dictionary<object, object> state)
         {
-            if (_settingsService.IsOnline())
+            if (_settingsService.IsOnline() && _onlineListingProvider != null)
                 return _onlineListingProvider.GetAdditionalListing(after, state);
             else
                 return _offlineListingProvider.GetAdditionalListing(after, state);
@@ -270,7 +271,7 @@ namespace BaconographyPortable.ViewModel.Collections
 
         private Task<Listing> GetMore(IEnumerable<string> ids, Dictionary<object, object> state)
         {
-            if (_settingsService.IsOnline())
+            if (_settingsService.IsOnline() && _onlineListingProvider != null)
                 return _onlineListingProvider.GetMore(ids, state);
             else
                 return _offlineListingProvider.GetMore(ids, state);

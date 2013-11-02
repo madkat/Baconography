@@ -47,6 +47,7 @@ namespace BaconographyPortable.ViewModel
             _loggedInUser = obj.CurrentUser != null && obj.CurrentUser.Username != null;
             _searchString = "";
             SearchSubNewGroup.Clear();
+            SearchSubNewGroup.Add(new SubredditGroupBridge(new ViewModelBase[] { new AboutSubredditViewModel(_baconProvider, ThingUtility.GetOfflinePageThing(), false) }, "Offline Content", false));
             if (MainViewModel != null && MainViewModel is MultipleRedditMainViewModel)
             {
                 SearchSubNewGroup.Add(new SubredditGroupBridge(((MultipleRedditMainViewModel)MainViewModel).PivotItems, "Pivot", true));
@@ -84,6 +85,10 @@ namespace BaconographyPortable.ViewModel
             {
                 Title = title;
                 Visible = visible;
+                if (title == "Offline")
+                    Offline = true;
+                else
+                    Offline = false;
             }
 
             public SubredditGroupBridge(ObservableCollection<ViewModelBase> viewModels, string title, bool visible)
@@ -108,6 +113,7 @@ namespace BaconographyPortable.ViewModel
             }
             public string Title { get; set; }
             public bool Visible { get; set; }
+            public bool Offline { get; set; }
         }
 
         private SubredditViewModelCollection PlainSubreddits { get; set; }
@@ -133,6 +139,9 @@ namespace BaconographyPortable.ViewModel
                     {
                         SearchResults = null;
                         SearchSubNewGroup.Clear();
+
+                        SearchSubNewGroup.Add(new SubredditGroupBridge(new ViewModelBase[] { new AboutSubredditViewModel(_baconProvider, ThingUtility.GetOfflinePageThing(), false) }, "Offline Content", false));
+
                         if (MainViewModel != null && MainViewModel is MultipleRedditMainViewModel)
                         {
                             SearchSubNewGroup.Add(new SubredditGroupBridge(((MultipleRedditMainViewModel)MainViewModel).PivotItems, "Pivot", true));

@@ -295,5 +295,6 @@ namespace BaconographyPortable.ViewModel
             MessengerInstance.Unregister<SelectSubredditMessage>(this);
             MessengerInstance.Unregister<SettingsChangedMessage>(this);
         }
+
     }
 }

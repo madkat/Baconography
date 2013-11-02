@@ -20,8 +20,8 @@ namespace Baconography.NeutralServices.KitaroDB
 {
     class Comments
     {
-		private static string commentsDatabase = Windows.Storage.ApplicationData.Current.LocalFolder.Path + "\\comments-v3.ism";
-        private static string commentsMetaDatabase = Windows.Storage.ApplicationData.Current.LocalFolder.Path + "\\comments-meta-v2.ism";
+		private static string commentsDatabase = Windows.Storage.ApplicationData.Current.LocalFolder.Path + "\\comments-v4.ism";
+        private static string commentsMetaDatabase = Windows.Storage.ApplicationData.Current.LocalFolder.Path + "\\comments-meta-v3.ism";
 
         private static Task<Comments> _instanceTask;
         CancellationTokenSource _terminateSource = new CancellationTokenSource();
@@ -35,7 +35,7 @@ namespace Baconography.NeutralServices.KitaroDB
 			var db = await DB.CreateAsync(commentsDatabase, DBCreateFlags.None, 0, new DBKey[]
             {
                 new DBKey(20, 0, DBKeyFlags.Alpha, "permalinkhash", false, false, false, 0),
-                new DBKey(8, 20, DBKeyFlags.AutoTime, "creation_timestamp", false, false, false, 1)
+                new DBKey(8, 20, DBKeyFlags.AutoTime, "creation_timestamp", false, false, true, 1)
             });
             return db;
         }
@@ -45,7 +45,7 @@ namespace Baconography.NeutralServices.KitaroDB
             var db = await DB.CreateAsync(commentsMetaDatabase, DBCreateFlags.None, 36, new DBKey[]
             {
                 new DBKey(20, 0, DBKeyFlags.Alpha, "permalinkhash", false, false, false, 0),
-                new DBKey(8, 20, DBKeyFlags.AutoTime, "creation_timestamp", false, false, false, 1)
+                new DBKey(8, 20, DBKeyFlags.AutoTime, "creation_timestamp", false, false, true, 1)
             });
             return db;
         }
@@ -253,6 +253,53 @@ namespace Baconography.NeutralServices.KitaroDB
             return null;
             
         }
+
+        public async Task<Tuple<IEnumerable<Listing>, DateTime>> GetCommentsByDate(DateTime? olderThan, int count)
+        {
+            try
+            {
+                DBCursor blobCursor = null;
+
+                if (olderThan.HasValue)
+                {
+                    var subtractedTime = olderThan.Value.Subtract(new DateTime(1969, 1, 1));
+                    var olderThanKey = BitConverter.GetBytes(subtractedTime.Ticks * 10);
+                    blobCursor = await _commentsDB.SeekAsync(_commentsDB.GetKeys()[1], olderThanKey, DBReadFlags.WaitOnLock | DBReadFlags.MatchGreater);
+                }
+                else
+                {
+                    blobCursor = await _commentsDB.SeekAsync(DBReadFlags.WaitOnLock);
+                }
+
+                using (blobCursor)
+                {
+                    if (blobCursor != null)
+                    {
+                        List<Listing> results = new List<Listing>();
+                        DateTime lastReadTime;
+                        do
+                        {
+                            var gottenBlob = blobCursor.Get();
+
+                            var microseconds = BitConverter.ToInt64(gottenBlob, 20);
+                            lastReadTime = new DateTime(microseconds * 10).AddYears(1969);
+
+                            var compressor = new BaconographyPortable.Model.Compression.CompressionService();
+                            var decompressedBytes = compressor.Decompress(gottenBlob, 28);
+                            var result = JsonConvert.DeserializeObject<Listing>(Encoding.UTF8.GetString(decompressedBytes, 0, decompressedBytes.Length));
+                            results.Add(result);
+                        } while (await blobCursor.MoveNextAsync() && (--count) > 0);
+                        return Tuple.Create((IEnumerable<Listing>)results, lastReadTime);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex);
+            }
+            return null;
+        }
+
 
         internal void Resume()
         {

@@ -43,5 +43,22 @@ namespace BaconographyPortable.Model.Reddit
             frontPage.Kind = "t5";
             return frontPage;
         }
+
+        public static Thing GetOfflinePageThing()
+        {
+            Thing frontPage = new Thing();
+            frontPage.Data = new Subreddit
+            {
+                DisplayName = "offline content",
+                Url = "offline content",
+                Name = "offline content",
+                Id = "offline content",
+                Subscribers = 1,
+                HeaderImage = "/Assets/reddit.png",
+                PublicDescription = "Offline content stored on this device."
+            };
+            frontPage.Kind = "t5";
+            return frontPage;
+        }
     }
 }
