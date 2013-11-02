@@ -21,16 +21,21 @@ namespace BaconographyPortable.Services
         Task<Listing> GetSubreddits(int? limit);
         Task<TypedThing<Subreddit>> GetSubreddit(string name);
         Task<Listing> GetPostsByUser(string username, int? limit);
+        Task<Listing> GetSaved(int? limit);
+        Task<Listing> GetLiked(int? limit);
+        Task<Listing> GetDisliked(int? limit);
         Task<Listing> GetPostsBySubreddit(string subreddit, int? limit);
         Task<Listing> GetMoreOnListing(IEnumerable<string> childrenIds, string contentId, string subreddit);
         Task<Listing> GetCommentsOnPost( string subreddit, string permalink, int? limit);
         Task<Listing> GetMessages(int? limit);
+        Task<Listing> GetSentMessages(int? limit);
         Task<Thing> GetLinkByUrl(string url);
         Task<Listing> GetAdditionalFromListing(string baseUrl, string after, int? limit);
         Task<TypedThing<Account>> GetAccountInfo(string accountName);
         Task AddVote(string thingId, int direction);
         Task AddSubredditSubscription(string subreddit, bool unsub);
         Task AddSavedThing(string thingId);
+        Task UnSaveThing(string thingId);
         Task AddReportOnThing(string thingId);
         Task AddPost(string kind, string url, string text, string subreddit, string title);
         Task EditPost(string text, string name);
@@ -40,6 +45,7 @@ namespace BaconographyPortable.Services
         Task SubmitCaptcha(string captcha);
         void AddFlairInfo(string linkId, string opName);
         Task ReadMessage(string id);
+        Task MarkVisited(string id);
 
         AuthorFlairKind GetUsernameModifiers(string username, string linkid, string subreddit);
     }

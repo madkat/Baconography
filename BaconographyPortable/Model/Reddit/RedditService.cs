@@ -1007,5 +1007,91 @@ namespace BaconographyPortable.Model.Reddit
             return (!string.IsNullOrWhiteSpace(meString) && meString != "{}");
         }
 
+        public async Task<Listing> GetSaved(int? limit)
+        {
+            return await GetUserInfoListing("saved", limit);
+        }
+
+        public async Task<Listing> GetLiked(int? limit)
+        {
+            return await GetUserInfoListing("liked", limit);
+        }
+
+        private async Task<Listing> GetUserInfoListing(string kind, int? limit)
+        {
+            var maxLimit = (await UserIsGold()) ? 1500 : 100;
+            var guardedLimit = Math.Min(maxLimit, limit ?? maxLimit);
+
+            var targetUri = string.Format("http://www.reddit.com/user/{0}/{2}/.json?limit={1}", (await _userService.GetUser()).Username, guardedLimit, kind);
+
+            try
+            {
+                var info = await _simpleHttpService.SendGet(await GetCurrentLoginCookie(), targetUri);
+                var newListing = JsonConvert.DeserializeObject<Listing>(info);
+
+                return MaybeFilterForNSFW(newListing);
+            }
+            catch (Exception ex)
+            {
+                _notificationService.CreateErrorNotification(ex);
+                return new Listing { Kind = "Listing", Data = new ListingData { Children = new List<Thing>() } };
+            }
+        }
+
+        public async Task<Listing> GetDisliked(int? limit)
+        {
+            return await GetUserInfoListing("disliked", limit);
+        }
+
+        public async Task<Listing> GetSentMessages(int? limit)
+        {
+            var maxLimit = (await UserIsGold()) ? 1500 : 100;
+            var guardedLimit = Math.Min(maxLimit, limit ?? maxLimit);
+
+            var targetUri = string.Format("http://www.reddit.com/message/sent/.json?limit={0}", guardedLimit);
+
+            try
+            {
+                var messages = await _simpleHttpService.SendGet(await GetCurrentLoginCookie(), targetUri);
+                if (messages == "\"{}\"")
+                {
+                    return new Listing { Kind = "Listing", Data = new ListingData { Children = new List<Thing>() } };
+                }
+                // Hacky hack mcHackerson
+                messages = messages.Replace("\"kind\": \"t1\"", "\"kind\": \"t4.5\"");
+                return JsonConvert.DeserializeObject<Listing>(messages);
+            }
+            catch (Exception ex)
+            {
+                _notificationService.CreateErrorNotification(ex);
+                return new Listing { Kind = "Listing", Data = new ListingData { Children = new List<Thing>() } };
+            }
+        }
+
+        public async Task UnSaveThing(string thingId)
+        {
+            var modhash = await GetCurrentModhash();
+            var targetUri = "http://www.reddit.com/api/unsave";
+
+            var content = new Dictionary<string, string>
+            {
+                { "id", thingId},
+                { "uh", modhash}
+            };
+
+            ProcessJsonErrors(await _simpleHttpService.SendPost(await GetCurrentLoginCookie(), content, targetUri));
+        }
+
+        public async Task MarkVisited(string id)
+        {
+            var modhash = await GetCurrentModhash();
+
+            var arguments = new Dictionary<string, string>
+            {
+                {"id", id}
+            };
+
+            ProcessJsonErrors(await this.SendPost(await GetCurrentLoginCookie(), arguments, "http://www.reddit.com/api/visited"));
+        }
     }
 }

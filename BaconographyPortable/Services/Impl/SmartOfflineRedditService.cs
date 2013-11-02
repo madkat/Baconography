@@ -742,6 +742,11 @@ namespace BaconographyPortable.Services.Impl
                                         await AddSavedThing(actionTpl.Item2["thingId"]);
                                         break;
                                     }
+                                case "UnSaveThing":
+                                    {
+                                        await UnSaveThing(actionTpl.Item2["thingId"]);
+                                        break;
+                                    }
                                 case "AddReportOnThing":
                                     {
                                         await AddReportOnThing(actionTpl.Item2["thingId"]);
@@ -831,6 +836,39 @@ namespace BaconographyPortable.Services.Impl
         public Task ReadMessage(string id)
         {
             return _redditService.ReadMessage(id);
+        }
+
+        public Task<Listing> GetSaved(int? limit)
+        {
+            return _redditService.GetSaved(limit);
+        }
+
+        public Task<Listing> GetLiked(int? limit)
+        {
+            return _redditService.GetLiked(limit);
+        }
+
+        public Task<Listing> GetDisliked(int? limit)
+        {
+            return _redditService.GetDisliked(limit);
+        }
+
+        public Task<Listing> GetSentMessages(int? limit)
+        {
+            return _redditService.GetSentMessages(limit);
+        }
+
+        public async Task UnSaveThing(string thingId)
+        {
+            if (_settingsService.IsOnline() && (await _userService.GetUser()).Username != null)
+                await _redditService.UnSaveThing(thingId);
+            else
+                await _offlineService.EnqueueAction("UnSaveThing", new Dictionary<string, string> { { "thingId", thingId } });
+        }
+
+        public Task MarkVisited(string id)
+        {
+            return _redditService.MarkVisited(id);
         }
     }
 }
