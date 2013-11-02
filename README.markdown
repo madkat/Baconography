@@ -5,6 +5,7 @@ Baconography is an open source reddit client built from the ground up to provide
 *   Visual Studio 2012 (Express should work)
 *   Windows 8
 *   [KitaroDB SDK & KitaroDB WP8 SDK](http://kitarodb.com/kitarodb-for-winrt/)
+*   [Microsoft Player Framework](http://playerframework.codeplex.com/)
 
 # Instructions for building
 Open the solution file with Visual Studio 2012. If you don't already have one, you will be prompted for a developer license; all it takes is a Microsoft Live account.
