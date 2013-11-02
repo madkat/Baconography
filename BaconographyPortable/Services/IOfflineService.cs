@@ -22,7 +22,7 @@ namespace BaconographyPortable.Services
         Task<Tuple<int, int>> GetCommentMetadata(string permalink);
         Task<Listing> GetTopLevelComments(string permalink, int count);
         Task<Listing> GetMoreComments(string subredditId, string linkId, IEnumerable<string> ids);
-        Task<Tuple<IEnumerable<Listing>, DateTime>> GetCommentsByDate(DateTime? olderThan, int count);
+        Task<Tuple<IEnumerable<Listing>, long>> GetCommentsByInsertion(long? after, int count);
 
         Task StoreMessages(User user, Listing listing);
         Task<Listing> GetMessages(User user);

@@ -927,13 +927,13 @@ namespace Baconography.NeutralServices
 
         }
 
-        public async Task<Tuple<IEnumerable<Listing>, DateTime>> GetCommentsByDate(DateTime? olderThan, int count)
+        public async Task<Tuple<IEnumerable<Listing>, long>> GetCommentsByInsertion(long? after, int count)
         {
             await SecondaryInitialize();
             if (_terminateSource.IsCancellationRequested)
                 return null;
 
-            return await _comments.GetCommentsByDate(olderThan, count);
+            return await _comments.GetCommentsByInsertion(after, count);
         }
 
 

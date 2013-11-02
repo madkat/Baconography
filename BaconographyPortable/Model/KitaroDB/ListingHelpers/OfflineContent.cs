@@ -22,15 +22,24 @@ namespace BaconographyPortable.Model.KitaroDB.ListingHelpers
         public async Task<Listing> GetInitialListing(Dictionary<object, object> state)
         {
             //get initial chunk of comments
-            var commentBlock = await _offlineService.GetCommentsByDate(null, 20);
+            var commentBlock = await _offlineService.GetCommentsByInsertion(null, 20);
             if (commentBlock != null)
             {
                 return new Listing 
                 { 
                     Data = new ListingData 
                     { 
-                        After = commentBlock.Item2.ToBinary().ToString(),
-                        Children = commentBlock.Item1.Select(listing => listing.Data.Children.FirstOrDefault(thing => thing.Data is Link)).ToList()
+                        After = commentBlock.Item2.ToString(),
+                        Children = commentBlock.Item1.Select(listing => 
+                            {
+                                var resultLink = listing.Data.Children.FirstOrDefault(thing => thing.Data is Link);
+                                if (resultLink != null)
+                                {
+                                    ((Link)resultLink.Data).Offlined = true;
+                                }
+                                return resultLink;
+                            }).Where(link => link != null)
+                            .ToList()
                     }
                 };
             }
@@ -42,19 +51,27 @@ namespace BaconographyPortable.Model.KitaroDB.ListingHelpers
 
         public async Task<Listing> GetAdditionalListing(string after, Dictionary<object, object> state)
         {
-            long afterDateLong;
-            if (long.TryParse(after, out afterDateLong))
+            long afterLong;
+            if (long.TryParse(after, out afterLong))
             {
-                var afterDate = DateTime.FromBinary(afterDateLong);
-                var commentBlock = await _offlineService.GetCommentsByDate(afterDate, 20);
+                var commentBlock = await _offlineService.GetCommentsByInsertion(afterLong, 20);
                 if (commentBlock != null)
                 {
                     return new Listing
                     {
                         Data = new ListingData
                         {
-                            After = commentBlock.Item2.ToBinary().ToString(),
-                            Children = commentBlock.Item1.Select(listing => listing.Data.Children.FirstOrDefault(thing => thing.Data is Link)).ToList()
+                            After = commentBlock.Item2.ToString(),
+                            Children = commentBlock.Item1.Select(listing =>
+                            {
+                                var resultLink = listing.Data.Children.FirstOrDefault(thing => thing.Data is Link);
+                                if (resultLink != null)
+                                {
+                                    ((Link)resultLink.Data).Offlined = true;
+                                }
+                                return resultLink;
+                            }).Where(link => link != null)
+                            .ToList()
                         }
                     };
                 }

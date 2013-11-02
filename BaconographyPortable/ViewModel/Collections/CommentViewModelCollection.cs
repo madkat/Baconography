@@ -42,7 +42,7 @@ namespace BaconographyPortable.ViewModel.Collections
             _targetName = targetName;
             _baconProvider = baconProvider;
             _settingsService = baconProvider.GetService<ISettingsService>();
-            if (_settingsService.IsOnline())
+            if (_settingsService.IsOnline() && (sourceLink == null || !(sourceLink.Data.Offlined ?? false)))
                 _listingProvider = new BaconographyPortable.Model.Reddit.ListingHelpers.PostComments(baconProvider, subreddit, permaLink, targetName);
             else
                 _listingProvider = new BaconographyPortable.Model.KitaroDB.ListingHelpers.PostComments(baconProvider, subredditId, permaLink, targetName);

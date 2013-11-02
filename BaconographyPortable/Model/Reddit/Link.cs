@@ -68,6 +68,10 @@ namespace BaconographyPortable.Model.Reddit
         public int Downs { get; set; }
         [JsonProperty("likes")]
         public bool? Likes { get; set; }
+        [JsonProperty("visited")]
+        public bool? Visited { get; set; }
+        [JsonProperty("offlined")]
+        public bool? Offlined { get; set; }
     }
 
     public class MediaEmbed

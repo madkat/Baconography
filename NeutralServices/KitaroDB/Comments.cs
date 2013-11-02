@@ -20,7 +20,7 @@ namespace Baconography.NeutralServices.KitaroDB
 {
     class Comments
     {
-		private static string commentsDatabase = Windows.Storage.ApplicationData.Current.LocalFolder.Path + "\\comments-v4.ism";
+		private static string commentsDatabase = Windows.Storage.ApplicationData.Current.LocalFolder.Path + "\\comments-v6.ism";
         private static string commentsMetaDatabase = Windows.Storage.ApplicationData.Current.LocalFolder.Path + "\\comments-meta-v3.ism";
 
         private static Task<Comments> _instanceTask;
@@ -35,7 +35,8 @@ namespace Baconography.NeutralServices.KitaroDB
 			var db = await DB.CreateAsync(commentsDatabase, DBCreateFlags.None, 0, new DBKey[]
             {
                 new DBKey(20, 0, DBKeyFlags.Alpha, "permalinkhash", false, false, false, 0),
-                new DBKey(8, 20, DBKeyFlags.AutoTime, "creation_timestamp", false, false, true, 1)
+                new DBKey(8, 20, DBKeyFlags.AutoTime, "creation_timestamp", false, false, false, 1),
+                new DBKey(8, 28, DBKeyFlags.AutoSequence, "insert_order", false, false, true, 2)
             });
             return db;
         }
@@ -45,7 +46,7 @@ namespace Baconography.NeutralServices.KitaroDB
             var db = await DB.CreateAsync(commentsMetaDatabase, DBCreateFlags.None, 36, new DBKey[]
             {
                 new DBKey(20, 0, DBKeyFlags.Alpha, "permalinkhash", false, false, false, 0),
-                new DBKey(8, 20, DBKeyFlags.AutoTime, "creation_timestamp", false, false, true, 1)
+                new DBKey(8, 20, DBKeyFlags.AutoTime, "creation_timestamp", false, false, false, 1)
             });
             return db;
         }
@@ -134,9 +135,9 @@ namespace Baconography.NeutralServices.KitaroDB
 
                 var compressor = new BaconographyPortable.Model.Compression.CompressionService();
                 var compressedBytes = compressor.Compress(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(listing)));
-                var recordBytes = new byte[compressedBytes.Length + 28];
+                var recordBytes = new byte[compressedBytes.Length + 36];
 
-                Array.Copy(compressedBytes, 0, recordBytes, 28, compressedBytes.Length);
+                Array.Copy(compressedBytes, 0, recordBytes, 36, compressedBytes.Length);
                 Array.Copy(keyBytes, 0, recordBytes, 0, keyBytes.Length);
 
                 if (_terminateSource.IsCancellationRequested)
@@ -215,6 +216,9 @@ namespace Baconography.NeutralServices.KitaroDB
 
         public async Task<Listing> GetTopLevelComments(string permalink, int count)
         {
+            if (permalink.EndsWith(".json?sort=hot"))
+                permalink = permalink.Replace(".json?sort=hot", "");
+
 #if WINDOWS_PHONE
             var keyBytes = permalinkDigest.ComputeHash(Encoding.UTF8.GetBytes(permalink));
 #else
@@ -229,7 +233,7 @@ namespace Baconography.NeutralServices.KitaroDB
                     {
                         var gottenBlob = blobCursor.Get();
                         var compressor = new BaconographyPortable.Model.Compression.CompressionService();
-                        var decompressedBytes = compressor.Decompress(gottenBlob, 28);
+                        var decompressedBytes = compressor.Decompress(gottenBlob, 36);
                         var result = JsonConvert.DeserializeObject<Listing>(Encoding.UTF8.GetString(decompressedBytes, 0, decompressedBytes.Length));
                         return result;
                     }
@@ -254,42 +258,26 @@ namespace Baconography.NeutralServices.KitaroDB
             
         }
 
-        public async Task<Tuple<IEnumerable<Listing>, DateTime>> GetCommentsByDate(DateTime? olderThan, int count)
+        public async Task<Tuple<IEnumerable<Listing>, long>> GetCommentsByInsertion(long? after, int count)
         {
             try
             {
-                DBCursor blobCursor = null;
-
-                if (olderThan.HasValue)
-                {
-                    var subtractedTime = olderThan.Value.Subtract(new DateTime(1969, 1, 1));
-                    var olderThanKey = BitConverter.GetBytes(subtractedTime.Ticks * 10);
-                    blobCursor = await _commentsDB.SeekAsync(_commentsDB.GetKeys()[1], olderThanKey, DBReadFlags.WaitOnLock | DBReadFlags.MatchGreater);
-                }
-                else
-                {
-                    blobCursor = await _commentsDB.SeekAsync(DBReadFlags.WaitOnLock);
-                }
-
-                using (blobCursor)
+                using (var blobCursor = await _commentsDB.SeekAsync(_commentsDB.GetKeys()[2], BitConverter.GetBytes(after ?? long.MaxValue), DBReadFlags.WaitOnLock | DBReadFlags.MatchGreater))
                 {
                     if (blobCursor != null)
                     {
                         List<Listing> results = new List<Listing>();
-                        DateTime lastReadTime;
+                        long lastSequence = 0;
                         do
                         {
                             var gottenBlob = blobCursor.Get();
-
-                            var microseconds = BitConverter.ToInt64(gottenBlob, 20);
-                            lastReadTime = new DateTime(microseconds * 10).AddYears(1969);
-
+                            lastSequence = BitConverter.ToInt64(gottenBlob, 28);
                             var compressor = new BaconographyPortable.Model.Compression.CompressionService();
-                            var decompressedBytes = compressor.Decompress(gottenBlob, 28);
+                            var decompressedBytes = compressor.Decompress(gottenBlob, 36);
                             var result = JsonConvert.DeserializeObject<Listing>(Encoding.UTF8.GetString(decompressedBytes, 0, decompressedBytes.Length));
                             results.Add(result);
                         } while (await blobCursor.MoveNextAsync() && (--count) > 0);
-                        return Tuple.Create((IEnumerable<Listing>)results, lastReadTime);
+                        return Tuple.Create((IEnumerable<Listing>)results, lastSequence);
                     }
                 }
             }
