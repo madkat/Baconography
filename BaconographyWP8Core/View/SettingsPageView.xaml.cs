@@ -355,8 +355,9 @@ namespace BaconographyWP8.View
                 );
         }
 
-        private async void Button_Click(object sender, RoutedEventArgs e)
+        private async void AdFreeUpgrade_Click(object sender, RoutedEventArgs e)
         {
+            var toggleSwitch = sender as ToggleSwitch;
             try
             {
                 ListingInformation products = await CurrentApp.LoadListingInformationByProductIdsAsync(new[] { "BaconographyWP8Upgrade" });
@@ -366,6 +367,8 @@ namespace BaconographyWP8.View
                 if (!products.ProductListings.TryGetValue("BaconographyWP8Upgrade", out productListing))
                 {
                     MessageBox.Show("Could not find product information");
+                    if (toggleSwitch != null)
+                        toggleSwitch.IsChecked = false;
                     return;
                 }
 
@@ -378,6 +381,8 @@ namespace BaconographyWP8.View
             catch (Exception)
             {
                 MessageBox.Show("Could not complete in app purchase");
+                if (toggleSwitch != null)
+                    toggleSwitch.IsChecked = false;
             }
  
         }

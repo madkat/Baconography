@@ -50,39 +50,40 @@
                     <ScrollViewer>
                         <StackPanel Margin="12,0,12,0">
                             <TextBlock FontWeight="SemiBold" Text="CONTENT"/>
-                            <Button Margin="12,0,0,0" Content="Upgrade to Ad-Free"
-                                IsEnabled="{Binding AllowAdvertising}" Click="Button_Click"/>
-                            <CheckBox Margin="12,0,0,0" Content="Allow NSFW (over 18) content"
+                            <toolkit:ToggleSwitch Header="Upgrade to Ad-Free"
+                                IsEnabled="{Binding AllowAdvertising}"
+                                IsChecked="{Binding AllowAdvertising, Converter={StaticResource invertBooleanConverter}}"
+                                Click="AdFreeUpgrade_Click"/>
+                            <toolkit:ToggleSwitch Header="Allow NSFW (over 18) content"
                                 IsChecked="{Binding AllowNSFWContent, Mode=TwoWay}" />
-                            <CheckBox Margin="12,0,0,0" Content="Only flipview unviewed content"
+                            <toolkit:ToggleSwitch Header="Only flipview unvisited content"
                                 IsChecked="{Binding OnlyFlipViewUnread, Mode=TwoWay}" />
-                            <CheckBox Margin="12,0,0,0" Content="Only flipview images"
+                            <toolkit:ToggleSwitch Header="Only flipview through images"
                                 IsChecked="{Binding OnlyFlipViewImages, Mode=TwoWay}" />
-                            <CheckBox Margin="12,0,0,0" Content="In app web content"
+                            <toolkit:ToggleSwitch Header="Visit web links in app"
                                 IsChecked="{Binding OptimizeWebContent, Mode=TwoWay}" />
 
                             <TextBlock FontWeight="SemiBold" Text="LAYOUT"/>
-                            <CheckBox Margin="12,0,0,0" Content="Left-handed mode"
+                            <toolkit:ToggleSwitch Header="Left-handed thumbnail layout"
                                 IsChecked="{Binding LeftHandedMode, Mode=TwoWay}" />
-                            <CheckBox Margin="12,0,0,0" Content="Simple layout"
+                            <toolkit:ToggleSwitch Header="Use single-reddit layout"
                                 IsChecked="{Binding SimpleLayoutMode, Mode=TwoWay}" />
-                            <CheckBox Margin="12,0,0,0" Content="One Touch Voting"
+                            <toolkit:ToggleSwitch Header="Enable one-touch voting"
                                 IsChecked="{Binding OneTouchVoteMode, Mode=TwoWay}" />
-                            <CheckBox Margin="12,0,0,0" Content="Orientation lock"
+                            <toolkit:ToggleSwitch Header="Lock current orientation"
                                 IsChecked="{Binding OrientationLock, Mode=TwoWay}"
                                 Checked="OrientationLock_Checked"
                                 Unchecked="OrientationLock_Unchecked"/>
-                            <CheckBox Margin="12,0,0,0" Content="Tap title for comments"
+                            <toolkit:ToggleSwitch Header="Tap title for comments"
                                 IsChecked="{Binding TapForComments, Mode=TwoWay}" />
-                            <CheckBox Margin="12,0,0,0" Content="Invert system theme"
+                            <toolkit:ToggleSwitch Header="Invert system theme"
                                 IsChecked="{Binding InvertSystemTheme, Mode=TwoWay}" />
-                            
-
-                            <CheckBox Margin="12,0,0,0" Content="Multi color comment margins"
+                            <toolkit:ToggleSwitch Header="Use multi-color comment margins"
                                 IsChecked="{Binding MultiColorCommentMargins, Mode=TwoWay}" />
 
+
                             <TextBlock FontWeight="SemiBold" Text="BACKGROUND"/>
-                            <CheckBox Margin="12,0,0,0" Content="Disable background activity"
+                            <toolkit:ToggleSwitch Header="Disable background activity"
                                 IsChecked="{Binding DisableBackground, Mode=TwoWay}" />
                             <StackPanel Orientation="Horizontal">
                                 <TextBlock HorizontalAlignment="Left" FontWeight="SemiBold" Text="OFFLINE CONTENT"/>
@@ -93,17 +94,17 @@
                                     Tap="HelpOfflineButton_Tap"
                                     Content="&#xE11B;" Style="{StaticResource RoundButtonStyle}"/>
                             </StackPanel>
-                            
-                            <CheckBox Margin="12,0,0,0" Content="Predictive offline caching"
+
+                            <toolkit:ToggleSwitch Header="Predictive offline caching"
                                 IsChecked="{Binding AllowPredictiveOfflining, Mode=TwoWay}" />
-                            <CheckBox Margin="12,0,0,0" Content="Overnight offline caching"
+                            <toolkit:ToggleSwitch Header="Overnight offline caching"
                                 IsChecked="{Binding EnableOvernightUpdates, Mode=TwoWay}" />
                             <StackPanel Orientation="Horizontal">
-                                <TextBlock Margin="24,0,0,0" Text="Cleanup data every"/>
+                                <TextBlock Margin="12,0,0,0" Text="Cleanup data every"/>
                                 <TextBlock Margin="6,0,0,0" Text="{Binding OfflineCacheDays}" />
                                 <TextBlock Margin="6,0,0,0" Text="days" />
                             </StackPanel>
-                            <Slider Margin="12,0,0,0" Minimum="1" Maximum="7" Value="{Binding OfflineCacheDays, Mode=TwoWay}"/>
+                            <Slider Margin="0,0,0,0" Minimum="1" Maximum="7" Value="{Binding OfflineCacheDays, Mode=TwoWay}"/>
                             <Button Margin="0,-12,0,0" Content="Clear Offline Data" Command="{Binding ClearOffline}"/>
 
                         </StackPanel>
@@ -116,8 +117,9 @@
                     <ScrollViewer>
                         <StackPanel Margin="12,0,12,0">
                             <Button Margin="12,0,0,0" Content="Change system settings" Click="ShowSystemLockScreenSettings"/>
-                            <CheckBox x:Name="lockStatus" Margin="12,0,0,0" Content="Baconography Lock Screens" 
-                                      Checked="SetLockScreen"/>
+                            <toolkit:ToggleSwitch Header="Baconography Lock Screens"
+                                x:Name="lockStatus"
+                                Checked="SetLockScreen"/>
 
                             <TextBlock FontWeight="SemiBold" Text="CONTENT PREFERENCES"/>
                             <RadioButton x:Name="userImageRadioButton" IsChecked="{Binding UseImagePickerForLockScreen, Mode=TwoWay}"
@@ -135,10 +137,13 @@
                             <Button Margin="12,0,0,0" Content="Customize overlay" Click="ShowLockScreenPreview"/>
 
                             <TextBlock FontWeight="SemiBold" Text="UPDATES"/>
-                            <CheckBox Margin="12,0,0,0" Content="Enable Updates" IsChecked="{Binding EnableUpdates, Mode=TwoWay}"/>
-                            <CheckBox Margin="12,0,0,0" Content="Update image only on Wifi" IsChecked="{Binding UpdateImagesOnlyOnWifi, Mode=TwoWay}"/>
-                            <CheckBox Margin="12,0,0,0" Content="Update top posts only on Wifi" IsChecked="{Binding UpdateOverlayOnlyOnWifi, Mode=TwoWay}"/>
-                            
+                            <toolkit:ToggleSwitch Header="Image and content updates"
+                                IsChecked="{Binding EnableUpdates, Mode=TwoWay}" />
+                            <toolkit:ToggleSwitch Header="Update images only on WiFi"
+                                IsChecked="{Binding UpdateImagesOnlyOnWifi, Mode=TwoWay}" />
+                            <toolkit:ToggleSwitch Header="Update top posts only on Wifi"
+                                IsChecked="{Binding UpdateOverlayOnlyOnWifi, Mode=TwoWay}" />
+
                         </StackPanel>
                     </ScrollViewer>
                 </Grid>
