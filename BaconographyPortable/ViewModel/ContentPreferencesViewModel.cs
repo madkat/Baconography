@@ -440,6 +440,19 @@ namespace BaconographyPortable.ViewModel
             }
         }
 
+        public bool OneTouchVoteMode
+        {
+            get
+            {
+                return _settingsService.OneTouchVoteMode;
+            }
+            set
+            {
+                _settingsService.OneTouchVoteMode = value;
+                RaisePropertyChanged("OneTouchVoteMode");
+            }
+        }
+
         public RelayCommand ClearOffline
         {
             get

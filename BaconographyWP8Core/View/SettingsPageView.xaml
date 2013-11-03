@@ -67,7 +67,7 @@
                             <CheckBox Margin="12,0,0,0" Content="Simple layout"
                                 IsChecked="{Binding SimpleLayoutMode, Mode=TwoWay}" />
                             <CheckBox Margin="12,0,0,0" Content="One Touch Voting"
-                                IsChecked="{Binding OneTouchVotingMode, Mode=TwoWay}" />
+                                IsChecked="{Binding OneTouchVoteMode, Mode=TwoWay}" />
                             <CheckBox Margin="12,0,0,0" Content="Orientation lock"
                                 IsChecked="{Binding OrientationLock, Mode=TwoWay}"
                                 Checked="OrientationLock_Checked"
