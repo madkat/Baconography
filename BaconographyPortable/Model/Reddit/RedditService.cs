@@ -1084,15 +1084,19 @@ namespace BaconographyPortable.Model.Reddit
 
         public async Task MarkVisited(IEnumerable<string> ids)
         {
-            var modhash = await GetCurrentModhash();
-
-            var arguments = new Dictionary<string, string>
+            var user = await _userService.GetUser();
+            if (user != null && user.Me != null && user.Me.IsGold)
             {
-                {"links", string.Join(",", ids)},
-                { "uh", modhash}
-            };
+                var modhash = await GetCurrentModhash();
 
-            ProcessJsonErrors(await this.SendPost(await GetCurrentLoginCookie(), arguments, "http://www.reddit.com/api/store_visits"));
+                var arguments = new Dictionary<string, string>
+                {
+                    {"links", string.Join(",", ids)},
+                    { "uh", modhash}
+                };
+
+                ProcessJsonErrors(await this.SendPost(await GetCurrentLoginCookie(), arguments, "http://www.reddit.com/api/store_visits"));
+            }
         }
     }
 }

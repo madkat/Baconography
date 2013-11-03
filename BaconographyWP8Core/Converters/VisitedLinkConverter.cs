@@ -63,7 +63,7 @@ namespace BaconographyWP8.Converters
             else if(value is LinkViewModel)
             {
                 var vm = value as LinkViewModel;
-                if (_offlineService.HasHistory(vm.IsSelfPost ? vm.LinkThing.Data.Permalink : vm.Url))
+                if (_offlineService.HasHistory(vm.IsSelfPost ? vm.LinkThing.Data.Permalink : vm.Url) || (vm.LinkThing.Data.Visited ?? false))
                     return history;
                 else
                     return noHistory;
