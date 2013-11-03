@@ -33,8 +33,14 @@ namespace BaconographyPortable.ViewModel
         {
             _launchBrowser = new RelayCommand(LaunchBrowserImpl);
         }
-        public static Task<ReadableArticleViewModel> LoadAtLeastOne(ISimpleHttpService httpService, string url, string linkId)
+        public static async Task<ReadableArticleViewModel> LoadAtLeastOne(ISimpleHttpService httpService, string url, string linkId)
         {
+            var offlineContent = await OfflineUtility.GetReadableArticle(url);
+            if (offlineContent != null)
+            {
+                return offlineContent;
+            }
+
             TaskCompletionSource<ReadableArticleViewModel> result = new TaskCompletionSource<ReadableArticleViewModel>();
             var articleViewModel = new ReadableArticleViewModel { ArticleUrl = url, ArticleParts = new ObservableCollection<object>(), LinkId = linkId, ContentIsFocused = true };
             LoadOneImpl(httpService, url, articleViewModel.ArticleParts).ContinueWith(async (task) =>
@@ -65,7 +71,7 @@ namespace BaconographyPortable.ViewModel
                         result.SetException(ex);
                     }
                 }, TaskScheduler.FromCurrentSynchronizationContext());
-            return result.Task;
+            return await result.Task;
             
         }
 

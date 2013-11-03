@@ -29,7 +29,7 @@ namespace BaconographyPortable.Common
                         break;
                     case LinkGlyphUtility.WebGlyph:
                         var loadedReadableArticle = await ReadableArticleViewModel.LoadFully(httpService, linkThing.Data.Url, linkThing.Data.Id);
-                        await offlineService.StoreBlob("boilerpipe:" + linkThing.Data.Url, new Tuple<object[], string, string>(loadedReadableArticle.ArticleParts.ToArray(), loadedReadableArticle.ArticleUrl, loadedReadableArticle.LinkId));
+                        await offlineService.StoreBlob("boilerpipe:" + linkThing.Data.Url, new Tuple<object[], string, string>(loadedReadableArticle.ArticleParts.ToArray(), loadedReadableArticle.Title, loadedReadableArticle.LinkId));
                         break;
                     case LinkGlyphUtility.CommentGlyph:
                         var targetLinkPermalink = linkThing.Data.Url.Substring(linkThing.Data.Url.IndexOf("reddit.com") + "reddit.com".Length);
@@ -45,6 +45,23 @@ namespace BaconographyPortable.Common
             catch (Exception ex)
             {
                 Debug.WriteLine(ex);
+            }
+        }
+
+        public static async Task<ReadableArticleViewModel> GetReadableArticle(string url)
+        {
+            try
+            {
+                var offlineService = ServiceLocator.Current.GetInstance<IOfflineService>();
+                var blobTpl = await offlineService.RetriveBlob<Tuple<object[], string, string>>("boilerpipe:" + url, TimeSpan.FromDays(1024));
+                if (blobTpl != null)
+                    return new ReadableArticleViewModel { ArticleUrl = url, LinkId = blobTpl.Item3, ArticleParts = new System.Collections.ObjectModel.ObservableCollection<object>(blobTpl.Item1), Title = blobTpl.Item2 };
+                else
+                    return null;
+            }
+            catch 
+            {
+                return null;
             }
         }
     }
