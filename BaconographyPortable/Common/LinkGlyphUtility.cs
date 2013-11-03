@@ -88,6 +88,8 @@ namespace BaconographyPortable.Common
                     targetHost == "i.imgur.com" ||
                     targetHost == "min.us" ||
                     targetHost == "www.quickmeme.com" ||
+                    targetHost == "www.livememe.com" ||
+                    targetHost == "livememe.com" ||
                     targetHost == "i.qkme.me" ||
                     targetHost == "quickmeme.com" ||
                     targetHost == "qkme.me" ||
