@@ -91,18 +91,12 @@
                     FontFamily="Segoe UI Symbol" HorizontalAlignment="Center"
                     Command="{Binding NavigateToComments}" CommandParameter="{Binding}">
                 <Grid>
-                    <TextBlock Margin="0,0,0,0" Foreground="Black" FontSize="45" Text="&#xE200;" />
-                    <TextBlock Margin="2,17,0,0" Foreground="White" FontSize="20" Text="{Binding Path=CommentCount}"
+                    <TextBlock Margin="0,0,0,0" Foreground="{StaticResource PhoneContrastBackgroundBrush}" FontSize="45" Text="&#xE200;" />
+                    <TextBlock Margin="2,17,0,0" Foreground="{StaticResource PhoneContrastForegroundBrush}" FontSize="20" Text="{Binding Path=CommentCount}"
                                HorizontalAlignment="Center"/>
                 </Grid>
             </Button>
         </Grid>
-        <StackPanel Grid.Row="1" Grid.ColumnSpan="2"
-            VerticalAlignment="Top" Orientation="Horizontal" Margin="0,3,0,0">
-            <!---->
-            
-        </StackPanel>
-
 
         <Grid Grid.Column="{Binding Source={StaticResource linkViewLayoutManager}, Path=PictureColumn}" Grid.Row="0" VerticalAlignment="Stretch"
               MinHeight="90" Width="100">
