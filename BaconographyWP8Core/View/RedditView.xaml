@@ -15,8 +15,11 @@
     Foreground="{StaticResource PhoneForegroundBrush}"
     d:DesignHeight="800" d:DesignWidth="480">
     <UserControl.Resources>
-        <DataTemplate x:Key="Type:LinkViewModel">
-            <local:LinkView/>
+        <DataTemplate x:Key="LinkType:Normal">
+            <local:LinkView />
+        </DataTemplate>
+        <DataTemplate x:Key="LinkType:OneTouch">
+            <local:OneTouchLinkView />
         </DataTemplate>
         <DataTemplate x:Key="Type:AdvertisementViewModel">
             <local:AdvertisementView Visibility="{Binding Path=DataContext.ShowAds, ElementName=linksView ,Converter={StaticResource booleanVisibilityConverter}}" Margin="-24,0,-24,0"/>

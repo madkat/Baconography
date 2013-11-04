@@ -36,6 +36,7 @@
                                    FontSize="15" Text="{Binding Path=AuthorFlairText}" Margin="4,3,0,0"
                                    Visibility="{Binding HasAuthorFlair, Converter={StaticResource booleanVisibilityConverter}}"/>
                         <TextBlock Margin="8,2,0,0" Foreground="Gray" FontSize="16" Text="{Binding Path=Votable.TotalVotes, Converter={StaticResource totalPointsConverter}}"/>
+                        <TextBlock Margin="3,2,0,0" Foreground="Gray" FontSize="16" Text="points"/>
                     </StackPanel>
                     <StackPanel VerticalAlignment="Top" Orientation="Horizontal" Margin="0,3,0,0">
                         <ContentControl Content="{Binding Votable, Converter={StaticResource voteIndicatorConverter}}"/>

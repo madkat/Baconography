@@ -11,7 +11,7 @@ namespace BaconographyWP8.Converters
     {
         public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
-            return string.Format("{0} points", value);
+            return string.Format("{0}", value);
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)

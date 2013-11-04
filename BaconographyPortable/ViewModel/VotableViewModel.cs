@@ -35,6 +35,7 @@ namespace BaconographyPortable.ViewModel
 
         public RelayCommand<VotableViewModel> ToggleUpvote { get { return _toggleUpvote; } }
         public RelayCommand<VotableViewModel> ToggleDownvote { get { return _toggleDownvote; } }
+        public RelayCommand<VotableViewModel> ToggleVote { get { return _toggleVote; } }
         private int originalVoteModifier = 0;
 
 
@@ -114,6 +115,30 @@ namespace BaconographyPortable.ViewModel
 
         static RelayCommand<VotableViewModel> _toggleUpvote = new RelayCommand<VotableViewModel>(ToggleUpvoteImpl);
         static RelayCommand<VotableViewModel> _toggleDownvote = new RelayCommand<VotableViewModel>(ToggleDownvoteImpl);
+        static RelayCommand<VotableViewModel> _toggleVote = new RelayCommand<VotableViewModel>(ToggleVoteImpl);
+
+        private static void ToggleVoteImpl(VotableViewModel vm)
+        {
+
+            int voteDirection = 1;
+            if (vm.Like)
+            {
+                vm.Dislike = true;
+                voteDirection = -1;
+            }
+            else if (vm.Dislike)
+            {
+                vm.Dislike = false;
+                voteDirection = 0;
+            }
+            else
+            {
+                vm.Like = true;
+            }
+
+            vm._redditService.AddVote(vm._votableThing.Data.Name, voteDirection);
+            vm._propertyChanged();
+        }
 
         private static void ToggleUpvoteImpl(VotableViewModel vm)
         {
