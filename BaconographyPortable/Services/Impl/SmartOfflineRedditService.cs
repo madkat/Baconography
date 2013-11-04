@@ -1,6 +1,7 @@
 ﻿using BaconographyPortable.Messages;
 using BaconographyPortable.Model.Reddit;
 using GalaSoft.MvvmLight.Messaging;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -752,6 +753,11 @@ namespace BaconographyPortable.Services.Impl
                                         await AddReportOnThing(actionTpl.Item2["thingId"]);
                                         break;
                                     }
+                                case "MarkVisited":
+                                    {
+                                        await MarkVisitedImpl(JsonConvert.DeserializeObject<string[]>(actionTpl.Item2["urls"]));
+                                        break;
+                                    }
                                 default:
                                     return false;
                             }
@@ -866,9 +872,18 @@ namespace BaconographyPortable.Services.Impl
                 await _offlineService.EnqueueAction("UnSaveThing", new Dictionary<string, string> { { "thingId", thingId } });
         }
 
-        public Task MarkVisited(IEnumerable<string> ids)
+        private Task MarkVisitedImpl(IEnumerable<string> ids)
         {
             return _redditService.MarkVisited(ids);
+        }
+
+        public async Task MarkVisited(IEnumerable<string> ids)
+        {
+            var user = await _userService.GetUser();
+            if (user != null && user.Me != null && user.Me.IsGold)
+            {
+                await _offlineService.EnqueueAction("MarkVisited", new Dictionary<string, string> { { "urls", JsonConvert.SerializeObject(ids.ToArray()) } });
+            }
         }
     }
 }

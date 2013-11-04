@@ -81,6 +81,14 @@ namespace BaconographyPortable.ViewModel
             } 
         }
 
+        public TypedThing<Message> Thing
+        {
+            get
+            {
+                return _message;
+            }
+        }
+
         private string _preview;
         public string Preview
         {

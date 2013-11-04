@@ -739,7 +739,8 @@ namespace Baconography.NeutralServices
 				}
 
             }
-            
+
+            await _redditService.MarkVisited(new string[] { link });
         }
 
         public async Task ClearHistory()

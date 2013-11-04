@@ -49,6 +49,7 @@
     <Compile Include="Common\IMergableThing.cs" />
     <Compile Include="Common\LinkGlyphUtility.cs" />
     <Compile Include="Common\NeverEndingRedditEnumerator.cs" />
+    <Compile Include="Common\OfflineUtility.cs" />
     <Compile Include="Common\StreamViewUtility.cs" />
     <Compile Include="Common\UtilityCommandImpl.cs" />
     <Compile Include="Messages\CloseSettingsMessage.cs" />
@@ -77,6 +78,7 @@
     <Compile Include="Model\Compression\LZ4Codec.Unsafe.cs" />
     <Compile Include="Model\Compression\LZ4Codec.Unsafe32.Dirty.cs" />
     <Compile Include="Model\KitaroDB\ListingHelpers\OfflineContent.cs" />
+    <Compile Include="Model\KitaroDB\ListingHelpers\SavedLinks.cs" />
     <Compile Include="Model\KitaroDB\ListingHelpers\UserMessages.cs" />
     <Compile Include="Model\KitaroDB\ListingHelpers\UsageStatisticsAggregate.cs" />
     <Compile Include="Model\KitaroDB\ListingHelpers\PostComments.cs" />
@@ -98,6 +100,7 @@
     <Compile Include="Model\Reddit\Json.cs" />
     <Compile Include="Model\Reddit\Link.cs" />
     <Compile Include="Model\Reddit\Listing.cs" />
+    <Compile Include="Model\Reddit\ListingHelpers\SavedLinks.cs" />
     <Compile Include="Model\Reddit\ListingHelpers\UserMessages.cs" />
     <Compile Include="Model\Reddit\ListingHelpers\PostComments.cs" />
     <Compile Include="Model\Reddit\ListingHelpers\SearchResults.cs" />
@@ -159,6 +162,7 @@
     <Compile Include="ViewModel\Collections\BindingShellViewModelCollection.cs" />
     <Compile Include="ViewModel\Collections\OfflineContentCollection.cs" />
     <Compile Include="ViewModel\Collections\RedditViewModelCollection.cs" />
+    <Compile Include="ViewModel\Collections\SavedLinkViewModelCollection.cs" />
     <Compile Include="ViewModel\Collections\SearchResultsViewModelCollection.cs" />
     <Compile Include="ViewModel\Collections\StoredUserCredentialsCollection.cs" />
     <Compile Include="ViewModel\Collections\SubredditViewModelCollection.cs" />
@@ -190,6 +194,7 @@
     <Compile Include="ViewModel\ReplyViewModel.cs" />
     <Compile Include="ViewModel\SearchQueryViewModel.cs" />
     <Compile Include="ViewModel\SearchResultsViewModel.cs" />
+    <Compile Include="ViewModel\SelfActivityViewModel.cs" />
     <Compile Include="ViewModel\SimpleMainViewModel.cs" />
     <Compile Include="ViewModel\SubredditManagementViewModel.cs" />
     <Compile Include="ViewModel\SubredditsViewModel.cs" />
