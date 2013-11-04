@@ -56,9 +56,9 @@
         </StackPanel>
         <Grid Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" HorizontalAlignment="Stretch">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="53*" />
-                <ColumnDefinition Width="27*" />
-                <ColumnDefinition Width="20*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="120" />
+                <ColumnDefinition Width="90" />
             </Grid.ColumnDefinitions>
 
             <Button Grid.Column="0"
@@ -85,13 +85,13 @@
                             <RotateTransform Angle="180" CenterX="9" CenterY="12" />
                         </TextBlock.RenderTransform>
                     </TextBlock>
-                    <TextBlock Margin="0,0,0,0" FontSize="22" Text="{Binding Path=Votable.TotalVotes, Converter={StaticResource totalPointsConverter}}"
+                    <TextBlock Margin="-2,0,0,0" FontSize="22" Text="{Binding Path=Votable.TotalVotes, Converter={StaticResource totalPointsConverter}}"
                                Foreground="{Binding Votable, Converter={StaticResource voteColorConverter}, Mode=TwoWay}"/>
                 </StackPanel>
             </Button>
 
             <Button Grid.Column="2"
-                    BorderThickness="0" Margin="0,-16,0,0" Padding="0" HorizontalContentAlignment="Left"
+                    BorderThickness="0" Margin="-5,-16,0,0" Padding="0" HorizontalContentAlignment="Left"
                     FontFamily="Segoe UI Symbol" HorizontalAlignment="Center"
                     Command="{Binding NavigateToComments}" CommandParameter="{Binding}">
                 <Grid>

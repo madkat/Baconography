@@ -19,6 +19,8 @@
     shell:SystemTray.Opacity="0"
     shell:SystemTray.ProgressIndicator="{Binding ProgressActive, Source={StaticResource orientationManager}}"
     DataContext="{Binding Comments, Source={StaticResource Locator}}"
+    HorizontalAlignment="Stretch"
+    HorizontalContentAlignment="Stretch"
     x:Name="controlRoot">
     <UserControl.Background>
         <SolidColorBrush Color="{Binding Source={StaticResource PhoneChromeBrush}, Path=Color}" Opacity="{StaticResource PhoneDarkThemeOpacity}" />
@@ -31,11 +33,16 @@
             <local:MoreCommentsView/>
         </DataTemplate>
         <DataTemplate x:Key="Type:LinkViewModel">
-            <StackPanel>
-            <local:LinkView InComments="True" DataContext="{Binding}" />
-                <Grid Margin="0,0,0,0" HorizontalAlignment="Stretch">
+            <Grid HorizontalAlignment="Stretch">
+                <Grid.RowDefinitions>
+                    <RowDefinition />
+                    <RowDefinition />
+                    <RowDefinition />
+                </Grid.RowDefinitions>
+
+                <local:LinkView Grid.Row="0" InComments="True" DataContext="{Binding}" HorizontalAlignment="Stretch" />
+                <Grid Grid.Row="1" Margin="0,0,0,0" HorizontalAlignment="Stretch">
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition />
                         <ColumnDefinition />
                         <ColumnDefinition />
                         <ColumnDefinition />
@@ -105,7 +112,7 @@
                                             Command="{Binding ElementName=controlRoot, Path=DataContext.GotoSubreddit}" CommandParameter="{Binding ElementName=controlRoot, Path=DataContext}"/>
                     <TextBlock Grid.Row="3" Grid.Column="4" Margin="0,4,0,0" Text="Subreddit" FontSize="14" HorizontalAlignment="Center" />
 
-                    
+
                     <Button Grid.Row="1" Grid.Column="5"
                     FontFamily="Segoe UI Symbol" FontSize="16"
                     Width="40" Height="40"
@@ -122,10 +129,10 @@
 
 
                 </Grid>
-                <Border BorderBrush="White" BorderThickness=".5" CornerRadius="3" Margin="5,5,5,10" Visibility="{Binding ElementName=controlRoot, Path=DataContext.IsSelf, Converter={StaticResource booleanVisibilityConverter}}">
+                <Border Grid.Row="2" BorderBrush="White" BorderThickness=".5" CornerRadius="3" Margin="5,5,5,10" Visibility="{Binding ElementName=controlRoot, Path=DataContext.IsSelf, Converter={StaticResource booleanVisibilityConverter}}">
                     <ContentControl Margin="5,5,5,5" Content="{Binding ElementName=controlRoot, Path=DataContext.SelfText, Converter={StaticResource markdownConverter}}"/>
                 </Border>
-            </StackPanel>
+            </Grid>
         </DataTemplate>
         <DataTemplate x:Key="typedTemplateSelector">
             <common:TypedTemplateSelector Content="{Binding}" />
@@ -162,7 +169,7 @@
 
             <ListBox.ItemTemplate>
                 <DataTemplate>
-                    <common:TypedTemplateSelector HorizontalContentAlignment="Stretch" Content="{Binding}" />
+                    <common:TypedTemplateSelector MinWidth="480" HorizontalContentAlignment="Stretch" Content="{Binding}" />
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>
