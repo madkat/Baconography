@@ -9,11 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 
-<<<<<<< HEAD
 namespace BaconographyWP8.Common
-=======
-namespace BaconographyWP8Core.Common
->>>>>>> 4c5e7082cc57dc2fbaa85dc2c8e2d94383549579
 {
     public class LinkTypeTemplateSelector : TypedTemplateSelector
     {
