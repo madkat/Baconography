@@ -32,7 +32,8 @@
                          DoubleTap="pivot_DoubleTap" CurrentRedditView="{Binding CurrentRedditView, ElementName=theControl, Mode=TwoWay}" />
         </DataTemplate>
         <DataTemplate x:Key="Type:SimpleMainViewModel">
-            <localc:RedditViewSingle HorizontalAlignment="Stretch" VerticalAlignment="Stretch" DataContext="{Binding CurrentViewModel}" toolkit:TurnstileFeatherEffect.FeatheringIndex="0" CurrentRedditView="{Binding CurrentRedditView, ElementName=theControl, Mode=TwoWay}"/>
+            <localc:SimpleSubredditManagerControl DataContext="{Binding SubredditManagement, Source={StaticResource Locator}}" HorizontalAlignment="Stretch" 
+                                                  VerticalAlignment="Stretch" toolkit:TurnstileFeatherEffect.FeatheringIndex="0" />
         </DataTemplate>
         <DataTemplate x:Name="TypedTemplateSelector">
             <common:TypedTemplateSelector HorizontalContentAlignment="Stretch" Content="{Binding}" />

@@ -348,6 +348,11 @@ namespace BaconographyPortable.ViewModel
                 MessengerInstance.Send<SelectSubredditMessage>(new SelectSubredditMessage { Subreddit = target });
             else
                 MessengerInstance.Send<SelectTemporaryRedditMessage>(new SelectTemporaryRedditMessage { Subreddit = target });
+
+            if (ServiceLocator.Current.GetInstance<ISettingsService>().SimpleLayoutMode)
+            {
+                ServiceLocator.Current.GetInstance<INavigationService>().Navigate(ServiceLocator.Current.GetInstance<IDynamicViewLocator>().RedditView, null);
+            }
         }
     }
 }

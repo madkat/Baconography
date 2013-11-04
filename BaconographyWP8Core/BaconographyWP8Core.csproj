@@ -265,9 +265,6 @@
     <Compile Include="View\PullToRefreshView.xaml.cs">
       <DependentUpon>PullToRefreshView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="View\RedditViewSingle.xaml.cs">
-      <DependentUpon>RedditViewSingle.xaml</DependentUpon>
-    </Compile>
     <Compile Include="View\ScalingGifView.xaml.cs">
       <DependentUpon>ScalingGifView.xaml</DependentUpon>
     </Compile>
@@ -276,6 +273,12 @@
     </Compile>
     <Compile Include="View\SelectSortTypeView.xaml.cs">
       <DependentUpon>SelectSortTypeView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\SimpleRedditView.xaml.cs">
+      <DependentUpon>SimpleRedditView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\SimpleSubredditManagerControl.xaml.cs">
+      <DependentUpon>SimpleSubredditManagerControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\SimpleSubredditManagerView.xaml.cs">
       <DependentUpon>SimpleSubredditManagerView.xaml</DependentUpon>
@@ -419,10 +422,6 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="View\RedditViewSingle.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="View\ScalingGifView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -432,6 +431,14 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="View\SelectSortTypeView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\SimpleRedditView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\SimpleSubredditManagerControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

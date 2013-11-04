@@ -328,11 +328,11 @@ namespace BaconographyPortable.Services.Impl
                 else
                     SimpleLayoutMode = false;
 
-                var oneTouchVoteMode = await offlineService.GetSetting("OneTouchVoteMode");
+                var oneTouchVoteMode = await offlineService.GetSetting("OneTouchVoteMode2");
                 if (!string.IsNullOrWhiteSpace(oneTouchVoteMode))
                     OneTouchVoteMode = bool.Parse(oneTouchVoteMode);
                 else
-                    OneTouchVoteMode = false;
+                    OneTouchVoteMode = true;
 
                 var disableBackground = await offlineService.GetSetting("DisableBackground");
                 if (!string.IsNullOrWhiteSpace(disableBackground))
@@ -391,7 +391,7 @@ namespace BaconographyPortable.Services.Impl
             await offlineService.StoreSetting("OnlyFlipViewImages2", OnlyFlipViewImages.ToString());
             await offlineService.StoreSetting("SimpleLayoutMode", SimpleLayoutMode.ToString());
             await offlineService.StoreSetting("DisableBackground", DisableBackground.ToString());
-            await offlineService.StoreSetting("OneTouchVoteMode", OneTouchVoteMode.ToString());
+            await offlineService.StoreSetting("OneTouchVoteMode2", OneTouchVoteMode.ToString());
         }
 
 

@@ -324,11 +324,6 @@ namespace BaconographyWP8
             Submit,
 			Close,
 			Pin
-            /*
-            Sort,
-            Mail,
-            Settings,
-            Manage,*/
 		}
 
         enum ButtonEnum
@@ -341,6 +336,8 @@ namespace BaconographyWP8
 
 		private void BuildMenu()
 		{
+            var simpleLayoutMode = _settingsService.SimpleLayoutMode;
+
             appBarButtons = new List<ApplicationBarIconButton>();
 			appMenuItems = new List<ApplicationBarMenuItem>();
 
@@ -377,8 +374,16 @@ namespace BaconographyWP8
             ApplicationBar.Buttons.Clear();
             try
             {
-                foreach (var button in appBarButtons)
-                    ApplicationBar.Buttons.Add(button as IApplicationBarIconButton);
+                if (simpleLayoutMode)
+                {
+                    ApplicationBar.Buttons.Add(appBarButtons[(int)ButtonEnum.Mail] as IApplicationBarIconButton);
+                    ApplicationBar.Buttons.Add(appBarButtons[(int)ButtonEnum.Settings] as IApplicationBarIconButton);
+                }
+                else
+                {
+                    foreach (var button in appBarButtons)
+                        ApplicationBar.Buttons.Add(button as IApplicationBarIconButton);
+                }
             }
             catch (Exception e)
             {
@@ -405,23 +410,6 @@ namespace BaconographyWP8
             appMenuItems[(int)MenuEnum.Submit].IsEnabled = false;
             appMenuItems[(int)MenuEnum.Submit].Click += MenuSubmit_Click;
 
-            /*
-			appMenuItems.Add(new ApplicationBarMenuItem());
-			appMenuItems[(int)MenuEnum.Sort].Text = "sort";
-			appMenuItems[(int)MenuEnum.Sort].IsEnabled = true;
-			appMenuItems[(int)MenuEnum.Sort].Click += MenuSort_Click;
-
-			appMenuItems.Add(new ApplicationBarMenuItem());
-			appMenuItems[(int)MenuEnum.Settings].Text = "settings";
-			appMenuItems[(int)MenuEnum.Settings].IsEnabled = true;
-			appMenuItems[(int)MenuEnum.Settings].Click += MenuSettings_Click;
-
-			appMenuItems.Add(new ApplicationBarMenuItem());
-			appMenuItems[(int)MenuEnum.Manage].Text = "manage subreddits";
-			appMenuItems[(int)MenuEnum.Manage].IsEnabled = true;
-			appMenuItems[(int)MenuEnum.Manage].Click += MenuManage_Click;
-            */
-
 			appMenuItems.Add(new ApplicationBarMenuItem());
 			appMenuItems[(int)MenuEnum.Close].Text = "close subreddit";
 			appMenuItems[(int)MenuEnum.Close].IsEnabled = true;
@@ -430,24 +418,12 @@ namespace BaconographyWP8
 			appMenuItems.Add(new ApplicationBarMenuItem());
 			appMenuItems[(int)MenuEnum.Pin].Text = "pin subreddit";
 			appMenuItems[(int)MenuEnum.Pin].IsEnabled = true;
-			appMenuItems[(int)MenuEnum.Pin].Click += MenuPin_Click;
-
-            /*
-            appMenuItems.Add(new ApplicationBarMenuItem());
-            appMenuItems[(int)MenuEnum.Mail].Text = "mail";
-            appMenuItems[(int)MenuEnum.Mail].IsEnabled = true;
-            appMenuItems[(int)MenuEnum.Mail].Click += MenuMail_Click;
-            */            
+			appMenuItems[(int)MenuEnum.Pin].Click += MenuPin_Click;         
 
 			ApplicationBar.MenuItems.Clear();
             ApplicationBar.MenuItems.Add(appMenuItems[(int)MenuEnum.Login]);
             ApplicationBar.MenuItems.Add(appMenuItems[(int)MenuEnum.Search]);
             ApplicationBar.MenuItems.Add(appMenuItems[(int)MenuEnum.Submit]);
-            /*
-			ApplicationBar.MenuItems.Add(appMenuItems[(int)MenuEnum.Manage]);
-			ApplicationBar.MenuItems.Add(appMenuItems[(int)MenuEnum.Sort]);
-			ApplicationBar.MenuItems.Add(appMenuItems[(int)MenuEnum.Settings]);
-            */
 		}
 
         private void MenuSidebar_Click(object sender, EventArgs e)

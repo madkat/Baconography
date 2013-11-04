@@ -13,7 +13,7 @@ namespace BaconographyWP8.PlatformServices
     {
         public Type RedditView
         {
-			get { return typeof(RedditView); }
+			get { return typeof(SimpleRedditView); }
         }
 
         public Type LinkedPictureView

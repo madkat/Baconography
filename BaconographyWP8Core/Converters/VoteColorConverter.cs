@@ -14,7 +14,7 @@ namespace BaconographyWP8.Converters
 {
     public class VoteColorConverter : IValueConverter
     {
-        private static Brush upvote = new SolidColorBrush(System.Windows.Media.Color.FromArgb(0xFF, 0xFF, 0x45, 0x00));
+        private static Brush upvote = new SolidColorBrush(System.Windows.Media.Colors.Orange);
         private static Brush downvote = new SolidColorBrush(System.Windows.Media.Color.FromArgb(0xFF, 0x87, 0xCE, 0xFA));
 
         public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
