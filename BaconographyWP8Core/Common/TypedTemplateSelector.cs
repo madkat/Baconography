@@ -41,6 +41,11 @@ namespace BaconographyWP8.Common
                 </DataTemplate>
              */
             string key = item != null ? string.Format("Type:{0}", item.GetType().Name.Split('.').Last()) : DefaultTemplateKey;
+            return ApplyKey(container, key);
+        }
+
+        protected DataTemplate ApplyKey(DependencyObject container, string key)
+        {
             DataTemplate dt = GetCachedDataTemplate(key);
             try
             {

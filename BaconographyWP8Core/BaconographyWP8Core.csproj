@@ -110,6 +110,7 @@
     <Compile Include="..\NeutralServices\AgnosticFile.cs">
       <Link>NeutralServices\AgnosticFile.cs</Link>
     </Compile>
+    <Compile Include="Common\LinkTypeTemplateSelector.cs" />
     <Compile Include="Common\RichMarkdownButton.xaml.cs">
       <DependentUpon>RichMarkdownButton.xaml</DependentUpon>
     </Compile>
