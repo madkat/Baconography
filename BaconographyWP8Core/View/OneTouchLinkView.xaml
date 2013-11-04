@@ -7,6 +7,7 @@
     xmlns:local="clr-namespace:BaconographyWP8.View"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:toolkit="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone.Controls.Toolkit"
     mc:Ignorable="d"
     d:DesignHeight="75"
     d:DesignWidth="480">
@@ -21,6 +22,9 @@
             <RowDefinition />
         </Grid.RowDefinitions>
         <StackPanel Grid.Row="0" Grid.Column="{Binding Source={StaticResource linkViewLayoutManager}, Path=TextColumn}">
+            <toolkit:ContextMenuService.ContextMenu>
+                <toolkit:ContextMenu IsZoomEnabled="True" ItemsSource="{Binding Converter={StaticResource linkViewContextMenuConverter}}"/>
+            </toolkit:ContextMenuService.ContextMenu>
             <Button 
                 BorderThickness="0" Margin="0" Padding="0" HorizontalContentAlignment="Left"
                 FontFamily="Segoe WP" Tap="Link_Tap">

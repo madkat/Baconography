@@ -116,6 +116,7 @@
     </Compile>
     <Compile Include="Common\FlipViewUtility.cs" />
     <Compile Include="Converters\BoolToAccentBrushConverter.cs" />
+    <Compile Include="Converters\LinkViewContextMenuConverter.cs" />
     <Compile Include="Converters\ReifiedAlbumItemConverter.cs" />
     <Compile Include="Converters\SubredditManagmentContextMenuConverter.cs" />
     <Compile Include="MainPage.xaml.cs">

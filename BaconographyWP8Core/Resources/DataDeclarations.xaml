@@ -44,6 +44,8 @@
     <converters:CachedImageConverter x:Key="cachedImageConverter"/>
     <converters:BoolToAccentBrushConverter x:Key="boolToAccentBrushConverter"/>
     <converters:SubredditManagmentContextMenuConverter x:Key="subredditManagmentContextMenuConverter"/>
+    <converters:LinkViewContextMenuConverter x:Key="linkViewContextMenuConverter"/>
+    
     <common:LinkViewLayoutManager x:Key="linkViewLayoutManager" />
     <common:OrientationManager x:Key="orientationManager" />
     
