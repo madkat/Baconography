@@ -124,6 +124,20 @@ namespace BaconographyPortable.Common
                 else if (CommentsPageRegex.IsMatch(str))
                 {
                     Messenger.Default.Send<LoadingMessage>(new LoadingMessage { Loading = true });
+
+                    if (sourceLink != null)
+                    {
+                        var targetLinkPermalink = sourceLink.Data.Url.Substring(sourceLink.Data.Url.IndexOf("reddit.com") + "reddit.com".Length);
+                        if (!targetLinkPermalink.Contains(str))
+                        {
+                            var realTarget = await baconProvider.GetService<IRedditService>().GetLinkByUrl(str);
+                            if (realTarget != null)
+                            {
+                                sourceLink = new TypedThing<Link>(realTarget);
+                            }
+                        }
+                    }
+
                     var targetLinkThing = sourceLink == null ? await baconProvider.GetService<IRedditService>().GetLinkByUrl(str) : sourceLink;
                     Messenger.Default.Send<LoadingMessage>(new LoadingMessage { Loading = false });
                     if (targetLinkThing != null)
