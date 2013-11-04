@@ -50,7 +50,7 @@
             </common:FixedLongListSelector.ListHeaderTemplate>
             <common:FixedLongListSelector.ItemTemplate>
                 <DataTemplate>
-                    <common:TypedTemplateSelector HorizontalContentAlignment="Stretch" Content="{Binding}" />
+                    <common:LinkTypeTemplateSelector HorizontalContentAlignment="Stretch" Content="{Binding}" />
                 </DataTemplate>
             </common:FixedLongListSelector.ItemTemplate>
             <common:FixedLongListSelector.ListFooterTemplate>
