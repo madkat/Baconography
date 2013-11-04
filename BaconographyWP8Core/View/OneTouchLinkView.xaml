@@ -97,12 +97,6 @@
                 </Grid>
             </Button>
         </Grid>
-        <StackPanel Grid.Row="1" Grid.ColumnSpan="2"
-            VerticalAlignment="Top" Orientation="Horizontal" Margin="0,3,0,0">
-            <!---->
-            
-        </StackPanel>
-
 
         <Grid Grid.Column="{Binding Source={StaticResource linkViewLayoutManager}, Path=PictureColumn}" Grid.Row="0" VerticalAlignment="Stretch"
               MinHeight="90" Width="100">
