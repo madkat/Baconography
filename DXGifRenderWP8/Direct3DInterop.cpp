@@ -38,8 +38,11 @@ namespace DXGifRenderWP8
 		if(gifFile != nullptr)
 		{
 			DGifSlurp(gifFile);
-			Height = gifFile->SHeight;
-			Width = gifFile->SWidth;
+			UINT width = (gifFile->SWidth % 2) + gifFile->SWidth;
+			UINT height = (gifFile->SHeight % 2) + gifFile->SHeight;
+			
+			Height = gifFile->SHeight = height;
+			Width = gifFile->SWidth = width;
 			_gifFile = gifFile;
 		}
 		else
