@@ -34,6 +34,12 @@ namespace BaconographyPortable.Services
         Task<Thing> GetLinkByUrl(string url);
         Task<Listing> GetAdditionalFromListing(string baseUrl, string after, int? limit);
         Task<TypedThing<Account>> GetAccountInfo(string accountName);
+        Task AddContributor(string name, string subreddit, string note);
+        Task RemoveContributor(string subreddit, string name);
+        Task AddModerator(string name, string subreddit, string note);
+        Task RemoveModerator(string subreddit, string name);
+        Task AddBan(string name, string subreddit, string note);
+        Task RemoveBan(string subreddit, string name);
         Task AddVote(string thingId, int direction);
         Task ApproveThing(string thingId);
         Task RemoveThing(string thingId, bool spam);
