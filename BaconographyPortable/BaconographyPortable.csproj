@@ -109,6 +109,7 @@
     <Compile Include="Model\Reddit\ListingHelpers\SubredditSubscriptions.cs" />
     <Compile Include="Model\Reddit\ListingHelpers\UserActivity.cs" />
     <Compile Include="Model\Reddit\Message.cs" />
+    <Compile Include="Model\Reddit\ModAction.cs" />
     <Compile Include="Model\Reddit\More.cs" />
     <Compile Include="Model\Reddit\RedditService.cs" />
     <Compile Include="Model\Reddit\Subreddit.cs" />

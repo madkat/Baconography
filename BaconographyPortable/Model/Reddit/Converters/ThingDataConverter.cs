@@ -55,6 +55,9 @@ namespace BaconographyPortable.Model.Reddit.Converters
                                 case "more":
                                     targetThing.Data = new More();
                                     break;
+                                case "modaction":
+                                    targetThing.Data = new ModAction();
+                                    break;
 								case "ad":
 									targetThing.Data = new Advertisement();
 									break;

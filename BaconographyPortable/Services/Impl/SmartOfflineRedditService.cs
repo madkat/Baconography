@@ -223,8 +223,8 @@ namespace BaconographyPortable.Services.Impl
                 switch (idCode)
                 {
                     //case "t1":
-                        //gottenThing = await _offlineService.RetrieveComment(id);
-                        //break;
+                    //gottenThing = await _offlineService.RetrieveComment(id);
+                    //break;
                     case "t3":
                         gottenThing = await _offlineService.RetrieveLink(id);
                         break;
@@ -302,13 +302,13 @@ namespace BaconographyPortable.Services.Impl
 
                 await MaybeStoreSubscribedSubredditListing(result, user);
             }
-            catch(Exception ex) 
+            catch (Exception ex)
             {
                 //this runs off the main thread so failure here takes out the entire application without warning
                 Debug.WriteLine(ex);
             }
         }
-        
+
         public async Task<Listing> GetSubscribedSubredditListing()
         {
             if (_subscribedSubredditListing != null)
@@ -323,7 +323,7 @@ namespace BaconographyPortable.Services.Impl
                 var user = await _userService.GetUser();
 
                 var offlineSublist = await _offlineService.RetrieveOrderedThings("sublist:" + user.Username, TimeSpan.FromDays(30));
-                if(offlineSublist != null)
+                if (offlineSublist != null)
                 {
                     MaybeRefreshSubscribedSubredditListing(user);
                     return new Listing { Data = new ListingData { Children = new List<Thing>(offlineSublist) } };
@@ -379,7 +379,7 @@ namespace BaconographyPortable.Services.Impl
             try
             {
                 var result = await _redditService.GetSubreddit(name);
-            
+
                 await _offlineService.StoreSubreddit(result);
             }
             catch { }
@@ -398,8 +398,8 @@ namespace BaconographyPortable.Services.Impl
                 else
                 {
                     var result = await _redditService.GetSubreddit(name);
-					if (result.Data.Name != null && result.Data.Id != null)
-						await _offlineService.StoreSubreddit(result);
+                    if (result.Data.Name != null && result.Data.Id != null)
+                        await _offlineService.StoreSubreddit(result);
                     return result;
                 }
             }
@@ -440,7 +440,7 @@ namespace BaconographyPortable.Services.Impl
                         }
                     }
                 });
-            
+
             return listing;
         }
 
@@ -452,10 +452,10 @@ namespace BaconographyPortable.Services.Impl
 
         public Task<Listing> GetMoreOnListing(IEnumerable<string> childrenIds, string contentId, string subreddit)
         {
-			if (_settingsService.IsOnline())
-				return _redditService.GetMoreOnListing(childrenIds, contentId, subreddit);
-			else
-				return null;
+            if (_settingsService.IsOnline())
+                return _redditService.GetMoreOnListing(childrenIds, contentId, subreddit);
+            else
+                return null;
         }
 
         Dictionary<string, Listing> _currentlyStoringComments = new Dictionary<string, Listing>();
@@ -618,7 +618,7 @@ namespace BaconographyPortable.Services.Impl
                 await _redditService.AddMessage(recipient, subject, message);
             else
                 await _offlineService.EnqueueAction("AddMessage", new Dictionary<string, string> { { "recipient", recipient }, { "subject", subject }, { "message", message } });
-            
+
         }
 
         public async Task AddPost(string kind, string url, string text, string subreddit, string title)
@@ -758,15 +758,29 @@ namespace BaconographyPortable.Services.Impl
                                         await MarkVisitedImpl(JsonConvert.DeserializeObject<string[]>(actionTpl.Item2["urls"]));
                                         break;
                                     }
-				case "Friend":
+				                case "Friend":
                                     {
-                                        await Friend(actionTpl.Item2["name"], actionTpl.Item2["container"], 
-						actionTpl.Item2["note"], actionTpl.Item2["type"]));
+                                        await Friend(actionTpl.Item2["name"], actionTpl.Item2["container"], actionTpl.Item2["note"], actionTpl.Item2["type"]);
                                         break;
                                     }
-				case "Unfriend":
+				                case "Unfriend":
                                     {
-                                        await Friend(actionTpl.Item2["name"], actionTpl.Item2["container"], actionTpl.Item2["type"]));
+                                        await Unfriend(actionTpl.Item2["name"], actionTpl.Item2["container"], actionTpl.Item2["type"]);
+                                        break;
+                                    }
+                                case "Approve":
+                                    {
+                                        await ApproveThing(actionTpl.Item2["thingId"]);
+                                        break;
+                                    }
+                                case "Remove":
+                                    {
+                                        await RemoveThing(actionTpl.Item2["thingId"], bool.Parse(actionTpl.Item2["spam"]));
+                                        break;
+                                    }
+                                case "IgnoreReports":
+                                    {
+                                        await IgnoreReportsOnThing(actionTpl.Item2["thingId"]);
                                         break;
                                     }
                                 default:
@@ -897,12 +911,12 @@ namespace BaconographyPortable.Services.Impl
             }
         }
 
-	public Task Friend(string name, string container, string note, string type)
-	{
-		if (_settingsService.IsOnline() && (await _userService.GetUser()).Username != null)
-                	await _redditService.Friend(name, container, note, type);
-            	else
-                	await _offlineService.EnqueueAction("Friend", new Dictionary<string, string> 
+        public async Task Friend(string name, string container, string note, string type)
+        {
+            if (_settingsService.IsOnline() && (await _userService.GetUser()).Username != null)
+                await _redditService.Friend(name, container, note, type);
+            else
+                await _offlineService.EnqueueAction("Friend", new Dictionary<string, string> 
 				{
 					{ "name", name },
 					{ "container", container },
@@ -910,22 +924,22 @@ namespace BaconographyPortable.Services.Impl
 					{ "type", type } 
 				});
 
-	}
+        }
 
-	public Task Unfriend(string name, string container, string type)
-	{
-		if (_settingsService.IsOnline() && (await _userService.GetUser()).Username != null)
-                	await _redditService.Unfriend(name, container, type);
-            	else
-                	await _offlineService.EnqueueAction("Unfriend", new Dictionary<string, string> 
+        public async Task Unfriend(string name, string container, string type)
+        {
+            if (_settingsService.IsOnline() && (await _userService.GetUser()).Username != null)
+                await _redditService.Unfriend(name, container, type);
+            else
+                await _offlineService.EnqueueAction("Unfriend", new Dictionary<string, string> 
 				{
 					{ "name", name },
 					{ "container", container },
 					{ "type", type } 
 				});
-	}
+        }
 
-	public Task AddContributor(string name, string subreddit, string note)
+        public Task AddContributor(string name, string subreddit, string note)
         {
             return Friend(name, subreddit, note, "contributor");
         }
@@ -953,6 +967,50 @@ namespace BaconographyPortable.Services.Impl
         public Task RemoveBan(string subreddit, string name)
         {
             return Unfriend(name, subreddit, "banned");
+        }
+
+        public Task<Listing> GetModActions(string subreddit, int? limit)
+        {
+            return _redditService.GetModActions(subreddit, limit);
+        }
+
+        public Task<Listing> GetModMail(int? limit)
+        {
+            return _redditService.GetModMail(limit);
+        }
+
+        public async Task ApproveThing(string thingId)
+        {
+            if (_settingsService.IsOnline() && (await _userService.GetUser()).Username != null)
+                await _redditService.ApproveThing(thingId);
+            else
+                await _offlineService.EnqueueAction("Approve", new Dictionary<string, string> 
+				{
+					{ "thingid", thingId }
+				});
+        }
+
+        public async Task RemoveThing(string thingId, bool spam)
+        {
+            if (_settingsService.IsOnline() && (await _userService.GetUser()).Username != null)
+                await _redditService.RemoveThing(thingId, spam);
+            else
+                await _offlineService.EnqueueAction("Remove", new Dictionary<string, string> 
+				{
+					{ "thingid", thingId },
+                    { "spam", spam.ToString() }
+				});
+        }
+
+        public async Task IgnoreReportsOnThing(string thingId)
+        {
+            if (_settingsService.IsOnline() && (await _userService.GetUser()).Username != null)
+                await _redditService.IgnoreReportsOnThing(thingId);
+            else
+                await _offlineService.EnqueueAction("IgnoreReports", new Dictionary<string, string> 
+				{
+					{ "thingid", thingId }
+				});
         }
     }
 }

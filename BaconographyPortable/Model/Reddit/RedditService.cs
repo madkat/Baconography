@@ -1047,9 +1047,27 @@ namespace BaconographyPortable.Model.Reddit
         }
 
 
-        public Task<Listing> GetModActions(string subreddit, int? limit)
+        public async Task<Listing> GetModActions(string subreddit, int? limit)
         {
-            throw new NotImplementedException();
+            var maxLimit = (await UserIsGold()) ? 1500 : 100;
+            var guardedLimit = Math.Min(maxLimit, limit ?? maxLimit);
+
+            var targetUri = string.Format("http://www.reddit.com/r/{0}/about/log.json?limi={1}", subreddit, guardedLimit);
+
+            try
+            {
+                var messages = await _simpleHttpService.SendGet(await GetCurrentLoginCookie(), targetUri);
+                if (messages == "\"{}\"")
+                {
+                    return new Listing { Kind = "Listing", Data = new ListingData { Children = new List<Thing>() } };
+                }
+                return JsonConvert.DeserializeObject<Listing>(messages);
+            }
+            catch (Exception ex)
+            {
+                _notificationService.CreateErrorNotification(ex);
+                return new Listing { Kind = "Listing", Data = new ListingData { Children = new List<Thing>() } };
+            }
         }
 
         private async Task<Listing> GetMail(string kind, int? limit)
@@ -1087,9 +1105,19 @@ namespace BaconographyPortable.Model.Reddit
             return ThingAction("approve", thingId);
         }
 
-        public Task RemoveThing(string thingId, bool spam)
+        public async Task RemoveThing(string thingId, bool spam)
         {
-            return ThingAction("remove", thingId);
+            var modhash = await GetCurrentModhash();
+            var targetUri = "http://www.reddit.com/api/remove";
+
+            var content = new Dictionary<string, string>
+            {
+                { "id", thingId},
+                { "uh", modhash},
+                { "spam", spam ? "true" : "false"}
+            };
+
+            ProcessJsonErrors(await _simpleHttpService.SendPost(await GetCurrentLoginCookie(), content, targetUri));
         }
 
         public Task IgnoreReportsOnThing(string thingId)

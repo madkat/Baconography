@@ -44,5 +44,7 @@ namespace BaconographyPortable.Model.Reddit
         public int Downs { get; set; }
         [JsonProperty("likes")]
         public bool? Likes { get; set; }
+        [JsonProperty("gilded")]
+        public int Gilded { get; set; }
     }
 }
