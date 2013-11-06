@@ -155,6 +155,10 @@ namespace BaconographyPortable.Model.Reddit.Converters
 									targetThing.Data = new More();
 									dataType = typeof(More);
 									break;
+                                case "modaction":
+                                    targetThing.Data = new ModAction();
+                                    dataType = typeof(ModAction);
+                                    break;
 								case "ad":
 									targetThing.Data = new Advertisement();
 									dataType = typeof(Advertisement);
