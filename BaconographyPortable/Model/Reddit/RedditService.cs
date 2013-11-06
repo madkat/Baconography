@@ -1097,7 +1097,7 @@ namespace BaconographyPortable.Model.Reddit
             return ThingAction("ignore_reports", thingId);
         }
 
-        private async Task Friend(string name, string container, string note, string type)
+        public async Task Friend(string name, string container, string note, string type)
         {
             var modhash = await GetCurrentModhash();
             var targetUri = "http://www.reddit.com/api/friend";
@@ -1115,7 +1115,7 @@ namespace BaconographyPortable.Model.Reddit
             ProcessJsonErrors(await _simpleHttpService.SendPost(await GetCurrentLoginCookie(), content, targetUri));
         }
 
-        private async Task Unfriend(string name, string container, string type)
+        public async Task Unfriend(string name, string container, string type)
         {
             var modhash = await GetCurrentModhash();
             var targetUri = "http://www.reddit.com/api/unfriend";
@@ -1143,22 +1143,22 @@ namespace BaconographyPortable.Model.Reddit
 
         public Task AddModerator(string name, string subreddit, string note)
         {
-            throw new NotImplementedException();
+            return Friend(name, subreddit, note, "moderator");
         }
 
         public Task RemoveModerator(string subreddit, string name)
         {
-            throw new NotImplementedException();
+            return Unfriend(name, subreddit, "moderator");
         }
 
         public Task AddBan(string name, string subreddit, string note)
         {
-            throw new NotImplementedException();
+            return Friend(name, subreddit, note, "banned");
         }
 
         public Task RemoveBan(string subreddit, string name)
         {
-            throw new NotImplementedException();
+            return Unfriend(name, subreddit, "banned");
         }
     }
 }

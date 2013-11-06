@@ -758,6 +758,17 @@ namespace BaconographyPortable.Services.Impl
                                         await MarkVisitedImpl(JsonConvert.DeserializeObject<string[]>(actionTpl.Item2["urls"]));
                                         break;
                                     }
+				case "Friend":
+                                    {
+                                        await Friend(actionTpl.Item2["name"], actionTpl.Item2["container"], 
+						actionTpl.Item2["note"], actionTpl.Item2["type"]));
+                                        break;
+                                    }
+				case "Unfriend":
+                                    {
+                                        await Friend(actionTpl.Item2["name"], actionTpl.Item2["container"], actionTpl.Item2["type"]));
+                                        break;
+                                    }
                                 default:
                                     return false;
                             }
@@ -884,6 +895,64 @@ namespace BaconographyPortable.Services.Impl
             {
                 await _offlineService.EnqueueAction("MarkVisited", new Dictionary<string, string> { { "urls", JsonConvert.SerializeObject(ids.ToArray()) } });
             }
+        }
+
+	public Task Friend(string name, string container, string note, string type)
+	{
+		if (_settingsService.IsOnline() && (await _userService.GetUser()).Username != null)
+                	await _redditService.Friend(name, container, note, type);
+            	else
+                	await _offlineService.EnqueueAction("Friend", new Dictionary<string, string> 
+				{
+					{ "name", name },
+					{ "container", container },
+					{ "note", note },
+					{ "type", type } 
+				});
+
+	}
+
+	public Task Unfriend(string name, string container, string type)
+	{
+		if (_settingsService.IsOnline() && (await _userService.GetUser()).Username != null)
+                	await _redditService.Unfriend(name, container, type);
+            	else
+                	await _offlineService.EnqueueAction("Unfriend", new Dictionary<string, string> 
+				{
+					{ "name", name },
+					{ "container", container },
+					{ "type", type } 
+				});
+	}
+
+	public Task AddContributor(string name, string subreddit, string note)
+        {
+            return Friend(name, subreddit, note, "contributor");
+        }
+
+        public Task RemoveContributor(string subreddit, string name)
+        {
+            return Unfriend(name, subreddit, "contributor");
+        }
+
+        public Task AddModerator(string name, string subreddit, string note)
+        {
+            return Friend(name, subreddit, note, "moderator");
+        }
+
+        public Task RemoveModerator(string subreddit, string name)
+        {
+            return Unfriend(name, subreddit, "moderator");
+        }
+
+        public Task AddBan(string name, string subreddit, string note)
+        {
+            return Friend(name, subreddit, note, "banned");
+        }
+
+        public Task RemoveBan(string subreddit, string name)
+        {
+            return Unfriend(name, subreddit, "banned");
         }
     }
 }
