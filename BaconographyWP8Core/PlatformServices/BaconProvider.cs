@@ -107,11 +107,14 @@ namespace BaconographyWP8.PlatformServices
         {
             (GetService<INavigationService>() as NavigationServices).Init(frame);
 
+            List<Task> initTasks = new List<Task>();
             foreach (var tpl in _services)
             {
                 if (tpl.Value is IBaconService)
-                    await ((IBaconService)tpl.Value).Initialize(this);
+                    initTasks.Add(((IBaconService)tpl.Value).Initialize(this));
             }
+
+            await Task.WhenAll(initTasks);
             //var redditService = (GetService<IRedditService>()) as OfflineDelayableRedditService;
             //await redditService.RunQueue(null);
             

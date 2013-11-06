@@ -105,7 +105,123 @@ namespace Baconography.NeutralServices
             }
         }
 
-		
+        public async Task StoreInitializationBlob(Action<InitializationBlob> initBlobSetter)
+        {
+            Monitor.Enter(this);
+            try
+            {
+                using (var agnosticFile = new AgnosticFile(Windows.Storage.ApplicationData.Current.LocalFolder.Path + "\\initBlob.flat"))
+                {
+                    using (var streamWriter = await agnosticFile.GetStreamWriter(false))
+                    {
+                        InitializationBlob initBlob = null;
+                        if (_loadInitBlob == null)
+                        {
+                            initBlob = new InitializationBlob();
+                        }
+                        else
+                        {
+                            initBlob = await _loadInitBlob;
+                        }
+                        initBlobSetter(initBlob);
+                        
+                        var initBlobString = JsonConvert.SerializeObject(initBlob);
+                        streamWriter.Write(initBlobString);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex);
+            }
+            finally
+            {
+                Monitor.Exit(this);
+            }
+        
+        }
+
+        Task<InitializationBlob> _loadInitBlob;
+
+        public Task<InitializationBlob> LoadInitializationBlob(IUserService userService)
+        {
+            if (_loadInitBlob == null)
+            {
+                lock (this)
+                {
+                    if (_loadInitBlob == null)
+                    {
+                        _loadInitBlob = LoadInitializationBlobImpl(userService);
+                    }
+                }
+            }
+            return _loadInitBlob;
+        }
+
+        private async Task<InitializationBlob> LoadInitializationBlobImpl(IUserService userService)
+        {
+            using(var agnosticFile = new AgnosticFile(Windows.Storage.ApplicationData.Current.LocalFolder.Path + "\\initBlob.flat"))
+            { 
+                if (await agnosticFile.Exists())
+                {
+                    var streamReader = await agnosticFile.GetStreamReader();
+                    var initBlobString = streamReader.ReadToEnd();
+                    return JsonConvert.DeserializeObject<InitializationBlob>(initBlobString);
+                }
+            }
+
+            using (var settingsDb = await DB.CreateAsync(Windows.Storage.ApplicationData.Current.LocalFolder.Path + "\\settings_v2.ism", DBCreateFlags.None))
+            {
+                var settingsCache = new Dictionary<string, string>();
+                //load all of the settings up front so we dont spend so much time going back and forth
+                using (var cursor = await settingsDb.SeekAsync(DBReadFlags.NoLock))
+                {
+                    if (cursor != null)
+                    {
+                        do
+                        {
+                            settingsCache.Add(cursor.GetKeyString(), cursor.GetString());
+                        } while (await cursor.MoveNextAsync());
+                    }
+                }
+
+
+                InitializationBlob result = null;
+
+                if (userService != null)
+                {
+                    await Initialize();
+                    var currentUser = await userService.GetUser();
+                    var sublist = await RetrieveOrderedThings("sublist:" + currentUser.Username, TimeSpan.FromDays(1024));
+                    var pivot = await RetrieveOrderedThings("pivotsubreddits:" + currentUser.Username, TimeSpan.FromDays(1024));
+
+                    result = new InitializationBlob
+                    {
+                        Settings = settingsCache,
+                        SubscribedSubreddits = sublist.ToArray(),
+                        PinnedSubreddits = sublist.ToArray()
+                    };
+                }
+                else
+                {
+                    result = new InitializationBlob
+                    {
+                        Settings = settingsCache,
+                    };
+                }
+
+                //since the above is only for migration, migrate on first load
+                using (var agnosticFile = new AgnosticFile(Windows.Storage.ApplicationData.Current.LocalFolder.Path + "\\initBlob.flat"))
+                {
+                    using (var streamWriter = await agnosticFile.GetStreamWriter(false))
+                    {
+                        var initBlobString = JsonConvert.SerializeObject(result);
+                        streamWriter.Write(initBlobString);
+                    }
+                }
+                return result;
+            }
+        }
 
 		
 
@@ -113,7 +229,6 @@ namespace Baconography.NeutralServices
         {
             try
             {
-                _settingsDb = await DB.CreateAsync(Windows.Storage.ApplicationData.Current.LocalFolder.Path + "\\settings_v2.ism", DBCreateFlags.None);
                 _blobStoreDb = await DB.CreateAsync(Windows.Storage.ApplicationData.Current.LocalFolder.Path + "\\blobs_v3.ism", DBCreateFlags.None, 0,
                     new DBKey[] 
                     { 
@@ -121,23 +236,8 @@ namespace Baconography.NeutralServices
                         new DBKey(8, 4, DBKeyFlags.AutoTime, "timestamp", false, true, false, 1) 
                     });
 
-                _settingsCache = new Dictionary<string, string>();
-                //load all of the settings up front so we dont spend so much time going back and forth
-                var cursor = await _settingsDb.SeekAsync(DBReadFlags.NoLock);
-                if (cursor != null)
-                {
-                    using (cursor)
-                    {
-                        do
-                        {
-                            _settingsCache.Add(cursor.GetKeyString(), cursor.GetString());
-                        } while (await cursor.MoveNextAsync());
-                    }
-                }
-
                 //this doesnt ever actually get looked up, just loaded into a dictionary so 
                 //there is no reason to load it into kitaro and pay for indexes we will never use
-
 				using (var file = new AgnosticFile(_historyFileName))
 				{
 					if (await file.Exists())
@@ -653,66 +753,6 @@ namespace Baconography.NeutralServices
             await Initialize();
             
         }
-
-        private Dictionary<string, string> _settingsCache;
-        public async Task StoreSetting(string name, string value)
-        {
-            try
-            {
-                await Initialize();
-                if (_terminateSource.IsCancellationRequested)
-                    return;
-                if (!_settingsCache.ContainsKey(name))
-                {
-                    _settingsCache.Add(name, value);
-                }
-                else
-                {
-                    _settingsCache[name] = value;
-                }
-                var cursor = await _settingsDb.SeekAsync(_settingsDb.GetKeys().First(), name, DBReadFlags.AutoLock | DBReadFlags.WaitOnLock) ;
-                if (cursor != null)
-                {
-                    cursor.Dispose();
-
-                    if (_terminateSource.IsCancellationRequested)
-                        return;
-
-                    if(!string.IsNullOrEmpty(value))
-                        await _settingsDb.UpdateAsync(name, value);
-                    else
-                        await _settingsDb.DeleteAsync(name);
-                }
-                else
-                {
-                    if(!string.IsNullOrEmpty(value))
-                        await _settingsDb.InsertAsync(name, value);
-                }
-            }
-            catch (Exception ex)
-            {
-                System.Diagnostics.Debug.WriteLine(string.Format("error while storing setting: {0}", ex.ToString()));
-                //something went wrong
-            }
-           
-        }
-
-        public async Task<string> GetSetting(string name)
-        {
-            try
-            {
-                await Initialize();
-
-                string result = null;
-                _settingsCache.TryGetValue(name, out result);
-                return result;
-            }
-            catch (Exception ex)
-            {
-                return "";
-            }
-        }
-
 
         public async Task StoreHistory(string link)
         {

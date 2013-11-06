@@ -64,7 +64,6 @@ namespace BaconographyPortable.ViewModel
         public string ParentId { get { return _message.Data.ParentId; } }
         public MessageViewModel Parent { get; set; }
         public string Recipient { get { return _message.Data.Destination; } }
-        public string Replies { get { return _message.Data.Replies; } }
         public string Subject { get { return _message.Data.Subject; } }
         public string Subreddit { get { return _message.Data.Subreddit; } }
 

@@ -57,8 +57,8 @@ namespace BaconographyPortable.Services
         void AddFlairInfo(string linkId, string opName);
         Task ReadMessage(string id);
         Task MarkVisited(IEnumerable<string> ids);
-	Task Friend(string name, string container, string note, string type);
-	Task Unfriend(string name, string container, string type);
+	    Task Friend(string name, string container, string note, string type);
+	    Task Unfriend(string name, string container, string type);
         AuthorFlairKind GetUsernameModifiers(string username, string linkid, string subreddit);
     }
 }

@@ -130,7 +130,15 @@ namespace BaconographyPortable.ViewModel
         {
             try
             {
-                var subreddits = await _offlineService.RetrieveOrderedThings("pivotsubreddits", TimeSpan.FromDays(1024));
+                var initBlob = await _offlineService.LoadInitializationBlob(_userService);
+                IEnumerable<Thing> subreddits = null;
+                if (initBlob == null)
+                {
+                    subreddits = await _offlineService.RetrieveOrderedThings("pivotsubreddits", TimeSpan.FromDays(1024));
+                }
+                else
+                    subreddits = initBlob.PinnedSubreddits;
+
 
                 if (subreddits == null || subreddits.Count() == 0)
                     subreddits = new List<TypedThing<Subreddit>> { new TypedThing<Subreddit>(ThingUtility.GetFrontPageThing()) };
@@ -175,7 +183,10 @@ namespace BaconographyPortable.ViewModel
         {
             try
             {
-                await _offlineService.StoreOrderedThings("pivotsubreddits", Subreddits);
+                await _offlineService.StoreInitializationBlob((initBlob) =>
+                    {
+                        initBlob.PinnedSubreddits = this.Subreddits.ToArray();
+                    });
             }
             catch { }
         }

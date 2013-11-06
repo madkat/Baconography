@@ -41,7 +41,7 @@ namespace BaconographyPortable.Model.Reddit
         [JsonProperty("parent_id")]
         public string ParentId { get; set; }
         [JsonProperty("replies")]
-        public string Replies { get; set; }
+        public Listing Replies { get; set; }
         [JsonProperty("subject")]
         public string Subject { get; set; }
         [JsonProperty("subreddit")]

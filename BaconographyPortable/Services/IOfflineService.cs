@@ -8,6 +8,22 @@ using System.Threading.Tasks;
 
 namespace BaconographyPortable.Services
 {
+    public class MessageElement
+    {
+        string Key {get; set;}
+        Thing Data {get; set;}
+        MessageElement[] Related {get; set;}
+    }
+    public class InitializationBlob
+    {
+        public Thing[] SubscribedSubreddits { get; set; }
+        public Thing[] PinnedSubreddits { get; set; }
+        public Thing[] ModeratedSubreddits { get; set; }
+        public Dictionary<string, string> Settings { get; set; }
+        public MessageElement[] Messages { get; set; }
+        public User AutoUser { get; set; }
+    }
+
     public interface IOfflineService
     {
         Task Clear();
@@ -49,8 +65,8 @@ namespace BaconographyPortable.Services
 
         Task StoreOrderedThings(IListingProvider listingProvider);
 
-        Task StoreSetting(string name, string value);
-        Task<string> GetSetting(string name);
+        Task<InitializationBlob> LoadInitializationBlob(IUserService userService);
+        Task StoreInitializationBlob(Action<InitializationBlob> initBlobSetter);
 
         Task StoreHistory(string link);
         Task ClearHistory();
