@@ -19,6 +19,8 @@ namespace BaconographyPortable.Services
         Task<Listing> GetSubscribedSubredditListing();
         Task<Listing> GetDefaultSubreddits();
         Task<Listing> GetSubreddits(int? limit);
+        Task<Listing> GetModActions(string subreddit, int? limit);
+        Task<Listing> GetModMail(int? limit);
         Task<TypedThing<Subreddit>> GetSubreddit(string name);
         Task<Listing> GetPostsByUser(string username, int? limit);
         Task<Listing> GetSaved(int? limit);
@@ -33,6 +35,9 @@ namespace BaconographyPortable.Services
         Task<Listing> GetAdditionalFromListing(string baseUrl, string after, int? limit);
         Task<TypedThing<Account>> GetAccountInfo(string accountName);
         Task AddVote(string thingId, int direction);
+        Task ApproveThing(string thingId);
+        Task RemoveThing(string thingId, bool spam);
+        Task IgnoreReportsOnThing(string thingId);
         Task AddSubredditSubscription(string subreddit, bool unsub);
         Task AddSavedThing(string thingId);
         Task UnSaveThing(string thingId);

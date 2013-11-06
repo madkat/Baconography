@@ -496,29 +496,9 @@ namespace BaconographyPortable.Model.Reddit
             }
         }
 
-        public async Task<Listing> GetMessages(int? limit)
+        public Task<Listing> GetMessages(int? limit)
         {
-            var maxLimit = (await UserIsGold()) ? 1500 : 100;
-            var guardedLimit = Math.Min(maxLimit, limit ?? maxLimit);
-
-            var targetUri = string.Format("http://www.reddit.com/message/inbox/.json?limit={0}", guardedLimit);
-
-            try
-            {
-                var messages = await _simpleHttpService.SendGet(await GetCurrentLoginCookie(), targetUri);
-                if (messages == "\"{}\"")
-                {
-                    return new Listing { Kind = "Listing", Data = new ListingData { Children = new List<Thing>() } };
-                }
-                // Hacky hack mcHackerson
-                messages = messages.Replace("\"kind\": \"t1\"", "\"kind\": \"t4.5\"");
-                return JsonConvert.DeserializeObject<Listing>(messages);
-            }
-            catch (Exception ex)
-            {
-                _notificationService.CreateErrorNotification(ex);
-                return new Listing { Kind = "Listing", Data = new ListingData { Children = new List<Thing>() } };
-            }
+            return GetMail("messages", limit);
         }
 
         public void AddFlairInfo(string linkId, string opName)
@@ -621,32 +601,14 @@ namespace BaconographyPortable.Model.Reddit
             await _simpleHttpService.SendPost(await GetCurrentLoginCookie(), content, "http://www.reddit.com/api/subscribe");
         }
 
-        public virtual async Task AddSavedThing(string thingId)
+        public virtual Task AddSavedThing(string thingId)
         {
-            var modhash = await GetCurrentModhash();
-            var targetUri = "http://www.reddit.com/api/save";
-
-            var content = new Dictionary<string, string>
-            {
-                { "id", thingId},
-                { "uh", modhash}
-            };
-
-            ProcessJsonErrors(await _simpleHttpService.SendPost(await GetCurrentLoginCookie(), content, targetUri));
+            return ThingAction("save", thingId);
         }
 
-        public virtual async Task AddReportOnThing(string thingId)
+        public virtual Task AddReportOnThing(string thingId)
         {
-            var modhash = await GetCurrentModhash();
-            var targetUri = "http://www.reddit.com/api/report";
-
-            var content = new Dictionary<string, string>
-            {
-                { "id", thingId},
-                { "uh", modhash}
-            };
-
-            ProcessJsonErrors(await _simpleHttpService.SendPost(await GetCurrentLoginCookie(), content, targetUri));
+            return ThingAction("report", thingId);
         }
 
         public virtual async Task AddPost(string kind, string url, string text, string subreddit, string title)
@@ -1043,12 +1005,59 @@ namespace BaconographyPortable.Model.Reddit
             return await GetUserInfoListing("disliked", limit);
         }
 
-        public async Task<Listing> GetSentMessages(int? limit)
+        public Task<Listing> GetSentMessages(int? limit)
+        {
+            return GetMail("sent", limit);
+        }
+
+        public async Task ThingAction(string action, string thingId)
+        {
+            var modhash = await GetCurrentModhash();
+            var targetUri = "http://www.reddit.com/api/" + action;
+
+            var content = new Dictionary<string, string>
+            {
+                { "id", thingId},
+                { "uh", modhash}
+            };
+
+            ProcessJsonErrors(await _simpleHttpService.SendPost(await GetCurrentLoginCookie(), content, targetUri));
+        }
+
+        public Task UnSaveThing(string thingId)
+        {
+            return ThingAction("unsafe", thingId);
+        }
+
+        public async Task MarkVisited(IEnumerable<string> ids)
+        {
+            var user = await _userService.GetUser();
+            if (user != null && user.Me != null && user.Me.IsGold)
+            {
+                var modhash = await GetCurrentModhash();
+
+                var arguments = new Dictionary<string, string>
+                {
+                    {"links", string.Join(",", ids)},
+                    { "uh", modhash}
+                };
+
+                ProcessJsonErrors(await this.SendPost(await GetCurrentLoginCookie(), arguments, "http://www.reddit.com/api/store_visits"));
+            }
+        }
+
+
+        public Task<Listing> GetModActions(string subreddit, int? limit)
+        {
+            throw new NotImplementedException();
+        }
+
+        private async Task<Listing> GetMail(string kind, int? limit)
         {
             var maxLimit = (await UserIsGold()) ? 1500 : 100;
             var guardedLimit = Math.Min(maxLimit, limit ?? maxLimit);
 
-            var targetUri = string.Format("http://www.reddit.com/message/sent/.json?limit={0}", guardedLimit);
+            var targetUri = string.Format("http://www.reddit.com/message/{1}/.json?limit={0}", guardedLimit, kind);
 
             try
             {
@@ -1068,35 +1077,24 @@ namespace BaconographyPortable.Model.Reddit
             }
         }
 
-        public async Task UnSaveThing(string thingId)
+        public Task<Listing> GetModMail(int? limit)
         {
-            var modhash = await GetCurrentModhash();
-            var targetUri = "http://www.reddit.com/api/unsave";
-
-            var content = new Dictionary<string, string>
-            {
-                { "id", thingId},
-                { "uh", modhash}
-            };
-
-            ProcessJsonErrors(await _simpleHttpService.SendPost(await GetCurrentLoginCookie(), content, targetUri));
+            return GetMail("moderator", limit);
         }
 
-        public async Task MarkVisited(IEnumerable<string> ids)
+        public Task ApproveThing(string thingId)
         {
-            var user = await _userService.GetUser();
-            if (user != null && user.Me != null && user.Me.IsGold)
-            {
-                var modhash = await GetCurrentModhash();
+            return ThingAction("approve", thingId);
+        }
 
-                var arguments = new Dictionary<string, string>
-                {
-                    {"links", string.Join(",", ids)},
-                    { "uh", modhash}
-                };
+        public Task RemoveThing(string thingId, bool spam)
+        {
+            return ThingAction("remove", thingId);
+        }
 
-                ProcessJsonErrors(await this.SendPost(await GetCurrentLoginCookie(), arguments, "http://www.reddit.com/api/store_visits"));
-            }
+        public Task IgnoreReportsOnThing(string thingId)
+        {
+            return ThingAction("ignore_reports", thingId);
         }
     }
 }
