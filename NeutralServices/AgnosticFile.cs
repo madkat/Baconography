@@ -135,6 +135,15 @@ namespace Baconography.NeutralServices
 #endif
 		}
 
+        public async Task Rename(string newName)
+        {
+#if WINDOWS_PHONE
+            File.Move(_file, newName);
+#else
+            await _file.RenameAsync(newName);
+#endif
+        }
+
 		public async Task Create()
 		{
 #if WINDOWS_PHONE

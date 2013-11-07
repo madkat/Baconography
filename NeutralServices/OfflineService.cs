@@ -110,7 +110,7 @@ namespace Baconography.NeutralServices
             Monitor.Enter(this);
             try
             {
-                using (var agnosticFile = new AgnosticFile(Windows.Storage.ApplicationData.Current.LocalFolder.Path + "\\initBlob.flat"))
+                using (var agnosticFile = new AgnosticFile(Windows.Storage.ApplicationData.Current.LocalFolder.Path + "\\initBlob_new.flat"))
                 {
                     using (var streamWriter = await agnosticFile.GetStreamWriter(false))
                     {
@@ -128,6 +128,19 @@ namespace Baconography.NeutralServices
                         var initBlobString = JsonConvert.SerializeObject(initBlob);
                         streamWriter.Write(initBlobString);
                     }
+                    using (var oldAgnosticFile = new AgnosticFile(Windows.Storage.ApplicationData.Current.LocalFolder.Path + "\\initBlob.flat"))
+                    {
+                        if (await oldAgnosticFile.Exists())
+                        {
+                            using (var backAgnosticFile = new AgnosticFile(Windows.Storage.ApplicationData.Current.LocalFolder.Path + "\\initBlob_bak.flat"))
+                            {
+                                if (await backAgnosticFile.Exists())
+                                    await backAgnosticFile.Delete();
+                            }
+                            await oldAgnosticFile.Rename(Windows.Storage.ApplicationData.Current.LocalFolder.Path + "\\initBlob_bak.flat");
+                        }
+                    }
+                    await agnosticFile.Rename(Windows.Storage.ApplicationData.Current.LocalFolder.Path + "\\initBlob.flat");
                 }
             }
             catch (Exception ex)
@@ -160,66 +173,89 @@ namespace Baconography.NeutralServices
 
         private async Task<InitializationBlob> LoadInitializationBlobImpl(IUserService userService)
         {
-            using(var agnosticFile = new AgnosticFile(Windows.Storage.ApplicationData.Current.LocalFolder.Path + "\\initBlob.flat"))
-            { 
-                if (await agnosticFile.Exists())
-                {
-                    var streamReader = await agnosticFile.GetStreamReader();
-                    var initBlobString = streamReader.ReadToEnd();
-                    return JsonConvert.DeserializeObject<InitializationBlob>(initBlobString);
-                }
-            }
-
-            using (var settingsDb = await DB.CreateAsync(Windows.Storage.ApplicationData.Current.LocalFolder.Path + "\\settings_v2.ism", DBCreateFlags.None))
+            try
             {
-                var settingsCache = new Dictionary<string, string>();
-                //load all of the settings up front so we dont spend so much time going back and forth
-                using (var cursor = await settingsDb.SeekAsync(DBReadFlags.NoLock))
-                {
-                    if (cursor != null)
-                    {
-                        do
-                        {
-                            settingsCache.Add(cursor.GetKeyString(), cursor.GetString());
-                        } while (await cursor.MoveNextAsync());
-                    }
-                }
-
-
-                InitializationBlob result = null;
-
-                if (userService != null)
-                {
-                    await Initialize();
-                    var currentUser = await userService.GetUser();
-                    var sublist = await RetrieveOrderedThings("sublist:" + currentUser.Username, TimeSpan.FromDays(1024));
-                    var pivot = await RetrieveOrderedThings("pivotsubreddits:" + currentUser.Username, TimeSpan.FromDays(1024));
-
-                    result = new InitializationBlob
-                    {
-                        Settings = settingsCache,
-                        SubscribedSubreddits = sublist.ToArray(),
-                        PinnedSubreddits = sublist.ToArray()
-                    };
-                }
-                else
-                {
-                    result = new InitializationBlob
-                    {
-                        Settings = settingsCache,
-                    };
-                }
-
-                //since the above is only for migration, migrate on first load
                 using (var agnosticFile = new AgnosticFile(Windows.Storage.ApplicationData.Current.LocalFolder.Path + "\\initBlob.flat"))
                 {
-                    using (var streamWriter = await agnosticFile.GetStreamWriter(false))
+                    bool badFile = false;
+                    try
                     {
-                        var initBlobString = JsonConvert.SerializeObject(result);
-                        streamWriter.Write(initBlobString);
+                        if (await agnosticFile.Exists())
+                        {
+                            using (var streamReader = await agnosticFile.GetStreamReader())
+                            {
+                                var initBlobString = streamReader.ReadToEnd();
+                                return JsonConvert.DeserializeObject<InitializationBlob>(initBlobString);
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        badFile = true;
+                        Debug.WriteLine(ex);
+
+                    }
+                    if (badFile)
+                    {
+                        await agnosticFile.Delete();
                     }
                 }
-                return result;
+
+                using (var settingsDb = await DB.CreateAsync(Windows.Storage.ApplicationData.Current.LocalFolder.Path + "\\settings_v2.ism", DBCreateFlags.None))
+                {
+                    var settingsCache = new Dictionary<string, string>();
+                    //load all of the settings up front so we dont spend so much time going back and forth
+                    using (var cursor = await settingsDb.SeekAsync(DBReadFlags.NoLock))
+                    {
+                        if (cursor != null)
+                        {
+                            do
+                            {
+                                settingsCache.Add(cursor.GetKeyString(), cursor.GetString());
+                            } while (await cursor.MoveNextAsync());
+                        }
+                    }
+
+
+                    InitializationBlob result = null;
+
+                    if (userService != null)
+                    {
+                        await Initialize();
+                        var currentUser = await userService.GetUser();
+                        var sublist = await RetrieveOrderedThings("sublist:" + currentUser.Username, TimeSpan.FromDays(1024));
+                        var pivot = await RetrieveOrderedThings("pivotsubreddits:" + currentUser.Username, TimeSpan.FromDays(1024));
+
+                        result = new InitializationBlob
+                        {
+                            Settings = settingsCache,
+                            SubscribedSubreddits = sublist.ToArray(),
+                            PinnedSubreddits = sublist.ToArray()
+                        };
+                    }
+                    else
+                    {
+                        result = new InitializationBlob
+                        {
+                            Settings = settingsCache,
+                        };
+                    }
+
+                    //since the above is only for migration, migrate on first load
+                    using (var agnosticFile = new AgnosticFile(Windows.Storage.ApplicationData.Current.LocalFolder.Path + "\\initBlob.flat"))
+                    {
+                        using (var streamWriter = await agnosticFile.GetStreamWriter(false))
+                        {
+                            var initBlobString = JsonConvert.SerializeObject(result);
+                            streamWriter.Write(initBlobString);
+                        }
+                    }
+                    return result;
+                }
+            }
+            catch (Exception ex)
+            {
+                return new InitializationBlob { Settings = new Dictionary<string, string>() };
             }
         }
 
@@ -607,6 +643,7 @@ namespace Baconography.NeutralServices
         {
             try
             {
+                Debug.WriteLine("storing key:" + key + " at " + new StackTrace().ToString());
                 await Initialize();
                 var thingsArray = things.ToArray();
                 var compressor = new BaconographyPortable.Model.Compression.CompressionService();
@@ -640,6 +677,7 @@ namespace Baconography.NeutralServices
                 Debug.WriteLine(errorText);
                 Debug.WriteLine(ex.ToString());
             }
+            Debug.WriteLine("finished storing key:" + key);
         }
 
 
@@ -721,7 +759,7 @@ namespace Baconography.NeutralServices
             await Initialize();
             try
             {
-                using (var blobCursor = await _blobStoreDb.SeekAsync(_blobStoreDb.GetKeys()[0], BitConverter.GetBytes(key.GetHashCode()), DBReadFlags.WaitOnLock))
+                using (var blobCursor = await _blobStoreDb.SeekAsync(_blobStoreDb.GetKeys()[0], BitConverter.GetBytes(key.GetHashCode()), DBReadFlags.NoLock))
                 {
                     if (blobCursor != null)
                     {
