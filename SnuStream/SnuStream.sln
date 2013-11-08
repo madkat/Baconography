@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SnuSharp", "..\SnuSharp\Snu
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CommonImageAquisition", "..\CommonImageAquisition\CommonImageAquisition.csproj", "{9316A5E4-85F8-4833-839F-A2E03C97BD67}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CommonVideoAquisition", "CommonVideoAquisition\CommonVideoAquisition.csproj", "{53CA745A-78CC-4068-873F-25670ECA15D5}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{9316A5E4-85F8-4833-839F-A2E03C97BD67}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9316A5E4-85F8-4833-839F-A2E03C97BD67}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9316A5E4-85F8-4833-839F-A2E03C97BD67}.Release|Any CPU.Build.0 = Release|Any CPU
+		{53CA745A-78CC-4068-873F-25670ECA15D5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{53CA745A-78CC-4068-873F-25670ECA15D5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{53CA745A-78CC-4068-873F-25670ECA15D5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{53CA745A-78CC-4068-873F-25670ECA15D5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
