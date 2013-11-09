@@ -66,9 +66,6 @@
     <Compile Include="UserState.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="AdvancedREI.Net.Http.Compression">
-      <HintPath>..\River\packages\HttpClient.Compression.1.1.0\lib\portable-net4+sl4+wp7+win8\AdvancedREI.Net.Http.Compression.dll</HintPath>
-    </Reference>
     <Reference Include="GalaSoft.MvvmLight">
       <HintPath>..\River\packages\Portable.MvvmLightLibs.4.2.30.1\lib\portable-net45+sl5+wp8+win8\GalaSoft.MvvmLight.dll</HintPath>
     </Reference>
@@ -78,26 +75,20 @@
     <Reference Include="Microsoft.Practices.ServiceLocation">
       <HintPath>..\River\packages\Portable.CommonServiceLocator.1.2.2\lib\portable-net4+sl4+wp7+win8\Microsoft.Practices.ServiceLocation.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Threading.Tasks">
-      <HintPath>..\River\packages\Microsoft.Bcl.Async.1.0.16\lib\portable-net45+win8+wp8\Microsoft.Threading.Tasks.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Threading.Tasks.Extensions">
-      <HintPath>..\River\packages\Microsoft.Bcl.Async.1.0.16\lib\portable-net45+win8+wp8\Microsoft.Threading.Tasks.Extensions.dll</HintPath>
-    </Reference>
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\River\packages\Newtonsoft.Json.5.0.8\lib\portable-net45+wp80+win8\Newtonsoft.Json.dll</HintPath>
     </Reference>
+    <Reference Include="System.IO.Compression">
+      <HintPath>..\SnuStream\packages\Microsoft.Bcl.Compression.3.9.69\lib\portable-net45+win8+wp8\System.IO.Compression.dll</HintPath>
+    </Reference>
     <Reference Include="System.Net.Http">
-      <HintPath>..\River\packages\Microsoft.Net.Http.2.2.15\lib\portable-net40+sl4+win8+wp71\System.Net.Http.dll</HintPath>
+      <HintPath>..\SnuStream\packages\Microsoft.Net.Http.2.2.15\lib\portable-net40+sl4+win8+wp71\System.Net.Http.dll</HintPath>
     </Reference>
     <Reference Include="System.Net.Http.Extensions">
-      <HintPath>..\River\packages\Microsoft.Net.Http.2.2.15\lib\portable-net40+sl4+win8+wp71\System.Net.Http.Extensions.dll</HintPath>
+      <HintPath>..\SnuStream\packages\Microsoft.Net.Http.2.2.15\lib\portable-net40+sl4+win8+wp71\System.Net.Http.Extensions.dll</HintPath>
     </Reference>
     <Reference Include="System.Net.Http.Primitives">
-      <HintPath>..\River\packages\Microsoft.Net.Http.2.2.15\lib\portable-net40+sl4+win8+wp71\System.Net.Http.Primitives.dll</HintPath>
-    </Reference>
-    <Reference Include="Zlib.Portable">
-      <HintPath>..\River\packages\Zlib.Portable.1.9.2\lib\portable-net4+sl4+wp71+win8\Zlib.Portable.dll</HintPath>
+      <HintPath>..\SnuStream\packages\Microsoft.Net.Http.2.2.15\lib\portable-net40+sl4+win8+wp71\System.Net.Http.Primitives.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

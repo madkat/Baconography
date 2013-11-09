@@ -8,5 +8,6 @@ namespace SnuStream.Common
 {
     class OfflineUtility
     {
+        
     }
 }
