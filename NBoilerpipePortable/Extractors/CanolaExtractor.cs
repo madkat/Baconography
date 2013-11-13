@@ -47,7 +47,7 @@ namespace NBoilerpipePortable.Extractors
 			return CLASSIFIER.Process(doc);
 		}
 
-		private sealed class _BoilerpipeFilter_56 : BoilerpipeFilter
+		private class _BoilerpipeFilter_56 : BoilerpipeFilter
 		{
 			public _BoilerpipeFilter_56()
 			{

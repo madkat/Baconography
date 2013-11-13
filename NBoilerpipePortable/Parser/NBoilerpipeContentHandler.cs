@@ -44,7 +44,6 @@ namespace NBoilerpipePortable
 		internal readonly IList<TextBlock> textBlocks = new List<TextBlock>();
 		string lastStartTag = null;
 		string lastEndTag = null;
-		NBoilerpipeContentHandler.Event lastEvent;
 		int offsetBlocks = 0;
 		BitSet currentContainedTextElements = new BitSet();
 		bool flush = false;
@@ -87,7 +86,6 @@ namespace NBoilerpipePortable
             if (IsHidden(node.Attributes))
                 inIgnorableElement++;
 
-            lastEvent = NBoilerpipeContentHandler.Event.START_TAG;
             lastStartTag = node.Name;
         }
 
@@ -114,7 +112,6 @@ namespace NBoilerpipePortable
             if (inIgnorableElement > 0 && IsHidden(node.Attributes))
                 inIgnorableElement--;
 
-            lastEvent = NBoilerpipeContentHandler.Event.END_TAG;
             lastEndTag = node.Name;
             labelStacks.RemoveLast();
         }
@@ -179,7 +176,6 @@ namespace NBoilerpipePortable
 				} else {
 					sbLastWasWhitespace = false;
 				}
-				lastEvent = NBoilerpipeContentHandler.Event.WHITESPACE;
 				return;
 			}
 			if (startWhitespace) {
@@ -198,7 +194,6 @@ namespace NBoilerpipePortable
 				tokenBuilder.Append (' ');
 			}
 			sbLastWasWhitespace = endWhitespace;
-			lastEvent = NBoilerpipeContentHandler.Event.CHARACTERS;
 			currentContainedTextElements.Add (textElementIdx);
 		}
 		

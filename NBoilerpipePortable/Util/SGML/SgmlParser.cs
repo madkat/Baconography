@@ -137,10 +137,8 @@ namespace Sgml {
         private char m_lastchar;
         private bool m_isWhitespace;
 
-        private Encoding m_encoding;
         private Uri m_resolvedUri;
         private TextReader m_stm;
-        private bool m_weOwnTheStream;
         private int m_lineStart;
         private int m_absolutePos;
 
@@ -430,15 +428,8 @@ namespace Sgml {
                     this.m_resolvedUri = new Uri(this.m_uri);
                 }
 
-                Stream stream = null;
-                Encoding e = Encoding.UTF8;
                 //this stuff should be happening but i dont quite know whats going on
                 throw new NotImplementedException();
-
-                this.m_weOwnTheStream = true;
-                HtmlStream html = new HtmlStream(stream, e);
-                this.m_encoding = html.Encoding;
-                this.m_stm = html;
             }
         }
 
@@ -449,7 +440,7 @@ namespace Sgml {
         {
             get
             {
-                return this.m_encoding;
+                return Encoding.UTF8;
             }
         }
         
@@ -458,8 +449,7 @@ namespace Sgml {
         /// </summary>
         public void Close()
         {
-            if (this.m_weOwnTheStream) 
-                this.m_stm.Dispose();
+            
         }
 
         /// <summary>
@@ -2574,7 +2564,7 @@ namespace Sgml {
                         {
                             PushEntity(this.m_current.ResolvedUri, e);
                         } 
-                        catch (Exception ex) 
+                        catch (Exception) 
                         {
                             // BUG: need an error log.
                             //Console.WriteLine(ex.Message + this.m_current.Context());
