@@ -8,8 +8,7 @@ namespace SnuSharp
 {
     public interface IActionDeferralSink
     {
-        event Action HasDeferrals;
         void Defer(Dictionary<string, string> arguments, string action);
-        Task<Tuple<Dictionary<string, string>, string>> DequeDeferral();
+        Tuple<Dictionary<string, string>, string> DequeDeferral();
     }
 }

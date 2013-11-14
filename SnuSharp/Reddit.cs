@@ -40,7 +40,7 @@ namespace SnuSharp
 
         public async Task ProcessDeferralSink()
         {
-            var deferral = await _deferalSink.DequeDeferral();
+            var deferral = _deferalSink.DequeDeferral();
             if (deferral != null)
             {
                 await BasicPost(deferral.Item1, deferral.Item2);

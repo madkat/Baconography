@@ -18,18 +18,17 @@ namespace SnuStream.Common
         private string _linksFileName;
         private string _subredditStatisticsFileName;
         private string _domainStatisticsFileName;
-        private string _thingMetaBlobFileName;
         private string _actionDeferalFileName;
 
         private DB _blobsDb;
         private DB _linksDb;
         private DB _subredditStatisticsDb;
         private DB _domainStatisticsDb;
-        private DB _thingMetaBlobDb;
         private DB _actionDeferalDb;
 
         public void Clear()
         {
+            Cleanup(_blobsDb, 4, 20, 2, TimeSpan.FromTicks(0));
             PurgeDB(_linksDb, _linksFileName);
             PurgeDB(_subredditStatisticsDb, _subredditStatisticsFileName);
             PurgeDB(_domainStatisticsDb, _domainStatisticsFileName);
@@ -47,31 +46,26 @@ namespace SnuStream.Common
             _linksFileName = cwd + "\\links_v4.ism";
             _subredditStatisticsFileName = cwd + "\\subreddit_statistics_v1.ism";
             _domainStatisticsFileName = cwd + "\\domain_statistics_v1.ism";
-            _thingMetaBlobFileName = cwd + "\\thing_meta_blob_v1.ism";
             _actionDeferalFileName = cwd + "\\action_deferal_v1.ism";
 
             _blobsDb = DB.Create(_blobsFileName, DBCreateFlags.None, 0, new DBKey[]
                 { 
                     new DBKey(4, 0, DBKeyFlags.Integer, "default", false, false, false, 0),
-                    new DBKey(8, 4, DBKeyFlags.AutoTime, "timestamp", false, true, false, 1) 
+                    new DBKey(8, 4, DBKeyFlags.AutoTime, "timestamp", false, true, false, 1),
+                    new DBKey(8, 12, DBKeyFlags.AutoSequence, "timestamp", false, false, false, 2)
                 });
 
             _actionDeferalDb = DB.Create(_actionDeferalFileName, DBCreateFlags.None, 0, new DBKey[]
                 { 
-                    new DBKey(8, 0, DBKeyFlags.AutoSequence, "timestamp", false, false, false, 0) 
+                    new DBKey(8, 0, DBKeyFlags.AutoSequence, "insertion-order", false, false, false, 0) 
                 });
 
             _linksDb = DB.Create(_linksFileName, DBCreateFlags.None, 0, new DBKey[]
                 {
                     new DBKey(10, 0, DBKeyFlags.Alpha, "thing-id", false, false, false, 0),
-                    new DBKey(8, 10, DBKeyFlags.AutoSequence, "insertion-order", false, false, true, 1) 
+                    new DBKey(8, 10, DBKeyFlags.AutoTime, "timestamp", false, true, false, 1),
+                    new DBKey(8, 18, DBKeyFlags.AutoSequence, "insertion-order", false, false, true, 2) 
                 });
-
-            _thingMetaBlobDb = DB.Create(_linksFileName, DBCreateFlags.None, 0, new DBKey[]
-            {
-                new DBKey(10, 0, DBKeyFlags.Alpha, "thing-id", false, false, false, 0),
-                new DBKey(4, 10, DBKeyFlags.Integer, "hash-locator", false, false, true, 1) 
-            });
 
             _subredditStatisticsDb = DB.Create(_subredditStatisticsFileName, DBCreateFlags.None, 28, new DBKey[]
             {
@@ -95,14 +89,14 @@ namespace SnuStream.Common
         {
             return Task.Run(() => 
             {
-                Cleanup(_linksDb, 4, 12, olderThan);
-                Cleanup(_blobsDb, 4, 12, olderThan);
+                Cleanup(_linksDb, 18, 26, 2, olderThan);
+                Cleanup(_blobsDb, 4, 20, 2, olderThan);
             });
         }
 
-        private static void Cleanup(DB db, int timeStampIndex, int importantFlagIndex, TimeSpan olderThan)
+        private static void Cleanup(DB db, int timeStampIndex, int importantFlagIndex, int seqKeyId, TimeSpan olderThan)
         {
-            using (var blobCursor = db.Seek(DBReadFlags.WaitOnLock))
+            using (var blobCursor = db.Seek(db.GetKeys()[seqKeyId], BitConverter.GetBytes((int)0), DBReadFlags.WaitOnLock | DBReadFlags.MatchGTEQ))
             {
                 if (blobCursor == null)
                     return;
@@ -118,6 +112,9 @@ namespace SnuStream.Common
                     {
                         blobCursor.Delete();
                     }
+                        //short circut if we end up on data that is newer than the target
+                    else if (blobAge < olderThan)
+                        break;
 
                 } while (blobCursor.MoveNext());
 
@@ -198,14 +195,14 @@ namespace SnuStream.Common
             }
         }
 
-        private void StoreLinkMetadataImpl(TypedThing<Link> link, int linkComments, int storedComments, int viewed = -1)
+        private void StoreLinkMetadataImpl(Thing link, int linkComments, int storedComments, int viewed = -1)
         {
-            StoreLinkMetadataImpl(link.Data.Id, (existingLink) =>
+            StoreLinkMetadataImpl(((Link)link.Data).Id, (existingLink) =>
                 {
                     if (existingLink == null)
                         existingLink = new LinkMeta();
 
-                    existingLink.Link = link;
+                    existingLink.Data = link.Data;
                     existingLink.CommentCount = linkComments;
                     existingLink.ViewedCommentCount = Math.Max(viewed, existingLink.ViewedCommentCount);
                     existingLink.OfflinedCommentCount = Math.Max(storedComments, existingLink.OfflinedCommentCount);
@@ -291,7 +288,7 @@ namespace SnuStream.Common
             {
                 var keyBytes = Encoding.UTF8.GetBytes(linkId);
 
-                using (var linkCursor = _linksDb.Seek(_linksDb.GetKeys()[0], keyBytes, DBReadFlags.WaitOnLock))
+                using (var linkCursor = _linksDb.Seek(_linksDb.GetKeys()[0], keyBytes, DBReadFlags.NoLock))
                 {
                     if (linkCursor != null)
                     {
@@ -357,19 +354,38 @@ namespace SnuStream.Common
                 });
         }
 
-        public Task<TypedThing<Subreddit>> RetrieveSubredditById(string id)
-        {
-            throw new NotImplementedException();
-        }
-
         public Task<Thing> GetSubreddit(string name)
         {
-            throw new NotImplementedException();
+            return Task.Run(() => RetriveBlobImpl<Thing>(name, TimeSpan.FromDays(4096), false));
+        }
+
+        private Listing AllLinksImpl(string after)
+        {
+            int afterInt;
+            if (!int.TryParse(after, out afterInt))
+                afterInt = int.MaxValue;
+
+            List<Thing> things = new List<Thing>();
+            int lastId = 0;
+            using (var linkCursor = _linksDb.Seek(_linksDb.GetKeys()[2], BitConverter.GetBytes(afterInt), DBReadFlags.NoLock | DBReadFlags.MatchGTEQ))
+            {
+                do
+                {
+                    if (linkCursor == null || things.Count > 20)
+                        break;
+
+                    var linkBytes = linkCursor.Get();
+                    var linkString = Encoding.UTF8.GetString(linkBytes, 27, linkBytes.Length - 27);
+                    var linkThing = JsonConvert.DeserializeObject<LinkMeta>(linkString);
+                    things.Add(linkThing);
+                } while (linkCursor.MoveNext());
+            }
+            return new Listing { Data = new ListingData { Children = things, Before = after, After = lastId == 0 ? null : lastId.ToString() } };
         }
 
         public Task<Listing> AllLinks(string after)
         {
-            throw new NotImplementedException();
+            return Task.Run(() => AllLinksImpl(after));
         }
 
         public Task StoreOrderedThings(string key, IEnumerable<Thing> things)
@@ -383,47 +399,44 @@ namespace SnuStream.Common
             return blob;
         }
 
-        public Task<TypedThing<Link>> RetrieveLink(string id)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<TypedThing<Link>> RetrieveLinkByUrl(string url, TimeSpan maxAge)
-        {
-            throw new NotImplementedException();
-        }
-
         private InitializationBlob LoadInitializationBlobImpl(string userName)
         {
-            try
-            {
-                return RetriveBlobImpl<InitializationBlob>("initBlob", TimeSpan.FromDays(4096), false) ?? new InitializationBlob { Settings = new Dictionary<string, string>() };
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine("while loading initialization blob recived {0}", ex.ToString());
-                return new InitializationBlob { Settings = new Dictionary<string, string>() };
-            }
+            return RetriveBlobImpl<InitializationBlob>("initBlob", TimeSpan.FromDays(4096), false) ?? new InitializationBlob { Settings = new Dictionary<string, string>() };
         }
 
-        public Task StoreHistory(string link)
+        Dictionary<string, DateTime> _history;
+
+        private Dictionary<string, DateTime> LoadHistory()
         {
-            throw new NotImplementedException();
+            return RetriveBlobImpl<Dictionary<string, DateTime>>("history", TimeSpan.FromDays(4096), false) ?? new Dictionary<string, DateTime>();
         }
 
-        public Task ClearHistory()
+        public void StoreHistory()
         {
-            throw new NotImplementedException();
+            StoreBlobImpl("history", _history, true);
+        }
+
+        public void AddHistory(string link)
+        {
+            var lowerLink = link.ToLower();
+            if (!_history.ContainsKey(lowerLink))
+                _history.Add(lowerLink, DateTime.Now);
+        }
+
+        public void ClearHistory()
+        {
+            _history.Clear();
+            StoreHistory();
         }
 
         public bool HasHistory(string link)
         {
-            throw new NotImplementedException();
+            return _history.ContainsKey(link.ToLower());
         }
 
         public Task StoreSubreddit(TypedThing<Subreddit> subreddit)
         {
-            throw new NotImplementedException();
+            return Task.Run(() => StoreBlobImpl("subreddit:" + subreddit.Data.Name, subreddit, false));
         }
 
         public uint GetHash(string name)
@@ -488,7 +501,7 @@ namespace SnuStream.Common
         {
             try
             {
-                using (var blobCursor = _blobsDb.Seek(_blobsDb.GetKeys()[0], BitConverter.GetBytes(name.GetHashCode()), DBReadFlags.WaitOnLock))
+                using (var blobCursor = _blobsDb.Seek(_blobsDb.GetKeys()[0], BitConverter.GetBytes(name.GetHashCode()), DBReadFlags.NoLock))
                 {
                     if (blobCursor != null)
                     {
@@ -527,16 +540,35 @@ namespace SnuStream.Common
             return Task.Run(() => RetriveBlobImpl<T>(name, maxAge, true));
         }
 
-        public event Action HasDeferrals;
-
         public void Defer(Dictionary<string, string> arguments, string action)
         {
-            throw new NotImplementedException();
+            var serializedDeferal = JsonConvert.SerializeObject(Tuple.Create(arguments, action));
+            var deferalBytes = Encoding.UTF8.GetBytes(serializedDeferal);
+            var recordBytes = new byte[deferalBytes.Length + 8];
+            deferalBytes.CopyTo(recordBytes, 8);
+            _actionDeferalDb.Insert(recordBytes);
         }
 
-        public Task<Tuple<Dictionary<string, string>, string>> DequeDeferral()
+        public Tuple<Dictionary<string, string>, string> DequeDeferral()
         {
-            throw new NotImplementedException();
+            try
+            {
+                using (var deferalCursor = _actionDeferalDb.Seek(DBReadFlags.WaitOnLock))
+                {
+                    if (deferalCursor != null)
+                    {
+                        var deferalBytes = deferalCursor.Get();
+                        var deferalString = Encoding.UTF8.GetString(deferalBytes, 8, deferalBytes.Length - 8);
+                        var deferal = JsonConvert.DeserializeObject<Tuple<Dictionary<string, string>, string>>(deferalString);
+                        return deferal;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine("recived exception while deque'ing deferal {0}", ex);
+            }
+            return null;
         }
     }
 
@@ -753,7 +785,7 @@ namespace SnuStream.Common
         }
     }
 
-    public class LinkMeta
+    public class LinkMeta : Thing
     {
         public int CommentCount { get; set; }
         public int ViewedCommentCount { get; set; }
@@ -762,7 +794,6 @@ namespace SnuStream.Common
         public bool HasOfflineImage { get; set; }
         public bool HasOfflineWeb { get; set; }
         public bool HasOfflineVideo { get; set; }
-        public Thing Link { get; set; }
     }
 
     public class UsageStatisticsAggregate
