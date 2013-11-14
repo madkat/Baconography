@@ -16,24 +16,21 @@ namespace SnuStream.Common
     {
         private string _blobsFileName;
         private string _linksFileName;
-        private string _commentsMetaFileName;
-        private string _offlineMetaFileName;
         private string _subredditStatisticsFileName;
         private string _domainStatisticsFileName;
+        private string _thingMetaBlobFileName;
+        private string _actionDeferalFileName;
 
         private DB _blobsDb;
         private DB _linksDb;
-        private DB _commentsMetaDb;
-        private DB _offlineMetaDb;
         private DB _subredditStatisticsDb;
         private DB _domainStatisticsDb;
         private DB _thingMetaBlobDb;
+        private DB _actionDeferalDb;
 
-        CancellationTokenSource _terminateSource = new CancellationTokenSource();
         public void Clear()
         {
             PurgeDB(_linksDb, _linksFileName);
-            PurgeDB(_commentsMetaDb, _commentsMetaFileName);
             PurgeDB(_subredditStatisticsDb, _subredditStatisticsFileName);
             PurgeDB(_domainStatisticsDb, _domainStatisticsFileName);
         }
@@ -48,17 +45,33 @@ namespace SnuStream.Common
         {
             _blobsFileName = cwd + "\\blobs_v4.ism";
             _linksFileName = cwd + "\\links_v4.ism";
-            _commentsMetaFileName = cwd + "\\comments_meta_v4.ism";
-            _offlineMetaFileName = cwd + "\\offline_meta_v1.ism";
+            _subredditStatisticsFileName = cwd + "\\subreddit_statistics_v1.ism";
+            _domainStatisticsFileName = cwd + "\\domain_statistics_v1.ism";
+            _thingMetaBlobFileName = cwd + "\\thing_meta_blob_v1.ism";
+            _actionDeferalFileName = cwd + "\\action_deferal_v1.ism";
 
-            //TODO KEYS!!!!
-            _blobsDb = DB.Create(_blobsFileName);
+            _blobsDb = DB.Create(_blobsFileName, DBCreateFlags.None, 0, new DBKey[]
+                { 
+                    new DBKey(4, 0, DBKeyFlags.Integer, "default", false, false, false, 0),
+                    new DBKey(8, 4, DBKeyFlags.AutoTime, "timestamp", false, true, false, 1) 
+                });
 
-            //links should actually contain the data of the two following databases
-            //merge them togeather since we should only be storing links that have comments or other offline data with them
-            _linksDb = DB.Create(_linksFileName);
-            _commentsMetaDb = DB.Create(_commentsMetaFileName);
-            _offlineMetaDb = DB.Create(_offlineMetaFileName);
+            _actionDeferalDb = DB.Create(_actionDeferalFileName, DBCreateFlags.None, 0, new DBKey[]
+                { 
+                    new DBKey(8, 0, DBKeyFlags.AutoSequence, "timestamp", false, false, false, 0) 
+                });
+
+            _linksDb = DB.Create(_linksFileName, DBCreateFlags.None, 0, new DBKey[]
+                {
+                    new DBKey(10, 0, DBKeyFlags.Alpha, "thing-id", false, false, false, 0),
+                    new DBKey(8, 10, DBKeyFlags.AutoSequence, "insertion-order", false, false, true, 1) 
+                });
+
+            _thingMetaBlobDb = DB.Create(_linksFileName, DBCreateFlags.None, 0, new DBKey[]
+            {
+                new DBKey(10, 0, DBKeyFlags.Alpha, "thing-id", false, false, false, 0),
+                new DBKey(4, 10, DBKeyFlags.Integer, "hash-locator", false, false, true, 1) 
+            });
 
             _subredditStatisticsDb = DB.Create(_subredditStatisticsFileName, DBCreateFlags.None, 28, new DBKey[]
             {
@@ -82,14 +95,12 @@ namespace SnuStream.Common
         {
             return Task.Run(() => 
             {
-                Cleanup(_commentsMetaDb, 20, olderThan);
-                Cleanup(_linksDb, 20, olderThan);
-                Cleanup(_blobsDb, 20, olderThan);
-                Cleanup(_offlineMetaDb, 20, olderThan);
+                Cleanup(_linksDb, 4, 12, olderThan);
+                Cleanup(_blobsDb, 4, 12, olderThan);
             });
         }
 
-        private static void Cleanup(DB db, int timeStampIndex, TimeSpan olderThan)
+        private static void Cleanup(DB db, int timeStampIndex, int importantFlagIndex, TimeSpan olderThan)
         {
             using (var blobCursor = db.Seek(DBReadFlags.WaitOnLock))
             {
@@ -99,10 +110,11 @@ namespace SnuStream.Common
                 {
                     var gottenBlob = blobCursor.Get();
 
+                    var important = BitConverter.ToBoolean(gottenBlob, importantFlagIndex);
                     var microseconds = BitConverter.ToInt64(gottenBlob, timeStampIndex);
                     var updatedTime = new DateTime(microseconds * 10).AddYears(1969);
                     var blobAge = DateTime.Now - updatedTime;
-                    if (blobAge >= olderThan)
+                    if (blobAge >= olderThan && !important)
                     {
                         blobCursor.Delete();
                     }
@@ -151,50 +163,68 @@ namespace SnuStream.Common
             //we can cut down on IO by about 50% by stripping out the HTML bodies of comments since we dont have any need for them
             StripCommentData(listing.Data.Children);
             StoreBlobImpl("comments:" + permalink, listing, true);
-            StoreCommentMetadataImpl(BitConverter.GetBytes(permalink.GetHashCode()), ((Link)linkThing.Data).CommentCount, listing.Data.Children.Count, -1);
+            StoreLinkMetadataImpl(new TypedThing<Link>(linkThing), ((Link)linkThing.Data).CommentCount, listing.Data.Children.Count, -1);
         }
 
-        private void StoreCommentsMetadataImpl(byte[] keyBytes, Func<int, int, int, byte[]> producer)
+        private void StoreLinkMetadataImpl(string linkId, Func<LinkMeta, LinkMeta> producer)
         {
-            using (var blobCursor = _commentsMetaDb.Seek(_commentsMetaDb.GetKeys()[0], keyBytes, DBReadFlags.WaitOnLock))
+            var keyBytes = Encoding.UTF8.GetBytes(linkId);
+            using (var linkCursor = _linksDb.Seek(_linksDb.GetKeys()[0], keyBytes, DBReadFlags.WaitOnLock))
             {
-                if (blobCursor != null)
+                if (linkCursor != null)
                 {
-                    var existingData = blobCursor.Get();
-                    var recordBytes = producer(BitConverter.ToInt32(existingData, 12), BitConverter.ToInt32(existingData, 16), BitConverter.ToInt32(existingData, 20));
-                    blobCursor.Update(recordBytes);
+                    var existingData = linkCursor.Get();
+                    var linkMeta = producer(JsonConvert.DeserializeObject<LinkMeta>(Encoding.UTF8.GetString(existingData, 13, existingData.Length - 13)));
+                    var serializedLinkMeta = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(linkMeta));
+                    var recordBytes = new byte[13 + serializedLinkMeta.Length];
+                    serializedLinkMeta.CopyTo(recordBytes, 13);
+                    linkCursor.Update(recordBytes);
                 }
                 else
                 {
-                    var recordBytes = producer(-1, -1, -1);
-                    _commentsMetaDb.Insert(recordBytes);
+                    var linkMeta = producer(null);
+                    if (linkMeta == null)
+                    {
+                        Debug.WriteLine("error while storing link metadata, null result from producer");
+                    }
+                    else
+                    {
+                        var serializedLinkMeta = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(linkMeta));
+                        var recordBytes = new byte[13 + serializedLinkMeta.Length];
+                        serializedLinkMeta.CopyTo(recordBytes, 13);
+                        _linksDb.Insert(recordBytes);
+                    }
                 }
             }
         }
 
-        private void StoreCommentMetadataImpl(byte[] keyBytes, int linkComments, int storedComments, int viewed = -1)
+        private void StoreLinkMetadataImpl(TypedThing<Link> link, int linkComments, int storedComments, int viewed = -1)
         {
-            StoreCommentsMetadataImpl(keyBytes, (existingLink, existingStored, existingViewed) =>
+            StoreLinkMetadataImpl(link.Data.Id, (existingLink) =>
                 {
-                    var recordBytes = new byte[28];
-                    keyBytes.CopyTo(recordBytes, 0);
-                    BitConverter.GetBytes(linkComments).CopyTo(recordBytes, 12);
-                    BitConverter.GetBytes(Math.Max(storedComments, existingStored)).CopyTo(recordBytes, 16);
-                    BitConverter.GetBytes(Math.Max(viewed, existingViewed)).CopyTo(recordBytes, 20);
+                    if (existingLink == null)
+                        existingLink = new LinkMeta();
+
+                    existingLink.Link = link;
+                    existingLink.CommentCount = linkComments;
+                    existingLink.ViewedCommentCount = Math.Max(viewed, existingLink.ViewedCommentCount);
+                    existingLink.OfflinedCommentCount = Math.Max(storedComments, existingLink.OfflinedCommentCount);
+                    return existingLink;
                 });
         }
 
-        public Task StoreCommentMetadataViewed(byte[] keyBytes, int linkComments, int viewed = -1)
+        public Task StoreLinkMetadataViewed(string linkId, int linkComments, int viewed = -1)
         {
             return Task.Run(() =>
             {
-                StoreCommentsMetadataImpl(keyBytes, (existingLink, existingStored, existingViewed) =>
+                StoreLinkMetadataImpl(linkId, (existingLink) =>
                 {
-                    var recordBytes = new byte[28];
-                    keyBytes.CopyTo(recordBytes, 0);
-                    BitConverter.GetBytes(linkComments).CopyTo(recordBytes, 12);
-                    BitConverter.GetBytes(Math.Max(-1, existingStored)).CopyTo(recordBytes, 16);
-                    BitConverter.GetBytes(Math.Max(viewed, existingViewed)).CopyTo(recordBytes, 20);
+                    if (existingLink == null)
+                        return null;
+
+                    existingLink.CommentCount = linkComments;
+                    existingLink.ViewedCommentCount = Math.Max(viewed, existingLink.ViewedCommentCount);
+                    return existingLink;
                 });
             });
         }
@@ -255,34 +285,31 @@ namespace SnuStream.Common
             }
         }
 
-        private Tuple<int, int, int> GetCommentMetadataImpl(string permalink)
+        private Tuple<int, int, int> GetLinkMetadataImpl(string linkId)
         {
             try
             {
-                if (permalink.EndsWith(".json?sort=hot"))
-                    permalink = permalink.Replace(".json?sort=hot", "");
+                var keyBytes = Encoding.UTF8.GetBytes(linkId);
 
-                var keyBytes = BitConverter.GetBytes(permalink.GetHashCode());
-
-                using (var blobCursor = _commentsMetaDb.Seek(_commentsMetaDb.GetKeys()[0], keyBytes, DBReadFlags.WaitOnLock))
+                using (var linkCursor = _linksDb.Seek(_linksDb.GetKeys()[0], keyBytes, DBReadFlags.WaitOnLock))
                 {
-                    if (blobCursor != null)
+                    if (linkCursor != null)
                     {
-                        var bytes = blobCursor.Get();
-                        return Tuple.Create(BitConverter.ToInt32(bytes, 12), BitConverter.ToInt32(bytes, 16), BitConverter.ToInt32(bytes, 20));
+                        var bytes = linkCursor.Get();
+                        JsonConvert.DeserializeObject<LinkMeta>(Encoding.UTF8.GetString(bytes, 13, bytes.Length - 13));
                     }
                 }
             }
             catch (Exception ex)
             {
-                Debug.WriteLine("exception while getting comment metadata {0}", ex);
+                Debug.WriteLine("exception while getting link metadata {0}", ex);
             }
             return Tuple.Create(0, 0, 0);
         }
 
-        public Task<Tuple<int, int, int>> GetCommentMetadata(string permalink)
+        public Task<Tuple<int, int, int>> GetLinkMetadata(string linkId)
         {
-            return Task.Run(() => GetCommentMetadataImpl(permalink));
+            return Task.Run(() => GetLinkMetadataImpl(linkId));
         }
 
         public Task<Listing> GetTopLevelComments(string permalink, int count)
@@ -291,11 +318,6 @@ namespace SnuStream.Common
                 permalink = permalink.Replace(".json?sort=hot", "");
 
             return RetriveBlob<Listing>("comments:" + permalink, TimeSpan.FromDays(4096));
-        }
-
-        public Task<Listing> OfflineMetaLinksByInsertion(string after, int count)
-        {
-            throw new NotImplementedException();
         }
 
         public Task IncrementDomainStatistic(string domain, bool isLink)
@@ -335,69 +357,18 @@ namespace SnuStream.Common
                 });
         }
 
-        private string TranslateSubredditNameToId(string subredditName)
+        public Task<TypedThing<Subreddit>> RetrieveSubredditById(string id)
         {
-            var gottenSubreddit = RetriveBlobImpl<Thing>("subreddit:" + subredditName, TimeSpan.FromDays(4096), false);
-            if (gottenSubreddit != null)
-            {
-                return ((Subreddit)gottenSubreddit.Data).Id;
-            }
-            else
-                return null;
+            throw new NotImplementedException();
         }
 
-        private Listing LinksForSubredditImpl(string subredditName, string after)
+        public Task<Thing> GetSubreddit(string name)
         {
-            try
-            {
-                var subredditId = TranslateSubredditNameToId(subredditName);
-                if (subredditId == null)
-                    return new Listing { Data = new ListingData { Children = new List<Thing>() } };
-
-                var keyspace = new byte[8];
-
-                for (int i = 0; i < 8 && i < subredditId.Length; i++)
-                    keyspace[i] = (byte)subredditId[i];
-
-                using (var linkCursor = _linksDb.Select(_linksDb.GetKeys().First(), keyspace))
-                {
-                    if (after != null && linkCursor != null)
-                    {
-                        var afterKeyspace = new byte[16];
-
-                        for (int i = 0; i < 16 && i < after.Length + 10; i++)
-                            afterKeyspace[i] = (byte)after[i + 2]; //skip ahead past the after type identifier
-
-                        linkCursor.Seek(_linksDb.GetKeys().First(), afterKeyspace, DBReadFlags.NoLock);
-                    }
-
-                    return DeserializeCursor(linkCursor, 25);
-                }
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine("encountered exception while loading links for subreddit {0}", ex);
-                return new Listing { Data = new ListingData { Children = new List<Thing>() } };   
-            }
-        }
-
-        public Task<Listing> LinksForSubreddit(string subredditName, string after)
-        {
-            return Task.Run(() => LinksForSubreddit(subredditName, after));
+            throw new NotImplementedException();
         }
 
         public Task<Listing> AllLinks(string after)
         {
-            throw new NotImplementedException();
-        }
-
-        public Task StoreThing(string key, Thing link)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<Thing> RetrieveThing(string key, TimeSpan maxAge)
-        { 
             throw new NotImplementedException();
         }
 
@@ -418,11 +389,6 @@ namespace SnuStream.Common
         }
 
         public Task<TypedThing<Link>> RetrieveLinkByUrl(string url, TimeSpan maxAge)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<TypedThing<Subreddit>> RetrieveSubredditById(string id)
         {
             throw new NotImplementedException();
         }
@@ -451,11 +417,6 @@ namespace SnuStream.Common
         }
 
         public bool HasHistory(string link)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<Thing> GetSubreddit(string name)
         {
             throw new NotImplementedException();
         }
@@ -581,11 +542,11 @@ namespace SnuStream.Common
 
     internal static class UsageStatisticsUtility
     {
-        static const int SubIdKeySpaceSize = 12;
-        static const int DomainHashKeySpaceSize = 4;
+        static readonly int SubIdKeySpaceSize = 12;
+        static readonly int DomainHashKeySpaceSize = 4;
 
-        static const int SubredditKeySpaceSize = 28;
-        static const int DomainKeySpaceSize = 20;
+        static readonly int SubredditKeySpaceSize = 28;
+        static readonly int DomainKeySpaceSize = 20;
 
         public static byte[] GenerateSubIdKeyspace(string id)
         {
@@ -790,6 +751,18 @@ namespace SnuStream.Common
                 Debug.WriteLine("encountered error while incrementing subreddit statistics {0}", ex);
             }
         }
+    }
+
+    public class LinkMeta
+    {
+        public int CommentCount { get; set; }
+        public int ViewedCommentCount { get; set; }
+        public int OfflinedCommentCount { get; set; }
+        public bool HasPreviewImage { get; set; }
+        public bool HasOfflineImage { get; set; }
+        public bool HasOfflineWeb { get; set; }
+        public bool HasOfflineVideo { get; set; }
+        public Thing Link { get; set; }
     }
 
     public class UsageStatisticsAggregate
