@@ -6,7 +6,10 @@ using System.Threading.Tasks;
 
 namespace SnuStream.Services
 {
-    interface INotificationService
+    public interface INotificationService
     {
+        Task Report(string message, Action operation);
+        Task Report(string message, Func<Task> operation);
+        Task ReportWithProgress(string message, Func<Action<int>, Task> operation);
     }
 }

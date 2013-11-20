@@ -2,11 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace SnuStream.Services
 {
-    interface ISystemServices
+    public interface ISystemServices
     {
         object StartTimer(EventHandler<object> tickHandler, TimeSpan tickSpan, bool uiThread);
         void RestartTimer(object tickHandle);
@@ -15,5 +16,6 @@ namespace SnuStream.Services
         void StartThreadPoolTimer(Func<object, Task> action, TimeSpan timer);
         bool IsOnMeteredConnection { get; }
         bool IsNearingDataLimit { get; }
+        Task<byte[]> DownloadWithProgress(string uri, Action<int> progress, CancellationToken cancelToken); 
     }
 }

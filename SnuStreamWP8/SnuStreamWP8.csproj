@@ -99,6 +99,8 @@
     <Compile Include="MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="PlatformServices\MarkdownProvider.cs" />
+    <Compile Include="PlatformServices\SystemServices.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Resources\AppResources.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -151,6 +153,30 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\CommonImageAquisition\CommonImageAquisition.csproj">
+      <Project>{9316A5E4-85F8-4833-839F-A2E03C97BD67}</Project>
+      <Name>CommonImageAquisition</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\CommonVideoAquisition\CommonVideoAquisition.csproj">
+      <Project>{53CA745A-78CC-4068-873F-25670ECA15D5}</Project>
+      <Name>CommonVideoAquisition</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DXGifRenderWP8\DXGifRenderWP8.vcxproj">
+      <Project>{B9A8ED65-C137-4751-AF3A-44D2D7DCA0F5}</Project>
+      <Name>DXGifRenderWP8</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\NBoilerpipePortable\NBoilerpipePortable.csproj">
+      <Project>{17272736-FE78-416B-96C4-90FCF0BEA45B}</Project>
+      <Name>NBoilerpipePortable</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SnuDom\SnuDomWP8.vcxproj">
+      <Project>{4D497A51-5483-4236-B2F0-640A4DC26E18}</Project>
+      <Name>SnuDomWP8</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SnuSharp\SnuSharp.csproj">
+      <Project>{D9BAA749-5BBE-4DAE-B5EA-4D70DEF266FC}</Project>
+      <Name>SnuSharp</Name>
+    </ProjectReference>
     <ProjectReference Include="..\SnuStream\SnuStream.csproj">
       <Project>{DAF4D2B8-E906-422A-B53A-C57DBA2AE94D}</Project>
       <Name>SnuStream</Name>
@@ -179,23 +205,31 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Newtonsoft.Json.5.0.8\lib\portable-net45+wp80+win8\Newtonsoft.Json.dll</HintPath>
     </Reference>
+    <Reference Include="SmartNavigation">
+      <HintPath>..\packages\SmartNavigation.1.0.0.0\lib\wp71\SmartNavigation.dll</HintPath>
+    </Reference>
     <Reference Include="System.IO.Compression, Version=3.9.69.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Microsoft.Bcl.Compression.3.9.69\lib\wp8\System.IO.Compression.dll</HintPath>
     </Reference>
-    <Reference Include="System.Net.Http">
-      <HintPath>..\packages\Microsoft.Net.Http.2.2.15\lib\sl4-windowsphone71\System.Net.Http.dll</HintPath>
+    <Reference Include="System.Net.Http, Version=1.5.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Microsoft.Net.Http.2.2.18\lib\sl4-windowsphone71\System.Net.Http.dll</HintPath>
     </Reference>
-    <Reference Include="System.Net.Http.Extensions">
-      <HintPath>..\packages\Microsoft.Net.Http.2.2.15\lib\sl4-windowsphone71\System.Net.Http.Extensions.dll</HintPath>
+    <Reference Include="System.Net.Http.Extensions, Version=1.5.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Microsoft.Net.Http.2.2.18\lib\sl4-windowsphone71\System.Net.Http.Extensions.dll</HintPath>
     </Reference>
-    <Reference Include="System.Net.Http.Primitives">
-      <HintPath>..\packages\Microsoft.Net.Http.2.2.15\lib\sl4-windowsphone71\System.Net.Http.Primitives.dll</HintPath>
+    <Reference Include="System.Net.Http.Primitives, Version=1.5.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Microsoft.Net.Http.2.2.18\lib\sl4-windowsphone71\System.Net.Http.Primitives.dll</HintPath>
     </Reference>
     <Reference Include="System.Windows.Interactivity, Version=3.9.5.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Unofficial.Blend.Interactivity.1.0.0\lib\wp8\System.Windows.Interactivity.dll</HintPath>
     </Reference>
+    <Reference Include="Telerik.Windows.Controls.Primitives, Version=2013.3.1016.3040, Culture=neutral, PublicKeyToken=5803cfa389c90ce7, processorArchitecture=MSIL" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\$(TargetFrameworkIdentifier)\$(TargetFrameworkVersion)\Microsoft.$(TargetFrameworkIdentifier).$(TargetFrameworkVersion).Overrides.targets" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\$(TargetFrameworkIdentifier)\$(TargetFrameworkVersion)\Microsoft.$(TargetFrameworkIdentifier).CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.

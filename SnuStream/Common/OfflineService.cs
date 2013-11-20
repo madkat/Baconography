@@ -82,6 +82,8 @@ namespace SnuStream.Common
                 new DBKey(4, 8, DBKeyFlags.Unsigned, "comments", true, true, false, 2),
                 new DBKey(8, 12, DBKeyFlags.AutoTime, "update_timestamp", true, true, false, 3)
             });
+
+            _history = LoadHistory();
         }
 
 
@@ -399,15 +401,16 @@ namespace SnuStream.Common
             return blob;
         }
 
-        private InitializationBlob LoadInitializationBlobImpl(string userName)
+        public InitializationBlob LoadInitializationBlob(string userName)
         {
-            return RetriveBlobImpl<InitializationBlob>("initBlob", TimeSpan.FromDays(4096), false) ?? new InitializationBlob { Settings = new Dictionary<string, string>() };
+            return RetriveBlobImpl<InitializationBlob>("initBlob", TimeSpan.FromDays(4096), false) ?? new InitializationBlob { Settings = new Dictionary<string, string>(), NSFWFilter = new Dictionary<string,bool>() };
         }
 
         Dictionary<string, DateTime> _history;
 
         private Dictionary<string, DateTime> LoadHistory()
         {
+            //this needs to remove history elements that are too old
             return RetriveBlobImpl<Dictionary<string, DateTime>>("history", TimeSpan.FromDays(4096), false) ?? new Dictionary<string, DateTime>();
         }
 

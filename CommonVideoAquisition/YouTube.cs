@@ -10,12 +10,83 @@ namespace CommonVideoAquisition
 {
     class YouTube
     {
-        public bool IsAPI(string url)
+        public static bool IsAPI(string url)
         {
             var youtubeRegex = new Regex("youtu(?:\\.be|be\\.com)/(?:.*v(?:/|=)|(?:.*/)?)([a-zA-Z0-9-_]+)");
             return youtubeRegex.IsMatch(url);
         }
-        public async Task<IEnumerable<Dictionary<string, string>>> GetPlayableStreams(string originalUrl)
+        
+        private static string CleanName(string dirtyName)
+        {
+            switch (dirtyName)
+            {
+                case "video/webm;+codecs":
+                    return "webm";
+                case "video/mp4;+codecs":
+                    return "mp4";
+                case "video/flv":
+                    return "flash";
+                case "video/3gpp":
+                    return "mobile";
+                default:
+                    return "unknown";
+            }
+        }
+
+        static string MakeUsableUrl(Dictionary<string, string> raw)
+        {
+            var rawUrl = Uri.UnescapeDataString(raw["url"]);
+            var rawSig = raw["sig"];
+            return rawUrl + "&signature=" + rawSig;
+        }
+
+        static string MakeQualityString(Dictionary<string, string> raw)
+        {
+            int itag = 0;
+            if (int.TryParse(raw["itag"], out itag))
+            {
+                switch (itag)
+                {
+                    case 5:
+                    case 36:
+                    case 83:
+                    case 133:
+                        return "240p";
+                    case 34:
+                    case 43:
+                    case 82:
+                    case 100:
+                    case 101:
+                    case 134:
+                        return "360p";
+                    case 35:
+                    case 44:
+                    case 135:
+                        return "480p";
+                    case 22:
+                    case 45:
+                    case 84:
+                    case 102:
+                    case 120:
+                    case 136:
+                        return "720p";
+                    case 37:
+                    case 46:
+                    case 137:
+                        return "1080p";
+
+                }
+            }
+            return "unknown";
+        }
+
+        public static async Task<IEnumerable<Tuple<string, string>>> GetPlayableStreams(string originalUrl)
+        {
+            var streams = await GetPlayableStreamsImpl(originalUrl);
+            return streams.Select(dict => Tuple.Create(MakeUsableUrl(dict), MakeQualityString(dict)));
+        }
+
+        private static async Task<IEnumerable<Dictionary<string, string>>> GetPlayableStreamsImpl(string originalUrl)
         {
             //check which video provider we are
             var youtubeRegex = new Regex("youtu(?:\\.be|be\\.com)/(?:.*v(?:/|=)|(?:.*/)?)([a-zA-Z0-9-_]+)");
@@ -40,7 +111,7 @@ namespace CommonVideoAquisition
 
         // "url_encoded_fmt_stream_map": "
         private static Regex _streamMapRegex = new Regex("\"url_encoded_fmt_stream_map\":\\s*\"([^\"]+)\"");
-        private IEnumerable<Dictionary<string, string>> GetUrls(string pageContents)
+        private static IEnumerable<Dictionary<string, string>> GetUrls(string pageContents)
         {
             var streamMapMatch = _streamMapRegex.Match(pageContents);
             if (streamMapMatch.Groups != null &&
@@ -66,7 +137,7 @@ namespace CommonVideoAquisition
             return null;
         }
 
-        int scoreFileType(string type)
+        static int scoreFileType(string type)
         {
             if (type.StartsWith("video/mp4"))
                 return 100;

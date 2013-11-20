@@ -9,5 +9,7 @@ namespace SnuStream.Common
     public class InitializationBlob
     {
         public Dictionary<string, string> Settings { get; set; }
+        public Dictionary<string, bool> NSFWFilter { get; set; }
+
     }
 }

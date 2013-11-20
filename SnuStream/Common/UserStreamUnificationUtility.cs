@@ -6,7 +6,8 @@ using System.Threading.Tasks;
 
 namespace SnuStream.Common
 {
-    class LinkDispatcher
+    public class UserStreamUnificationUtility
     {
+
     }
 }

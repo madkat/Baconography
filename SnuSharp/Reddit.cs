@@ -38,6 +38,14 @@ namespace SnuSharp
             _httpClient = new HttpClient(handler);
         }
 
+        public string CurrentUserName
+        {
+            get
+            {
+                return _userState.Username;
+            }
+        }
+
         public async Task ProcessDeferralSink()
         {
             var deferral = _deferalSink.DequeDeferral();
@@ -134,10 +142,7 @@ namespace SnuSharp
             EnsureRedditCookie();
             var listing = await _httpClient.GetStringAsync(targetUri);
             var newListing = JsonConvert.DeserializeObject<Listing>(listing);
-            if (!string.IsNullOrWhiteSpace(restrictedToSubreddit))
-                return _listingFilter.FilterLinks(newListing, restrictedToSubreddit);
-            else
-                return _listingFilter.FilterSubreddits(newListing);
+            return await _listingFilter.Filter(newListing);
         }
 
         public async Task<Thing> GetThingById(string id)
@@ -166,7 +171,7 @@ namespace SnuSharp
             var subreddits = await _httpClient.GetStringAsync(targetUri);
             var newListing = JsonConvert.DeserializeObject<Listing>(subreddits);
 
-            return _listingFilter.FilterSubreddits(newListing);
+            return await _listingFilter.Filter(newListing);
         }
 
         public async Task<TypedThing<Subreddit>> GetSubreddit(string name)
@@ -234,7 +239,7 @@ namespace SnuSharp
             var listing = await _httpClient.GetStringAsync(targetUri);
             var newListing = JsonConvert.DeserializeObject<Listing>(listing);
 
-            return _listingFilter.Filter(newListing);
+            return await _listingFilter.Filter(newListing);
         }
 
         public async Task<Listing> GetPostsBySubreddit(string subreddit, int? limit)
@@ -252,7 +257,7 @@ namespace SnuSharp
             EnsureRedditCookie();
             var listing = await _httpClient.GetStringAsync(targetUri);
             var newListing = JsonConvert.DeserializeObject<Listing>(listing);
-            return _listingFilter.FilterLinks(newListing, subreddit);
+            return await _listingFilter.Filter(newListing);
         }
 
         public async Task<Listing> GetMoreOnListing(IEnumerable<string> childrenIds, string contentId, string subreddit)
@@ -287,7 +292,7 @@ namespace SnuSharp
                 Data = new ListingData { Children = JsonConvert.DeserializeObject<JsonThing>(resultString).Json.Data.Things }
             };
 
-            return _listingFilter.FilterComments(newListing, contentId);
+            return newListing;
         }
 
         public async Task<Thing> GetLinkByUrl(string url)
@@ -379,8 +384,6 @@ namespace SnuSharp
             else
                 listing = JsonConvert.DeserializeObject<Listing>(comments);
 
-            var result = _listingFilter.FilterComments(listing, permalink);
-
             var requestedLinkInfo = listing.Data.Children.FirstOrDefault(thing => thing.Data is Link);
             if (requestedLinkInfo != null)
             {
@@ -389,7 +392,7 @@ namespace SnuSharp
                     _linkToOpMap.Add(((Link)requestedLinkInfo.Data).Name, ((Link)requestedLinkInfo.Data).Author);
                 }
             }
-            return result;
+            return listing;
         }
 
         public Task<Listing> GetMessages(int? limit)
@@ -421,7 +424,7 @@ namespace SnuSharp
             var listing = await _httpClient.GetStringAsync(targetUri);
             var newListing = JsonConvert.DeserializeObject<Listing>(listing);
 
-            return _listingFilter.FilterAdditional(newListing, baseUrl);
+            return await _listingFilter.Filter(newListing);
 
         }
 
@@ -779,7 +782,7 @@ namespace SnuSharp
             var info = await _httpClient.GetStringAsync(targetUri);
             var newListing = JsonConvert.DeserializeObject<Listing>(info);
 
-            return _listingFilter.Filter(newListing);
+            return await _listingFilter.Filter(newListing);
         }
 
         public async Task<Listing> GetDisliked(int? limit)

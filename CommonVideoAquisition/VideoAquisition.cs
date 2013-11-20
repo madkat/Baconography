@@ -6,7 +6,17 @@ using System.Threading.Tasks;
 
 namespace CommonVideoAquisition
 {
-    class VideoAquisition
+    public class VideoAquisition
     {
+        //someday we will support other video providers
+        bool IsAPI(string originalUrl)
+        {
+            return YouTube.IsAPI(originalUrl);
+        }
+
+        Task<IEnumerable<Tuple<string, string>>> GetPlayableStreams(string originalUrl)
+        {
+            return YouTube.GetPlayableStreams(originalUrl);
+        }
     }
 }

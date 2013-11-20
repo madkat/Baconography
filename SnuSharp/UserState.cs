@@ -12,7 +12,6 @@ namespace SnuSharp
         public string LoginCookie {get; set;}
         public string ModHash { get; set; }
         public bool IsGold { get; set; }
-
         public bool NeedsCaptcha { get; set; }
     }
 }
