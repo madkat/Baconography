@@ -1,0 +1,16 @@
+﻿using SnooStream.ViewModel;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace SnooStream.Services
+{
+    public interface INavigationService
+    {
+        void NavigateToComments(CommentsViewModel viewModel);
+
+        void GoBack();
+    }
+}
