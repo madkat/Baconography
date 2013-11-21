@@ -5,6 +5,7 @@ using SnooStream.Model;
 using SnooStream.Services;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -41,12 +42,7 @@ namespace SnooStream.ViewModel
         public UserHubViewModel UserHub { get; private set; }
         public ModeratorHubViewModel ModeratorHub { get; private set; }
         public SettingsViewModel SettingsHub { get; private set; }
-        public LinkRiverViewModel RiverViewModel { get; private set; }
-
-        public SubredditRiverViewModel MakeSubredditRiver(string subreddit)
-        {
-            return new SubredditRiverViewModel(subreddit, this);
-        }
+        public SubredditRiverViewModel SubredditRiver { get; private set; }
 
         public UploadViewModel UploadHub { get; private set; }
 

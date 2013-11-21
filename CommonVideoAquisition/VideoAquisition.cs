@@ -10,12 +10,12 @@ namespace CommonVideoAquisition
     {
         
         //someday we will support other video providers
-        bool IsAPI(string originalUrl)
+        public static bool IsAPI(string originalUrl)
         {
             return YouTube.IsAPI(originalUrl);
         }
 
-        Task<VideoResult> GetPlayableStreams(string originalUrl)
+        public static Task<VideoResult> GetPlayableStreams(string originalUrl)
         {
             return YouTube.GetPlayableStreams(originalUrl);
         }
