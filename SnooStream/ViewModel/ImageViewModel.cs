@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SnooStream.Common;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -11,44 +12,41 @@ namespace SnooStream.ViewModel
         public string Url { get; set; }
         public string Domain { get; set; }
         public string Title { get; set; }
-        public byte[] ImageSource { get; set; }
-        public byte[] Preview { get; set; }
-        public bool IsGif
+        public bool IsGif { get; set; }
+        public ImageSource ImageSource { get; set; }
+        public PreviewImageSource Preview { get; set; }
+        private static bool CheckGif(byte[] data)
         {
-            get
-            {
-                return
-                    ImageSource[0] == 0x47 && // G
-                    ImageSource[1] == 0x49 && // I
-                    ImageSource[2] == 0x46 && // F
-                    ImageSource[3] == 0x38 && // 8
-                    (ImageSource[4] == 0x39 || ImageSource[4] == 0x37) && // 9 or 7
-                    ImageSource[5] == 0x61;   // a
-            }
-             
+            return
+                data[0] == 0x47 && // G
+                data[1] == 0x49 && // I
+                data[2] == 0x46 && // F
+                data[3] == 0x38 && // 8
+                (data[4] == 0x39 || data[4] == 0x37) && // 9 or 7
+                data[5] == 0x61;   // a
         }
+
+       
 
         private async Task<byte[]> LoadImage()
         {
+            byte[] bytes = null;
             await SnooStreamViewModel.NotificationService.ReportWithProgress("loading from " + Domain,
                 async (report) =>
                 {
-                    var bytes = await SnooStreamViewModel.SystemServices.DownloadWithProgress(Url, report, SnooStreamViewModel.UIContextCancellationToken);
+                    bytes = await SnooStreamViewModel.SystemServices.DownloadWithProgress(Url, (progress) => report(PreviewLoadPercent = progress), SnooStreamViewModel.UIContextCancellationToken);
                     if (bytes != null && bytes.Length > 6) //minimum to identify the image type
                     {
-                        
+                        IsGif = CheckGif(bytes);
                     }
                 });
+            return bytes;
         }
 
-        public override async void LoadContent()
+        protected override async Task LoadContent()
         {
-            
-        }
-
-        public override void LoadPreview()
-        {
-            throw new NotImplementedException();
+            ImageSource = new ImageSource(Url, await LoadImage());
+            Preview = new PreviewImageSource(ImageSource);
         }
     }
 }

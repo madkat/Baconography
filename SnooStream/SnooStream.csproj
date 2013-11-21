@@ -37,6 +37,7 @@
   <ItemGroup>
     <Compile Include="Common\CacheStore.cs" />
     <Compile Include="Common\EndlessStack.cs" />
+    <Compile Include="Common\ImageSource.cs" />
     <Compile Include="Model\InitializationBlob.cs" />
     <Compile Include="Common\CommandDispatcher.cs" />
     <Compile Include="Common\LinkGlyphUtility.cs" />
@@ -72,6 +73,7 @@
     <Compile Include="ViewModel\PrimaryLiveTileViewModel.cs" />
     <Compile Include="ViewModel\RiverViewModel.cs" />
     <Compile Include="ViewModel\SecondaryLiveTileHubViewModel.cs" />
+    <Compile Include="ViewModel\SelfContentViewModel.cs" />
     <Compile Include="ViewModel\SelfViewModel.cs" />
     <Compile Include="ViewModel\SettingsViewModel.cs" />
     <Compile Include="ViewModel\SnooStreamViewModel.cs" />

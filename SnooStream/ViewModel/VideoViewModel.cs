@@ -9,19 +9,10 @@ namespace SnooStream.ViewModel
 {
     public class VideoViewModel : ContentViewModel
     {
-        //this needs to load the preview image from youtube
-        public override void LoadContent()
-        {
-            throw new NotImplementedException();
-        }
 
-        public override void LoadPreview()
-        {
-            throw new NotImplementedException();
-        }
+        public ObservableCollection<Tuple<string, string>> AvailableStreams { get; private set; }
 
-        ObservableCollection<Tuple<string, string>> AvailableStreams { get; private set; }
-
+        public byte[] Preview { get; private set; }
 
         private string _selectedStream;
         public string SelectedStream
@@ -37,6 +28,9 @@ namespace SnooStream.ViewModel
             }
         }
 
-        
+        protected override async Task LoadContent()
+        {
+            
+        }
     }
 }

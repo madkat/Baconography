@@ -80,13 +80,15 @@ namespace CommonVideoAquisition
             return "unknown";
         }
 
-        public static async Task<IEnumerable<Tuple<string, string>>> GetPlayableStreams(string originalUrl)
+        public static async Task<VideoResult> GetPlayableStreams(string originalUrl)
         {
             var streams = await GetPlayableStreamsImpl(originalUrl);
-            return streams.Select(dict => Tuple.Create(MakeUsableUrl(dict), MakeQualityString(dict)));
+            var processedStreams = streams.Item2.Select(dict => Tuple.Create(MakeUsableUrl(dict), MakeQualityString(dict)));
+            var previewImage = string.Format("http://img.youtube.com/vi/{0}/0.jpg", streams.Item1);
+            return new VideoResult { PlayableStreams = processedStreams, PreviewUrl = previewImage };
         }
 
-        private static async Task<IEnumerable<Dictionary<string, string>>> GetPlayableStreamsImpl(string originalUrl)
+        private static async Task<Tuple<string, IEnumerable<Dictionary<string, string>>>> GetPlayableStreamsImpl(string originalUrl)
         {
             //check which video provider we are
             var youtubeRegex = new Regex("youtu(?:\\.be|be\\.com)/(?:.*v(?:/|=)|(?:.*/)?)([a-zA-Z0-9-_]+)");
@@ -100,7 +102,7 @@ namespace CommonVideoAquisition
                     using (var client = new HttpClient())
                     {
                         var html5PageContents = await client.GetStringAsync(html5YoutubeUrl);
-                        return GetUrls(html5PageContents);
+                        return Tuple.Create(youtubeId, GetUrls(html5PageContents));
                     }
                 }
                 

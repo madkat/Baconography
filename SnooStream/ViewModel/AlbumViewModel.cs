@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SnooStream.Common;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -32,24 +33,26 @@ namespace SnooStream.ViewModel
                     //make sure we havent already loaded this image
                     if (Images.Count <= i)
                     {
-                        if (await LoadImageImpl(tpl.Item2, imageUri))
+                        if (await LoadImageImpl(tpl.Item2, imageUri, false))
                             i++;
                     }
                 }
                 
             }
         }
-        private async Task<bool> LoadImageImpl(string title, Uri source)
+        private async Task<bool> LoadImageImpl(string title, Uri source, bool isPreview)
         {
             bool loadedOne = false;
             await SnooStreamViewModel.NotificationService.ReportWithProgress("loading from " + source.Host,
                 async (report) =>
                 {
-                    var bytes = await SnooStreamViewModel.SystemServices.DownloadWithProgress(source.ToString(), report, SnooStreamViewModel.UIContextCancellationToken);
+                    var bytes = await SnooStreamViewModel.SystemServices.DownloadWithProgress(source.ToString(),
+                        isPreview ? (progress) => report(PreviewLoadPercent = progress) : report, 
+                        SnooStreamViewModel.UIContextCancellationToken);
                     if (bytes != null && bytes.Length > 6) //minimum to identify the image type
                     {
                         loadedOne = true;
-                        Images.Add(new ImageViewModel { ImageSource = bytes, Title = title, Url = source.ToString(), Domain = source.Host });
+                        Images.Add(new ImageViewModel { ImageSource = new ImageSource(source.ToString(), bytes), Title = title, Url = source.ToString(), Domain = source.Host });
                     }
                 });
             return loadedOne;
@@ -61,16 +64,17 @@ namespace SnooStream.ViewModel
         public int ApiImageCount { get; private set; }
         public ObservableCollection<ImageViewModel> Images { get; private set; }
         public string AlbumTitle { get; private set; }
+        public PreviewImageSource Preview { get; private set; }
 
-        public override void LoadContent()
-        {
-            LoadAlbumImpl();
-        }
-
-        public override void LoadPreview()
+        protected override async Task LoadContent()
         {
             var firstImage = ApiResults.First();
-            LoadImageImpl(firstImage.Item2, new Uri(firstImage.Item1));
+            var addResult = await LoadImageImpl(firstImage.Item2, new Uri(firstImage.Item1), true);
+            if (addResult)
+            {
+                Preview = Images.First().Preview;
+            }
+            LoadAlbumImpl();
         }
     }
 }

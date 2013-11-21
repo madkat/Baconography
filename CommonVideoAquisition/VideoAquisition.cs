@@ -8,13 +8,14 @@ namespace CommonVideoAquisition
 {
     public class VideoAquisition
     {
+        
         //someday we will support other video providers
         bool IsAPI(string originalUrl)
         {
             return YouTube.IsAPI(originalUrl);
         }
 
-        Task<IEnumerable<Tuple<string, string>>> GetPlayableStreams(string originalUrl)
+        Task<VideoResult> GetPlayableStreams(string originalUrl)
         {
             return YouTube.GetPlayableStreams(originalUrl);
         }
