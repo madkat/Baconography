@@ -71,7 +71,7 @@
     <Compile Include="ViewModel\ModeratorHubViewModel.cs" />
     <Compile Include="ViewModel\PostViewModel.cs" />
     <Compile Include="ViewModel\PrimaryLiveTileViewModel.cs" />
-    <Compile Include="ViewModel\RiverViewModel.cs" />
+    <Compile Include="ViewModel\LinkRiverViewModel.cs" />
     <Compile Include="ViewModel\SecondaryLiveTileHubViewModel.cs" />
     <Compile Include="ViewModel\SelfContentViewModel.cs" />
     <Compile Include="ViewModel\SelfViewModel.cs" />

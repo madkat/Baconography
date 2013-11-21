@@ -41,7 +41,7 @@ namespace SnooStream.ViewModel
         public UserHubViewModel UserHub { get; private set; }
         public ModeratorHubViewModel ModeratorHub { get; private set; }
         public SettingsViewModel SettingsHub { get; private set; }
-        public RiverViewModel RiverViewModel { get; private set; }
+        public LinkRiverViewModel RiverViewModel { get; private set; }
 
         public SubredditRiverViewModel MakeSubredditRiver(string subreddit)
         {

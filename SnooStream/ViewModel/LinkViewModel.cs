@@ -1,4 +1,5 @@
 ﻿using GalaSoft.MvvmLight;
+using SnooSharp;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,5 +12,7 @@ namespace SnooStream.ViewModel
     {
         public ContentViewModel Content { get; private set; }
         public CommentsViewModel Comments { get; private set; }
+        public Link Link { get; private set; }
+        //need to add load helpers here for kicking off preview loads when we get near things
     }
 }
