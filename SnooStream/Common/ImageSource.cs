@@ -66,7 +66,7 @@ namespace SnooStream.Common
                     return Task.Run<byte[]>(async () =>
                         {
                             var mainBytes = await ImageSource.ImageData;
-                            _cachedData = new WeakReference<byte[]>(resizedBytes = SnooStreamViewModel.SystemServices.ResizeImage(mainBytes, 691, 336));
+                            _cachedData = new WeakReference<byte[]>(resizedBytes = await SnooStreamViewModel.SystemServices.ResizeImage(mainBytes, 691, 336));
                             return resizedBytes;
                         });
                 }

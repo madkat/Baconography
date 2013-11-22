@@ -56,6 +56,7 @@
     <Compile Include="Services\INotificationService.cs" />
     <Compile Include="Services\ISystemServices.cs" />
     <Compile Include="Services\IUserCredentialService.cs" />
+    <Compile Include="ViewModel\ActivityViewModel.cs" />
     <Compile Include="ViewModel\AlbumViewModel.cs" />
     <Compile Include="ViewModel\AppearanceSettingsViewModel.cs" />
     <Compile Include="ViewModel\CommentReplyViewModel.cs" />
@@ -73,6 +74,7 @@
     <Compile Include="ViewModel\PrimaryLiveTileViewModel.cs" />
     <Compile Include="ViewModel\LinkRiverViewModel.cs" />
     <Compile Include="ViewModel\SecondaryLiveTileHubViewModel.cs" />
+    <Compile Include="ViewModel\ActivityGroupViewModel.cs" />
     <Compile Include="ViewModel\SelfContentViewModel.cs" />
     <Compile Include="ViewModel\SelfViewModel.cs" />
     <Compile Include="ViewModel\SettingsViewModel.cs" />

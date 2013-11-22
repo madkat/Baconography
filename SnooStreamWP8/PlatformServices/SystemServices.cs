@@ -1,6 +1,8 @@
-﻿using SnooStream.Services;
+﻿using Nokia.InteropServices.WindowsRuntime;
+using SnooStream.Services;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Runtime.InteropServices.WindowsRuntime;
@@ -8,7 +10,9 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Threading;
+using Windows.Foundation;
 using Windows.Networking.Connectivity;
+using Windows.Storage.Streams;
 using Windows.System.Threading;
 
 namespace SnooStreamWP8.PlatformServices
@@ -173,6 +177,56 @@ namespace SnooStreamWP8.PlatformServices
             };
             client.OpenReadAsync(new Uri(uri));
             return taskCompletion.Task;
+        }
+
+
+        public Task<byte[]> ResizeImage(byte[] data, int maxWidth, int maxHeight)
+        {
+            return CropPicture(data, new Size(maxWidth, maxHeight));
+        }
+
+        private static async Task<byte[]> CropPicture(byte[] data, Size desiredSize)
+        {
+            using(var stream = new MemoryStream(data))
+            {
+                using(var dataWriter = new DataWriter(stream.AsOutputStream()))
+                {
+                    var buffer = await Nokia.Graphics.Imaging.JpegTools.AutoResizeAsync(dataWriter.DetachBuffer(),
+                        new Nokia.Graphics.Imaging.AutoResizeConfiguration(5 * 1024 * 1024, desiredSize, desiredSize, Nokia.Graphics.Imaging.AutoResizeMode.PrioritizeHighEncodingQuality, 1.0, Nokia.Graphics.Imaging.ColorSpace.Undefined));
+                    
+                    return buffer.ToArray();
+                }
+            }
+            
+        }
+
+        private static Rect? GetCropArea(Size imageSize, Size desiredSize)
+        {
+            // how big is the picture compared to the phone?
+            var widthRatio = desiredSize.Width / imageSize.Width;
+            var heightRatio = desiredSize.Height / imageSize.Height;
+
+            // the ratio is the same, no need to crop it
+            if (widthRatio == heightRatio) return null;
+
+            double cropWidth;
+            double cropheight;
+            if (widthRatio < heightRatio)
+            {
+                cropheight = imageSize.Height;
+                cropWidth = desiredSize.Width / heightRatio;
+            }
+            else
+            {
+                cropheight = desiredSize.Height / widthRatio;
+                cropWidth = imageSize.Width;
+            }
+
+            int left = (int)(imageSize.Width - cropWidth) / 2;
+            int top = (int)(imageSize.Height - cropheight) / 2;
+
+            var rect = new Windows.Foundation.Rect(left, top, cropWidth, cropheight);
+            return rect;
         }
     }
 }
