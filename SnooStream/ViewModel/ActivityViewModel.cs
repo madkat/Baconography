@@ -18,6 +18,13 @@ namespace SnooStream.ViewModel
         }
 
         public DateTime Created { get; private set; }
+        public string Test
+        {
+            get
+            {
+                return "Test";
+            }
+        }
 
         public static string GetActivityGroupName(Thing thing)
         {

@@ -46,7 +46,7 @@ namespace SnooStream.Common
             _linksFileName = cwd + "\\links_v4.ism";
             _subredditStatisticsFileName = cwd + "\\subreddit_statistics_v1.ism";
             _domainStatisticsFileName = cwd + "\\domain_statistics_v1.ism";
-            _actionDeferalFileName = cwd + "\\action_deferal_v1.ism";
+            _actionDeferalFileName = cwd + "\\actionss_v1.ism";
 
             _blobsDb = DB.Create(_blobsFileName, DBCreateFlags.None, 0, new DBKey[]
                 { 
@@ -403,7 +403,13 @@ namespace SnooStream.Common
 
         public InitializationBlob LoadInitializationBlob(string userName)
         {
-            return RetriveBlobImpl<InitializationBlob>("initBlob", TimeSpan.FromDays(4096), false) ?? new InitializationBlob { Settings = new Dictionary<string, string>(), NSFWFilter = new Dictionary<string,bool>() };
+            return RetriveBlobImpl<InitializationBlob>("initBlob", TimeSpan.FromDays(4096), false) ?? 
+                new InitializationBlob 
+                { 
+                    Settings = new Dictionary<string, string>(), 
+                    NSFWFilter = new Dictionary<string,bool>(),
+                    SelfThings = new List<Thing>()
+                };
         }
 
         Dictionary<string, DateTime> _history;

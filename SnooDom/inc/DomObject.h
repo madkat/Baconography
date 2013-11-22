@@ -4,9 +4,9 @@
 #include <windows.foundation.h>
 
 #ifdef WP8
-namespace SnuDomWP8
+namespace SnooDomWP8
 #else
-namespace SnuDom
+namespace SnooDom
 #endif
 {
 	ref class Text;

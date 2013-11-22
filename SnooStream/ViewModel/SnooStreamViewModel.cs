@@ -15,15 +15,24 @@ namespace SnooStream.ViewModel
 {
     public class SnooStreamViewModel : ViewModelBase
     {
-        public SnooStreamViewModel(string currentWorkingDirectory)
+        public static string CurrentWorkingDirectory { get; set; }
+        public SnooStreamViewModel()
         {
+            if (CurrentWorkingDirectory == null)
+                CurrentWorkingDirectory = "";
+
             _listingFilter = new NSFWListingFilter();
-            OfflineService = new OfflineService(currentWorkingDirectory);
-            RedditService = new Reddit(_listingFilter, null, OfflineService, CaptchaProvider);
+            OfflineService = new OfflineService(CurrentWorkingDirectory);
+            RedditUserState = new UserState();
+            RedditService = new Reddit(_listingFilter, RedditUserState, OfflineService, CaptchaProvider);
             _initializationBlob = OfflineService.LoadInitializationBlob("");
             Settings = new Model.Settings(_initializationBlob.Settings);
             _listingFilter.Initialize(Settings, OfflineService, RedditService, _initializationBlob.NSFWFilter);
             CommandDispatcher = new CommandDispatcher();
+            UserHub = new UserHubViewModel(_initializationBlob);
+            ModeratorHub = new ModeratorHubViewModel();
+            SettingsHub = new SettingsViewModel();
+            SubredditRiver = new SubredditRiverViewModel();
         }
 
         private InitializationBlob _initializationBlob;
@@ -31,6 +40,7 @@ namespace SnooStream.ViewModel
         public static CommandDispatcher CommandDispatcher {get; set;}
         public static Settings Settings { get; set; }
         public static OfflineService OfflineService { get; private set; }
+        public static UserState RedditUserState { get; private set; }
         public static Reddit RedditService { get; private set; }
         public static ICaptchaProvider CaptchaProvider { get; private set; }
         public static IMarkdownProcessor MarkdownProcessor { get; private set; }

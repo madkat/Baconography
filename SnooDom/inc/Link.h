@@ -4,9 +4,9 @@
 #include "Text.h"
 #include "vector"
 #ifdef WP8
-namespace SnuDomWP8
+namespace SnooDomWP8
 #else
-namespace SnuDom
+namespace SnooDom
 #endif
 {
 	public ref class Link sealed : IDomObject

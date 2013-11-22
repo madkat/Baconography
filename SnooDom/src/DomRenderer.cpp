@@ -23,9 +23,9 @@ using std::array;
 using std::map;
 
 #ifdef WP8
-namespace SnuDomWP8
+namespace SnooDomWP8
 #else
-namespace SnuDom
+namespace SnooDom
 #endif
 {
 	void* rndr_allocate(void *opaque, size_t size);
@@ -491,7 +491,7 @@ namespace SnuDom
 		MKDEXT_STRIKETHROUGH |
 		MKDEXT_TABLES;
 
-	public ref class SnuDom sealed
+	public ref class SnooDom sealed
 	{
 	public:
 		static Document^ MarkdownToDOM(Platform::String^ source)
@@ -520,11 +520,11 @@ namespace SnuDom
 		}
 	};
 
-	public ref class SnuDomPlainTextVisitor sealed : IDomVisitor
+	public ref class SnooDomPlainTextVisitor sealed : IDomVisitor
 	{
 	public:
 		property Platform::String^ Result;
-		SnuDomPlainTextVisitor()
+		SnooDomPlainTextVisitor()
 		{
 			Result = "";
 		}
@@ -566,7 +566,7 @@ namespace SnuDom
 		Full
 	};
 
-	public ref class SnuDomCategoryVisitor sealed : IDomVisitor
+	public ref class SnooDomCategoryVisitor sealed : IDomVisitor
 	{
 	public:
 		
@@ -578,7 +578,7 @@ namespace SnuDom
         }
 
 	public:
-		SnuDomCategoryVisitor()
+		SnooDomCategoryVisitor()
 		{
 			Category = MarkdownCategory::PlainText;
 		}

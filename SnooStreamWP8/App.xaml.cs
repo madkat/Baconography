@@ -23,6 +23,7 @@ namespace SnooStreamWP8
         /// </summary>
         public App()
         {
+            SnooStream.ViewModel.SnooStreamViewModel.CurrentWorkingDirectory = Windows.Storage.ApplicationData.Current.LocalFolder.Path;
             // Global handler for uncaught exceptions.
             UnhandledException += Application_UnhandledException;
 
