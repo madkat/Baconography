@@ -403,6 +403,11 @@ namespace SnooStream.Common
             return blob;
         }
 
+        public void StoreInitializationBlob(InitializationBlob initBlob)
+        {
+            StoreBlobImpl("initBlob", initBlob, false);
+        }
+
         public InitializationBlob LoadInitializationBlob(string userName)
         {
             return RetriveBlobImpl<InitializationBlob>("initBlob", TimeSpan.FromDays(4096), false) ?? 
@@ -457,22 +462,15 @@ namespace SnooStream.Common
 
         private byte[] CompressString(string data, byte[] lead)
         {
-            using (var streamUncompressedData = new MemoryStream())
+            var bytes = Encoding.UTF8.GetBytes(data);
+            using (var compressedData = new MemoryStream())
             {
-                using (var streamWriter = new StreamWriter(streamUncompressedData))
+                compressedData.Write(lead, 0, lead.Length);
+                using (var gzipStream = new System.IO.Compression.GZipStream(compressedData, System.IO.Compression.CompressionLevel.Fastest))
                 {
-                    streamWriter.Write(data);
+                    gzipStream.Write(bytes, 0, bytes.Length);
                 }
-
-                using (var gzipStream = new System.IO.Compression.GZipStream(streamUncompressedData, System.IO.Compression.CompressionLevel.Fastest))
-                {
-                    using (var compressedData = new MemoryStream())
-                    {
-                        compressedData.Write(lead, 0, lead.Length);
-                        gzipStream.CopyTo(compressedData);
-                        return compressedData.ToArray();
-                    }
-                }
+                return compressedData.ToArray();
             }
         }
 
@@ -480,20 +478,32 @@ namespace SnooStream.Common
         {
             try
             {
-                var leadBytes = new Byte[12];
+                var leadBytes = new Byte[20];
                 var keyBytes = BitConverter.GetBytes(name.GetHashCode());
                 keyBytes.CopyTo(leadBytes, 0);
-                var compressedBytes = CompressString(JsonConvert.SerializeObject(serializable), leadBytes);
+                var serialized = JsonConvert.SerializeObject(serializable);
+                byte[] storeBytes = null;
+                if (compression)
+                {
+                    storeBytes = CompressString(serialized, leadBytes);
+                }
+                else
+                {
+                    var serializedBytes = Encoding.UTF8.GetBytes(serialized);
+                    storeBytes = new byte[20 + serializedBytes.Length];
+                    leadBytes.CopyTo(storeBytes, 0);
+                    serializedBytes.CopyTo(storeBytes, 20);
+                }
 
                 using (var blobCursor = _blobsDb.Seek(_blobsDb.GetKeys()[0], keyBytes, DBReadFlags.WaitOnLock))
                 {
                     if (blobCursor != null)
                     {
-                        blobCursor.Update(compressedBytes);
+                        blobCursor.Update(storeBytes);
                     }
                     else
                     {
-                        _blobsDb.Insert(compressedBytes);
+                        _blobsDb.Insert(storeBytes);
                     }
                 }
             }
@@ -522,17 +532,27 @@ namespace SnooStream.Common
                         var blobAge = DateTime.Now - updatedTime;
                         if (blobAge <= maxAge)
                         {
-                            using (var memoryStream = new MemoryStream(gottenBlob))
+                            if (useCompression)
                             {
-                                memoryStream.Seek(12, SeekOrigin.Begin);
-
-                                using( var gzipStream = new System.IO.Compression.GZipStream(memoryStream, System.IO.Compression.CompressionLevel.Fastest))
+                                using (var memoryStream = new MemoryStream(gottenBlob))
                                 {
-                                    using (var streamReader = new StreamReader(gzipStream))
+                                    memoryStream.Seek(20, SeekOrigin.Begin);
+
+                                    using (var uncompressed = new MemoryStream())
                                     {
-                                        return JsonConvert.DeserializeObject<T>(streamReader.ReadToEnd());
+                                        using (var gzipStream = new System.IO.Compression.GZipStream(memoryStream, System.IO.Compression.CompressionMode.Decompress))
+                                        {
+                                            gzipStream.CopyTo(uncompressed);
+                                        }
+                                        var uncompressedBytes = uncompressed.ToArray();
+                                        return JsonConvert.DeserializeObject<T>(Encoding.UTF8.GetString(uncompressedBytes, 0, uncompressedBytes.Length));
                                     }
                                 }
+                            }
+                            else
+                            {
+                                var blobString = Encoding.UTF8.GetString(gottenBlob, 20, gottenBlob.Length - 20);
+                                return JsonConvert.DeserializeObject<T>(blobString);
                             }
                         }
                     }

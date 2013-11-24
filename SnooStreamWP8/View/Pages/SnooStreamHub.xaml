@@ -19,7 +19,7 @@
         <phone:Panorama Title="my application" >
 
             <phone:Panorama.Background>
-                <ImageBrush ImageSource="{Binding Path=SnooStream.FeaturedImage}"/>
+                <ImageBrush ImageSource="http://www.darelparker.com/dp/wp-content/uploads/2011/01/reddit-coat-of-arms-logo-widescreen-1440-900-wallpaper.jpg"/>
             </phone:Panorama.Background>
 
             <phone:PanoramaItem Header="item1">
