@@ -34,7 +34,13 @@ namespace SnooStream.ViewModel
             OldestActivity = oldestActivity;
         }
 
-        
+        public bool IsLoggedIn
+        {
+            get
+            {
+                return !String.IsNullOrWhiteSpace(SnooStreamViewModel.RedditService.CurrentUserName);
+            }
+        }
 
         private string OldestMessage { get; set; }
         private string OldestSentMessage { get; set; }
@@ -42,6 +48,9 @@ namespace SnooStream.ViewModel
         public ObservableSortedUniqueCollection<string, ActivityGroupViewModel> Activities { get; private set; }
         public async Task PullNew()
         {
+            if (!IsLoggedIn)
+                throw new InvalidOperationException("User must be logged in to do this");
+
             Listing inbox = null;
             Listing outbox = null;
             Listing activity = null;
@@ -94,6 +103,9 @@ namespace SnooStream.ViewModel
 
         public async Task PullOlder()
         {
+            if (!IsLoggedIn)
+                throw new InvalidOperationException("User must be logged in to do this");
+
             Listing inbox = null;
             Listing outbox = null;
             Listing activity = null;

@@ -15,15 +15,12 @@ namespace SnooStream.ViewModel
 {
     public class SnooStreamViewModel : ViewModelBase
     {
-        public static string CurrentWorkingDirectory { get; set; }
         public SnooStreamViewModel()
         {
-            if (CurrentWorkingDirectory == null)
-                CurrentWorkingDirectory = "";
-
             _listingFilter = new NSFWListingFilter();
-            OfflineService = new OfflineService(CurrentWorkingDirectory);
+            OfflineService = new OfflineService();
             RedditUserState = new UserState();
+            NotificationService = new Common.NotificationService();
             RedditService = new Reddit(_listingFilter, RedditUserState, OfflineService, CaptchaProvider);
             _initializationBlob = OfflineService.LoadInitializationBlob("");
             Settings = new Model.Settings(_initializationBlob.Settings);
@@ -33,6 +30,33 @@ namespace SnooStream.ViewModel
             ModeratorHub = new ModeratorHubViewModel();
             SettingsHub = new SettingsViewModel();
             SubredditRiver = new SubredditRiverViewModel();
+            if (_initializationBlob.LockscreenImages != null && _initializationBlob.LockscreenImages.Count > 0)
+            {
+                Random rnd = new Random();
+                FeaturedImage = _initializationBlob.LockscreenImages[rnd.Next() % _initializationBlob.LockscreenImages.Count].Item2;
+            }
+            LoadLargeImages();
+        }
+
+        private async void LoadLargeImages()
+        {
+            await Task.Delay(2000); //stay away from startup, we've got enough going on as it is
+            if (SystemServices.IsLowPriorityNetworkOk)
+            {
+                await NotificationService.Report("loading secondary images", async () =>
+                {
+                    var posts = await RedditService.GetPostsBySubreddit(Settings.LockScreenReddit, 25);
+                    if (posts != null)
+                    {
+                        foreach (var post in posts.Data.Children)
+                        {
+
+                        }
+                    }
+                });
+                
+            }
+            
         }
 
         private InitializationBlob _initializationBlob;
@@ -42,12 +66,12 @@ namespace SnooStream.ViewModel
         public static OfflineService OfflineService { get; private set; }
         public static UserState RedditUserState { get; private set; }
         public static Reddit RedditService { get; private set; }
-        public static ICaptchaProvider CaptchaProvider { get; private set; }
-        public static IMarkdownProcessor MarkdownProcessor { get; private set; }
-        public static IUserCredentialService UserCredentialService { get; private set; }
-        public static INotificationService NotificationService { get; private set; }
-        public static INavigationService NavigationService { get; private set; }
-        public static ISystemServices SystemServices { get; private set; }
+        public static NotificationService NotificationService { get; private set; }
+        public static ICaptchaProvider CaptchaProvider { get; set; }
+        public static IMarkdownProcessor MarkdownProcessor { get; set; }
+        public static IUserCredentialService UserCredentialService { get; set; }
+        public static INavigationService NavigationService { get; set; }
+        public static ISystemServices SystemServices { get; set; }
 
         public UserHubViewModel UserHub { get; private set; }
         public ModeratorHubViewModel ModeratorHub { get; private set; }
@@ -55,6 +79,7 @@ namespace SnooStream.ViewModel
         public SubredditRiverViewModel SubredditRiver { get; private set; }
 
         public UploadViewModel UploadHub { get; private set; }
+        public string FeaturedImage { get; private set; }
 
         public static CancellationToken UIContextCancellationToken { get; set; }
     }

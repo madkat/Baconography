@@ -9,7 +9,7 @@
     <!--Application Resources-->
     <Application.Resources>
         <local:LocalizedStrings xmlns:local="clr-namespace:SnooStreamWP8" x:Key="LocalizedStrings"/>
-        <core:SnooStreamViewModel x:Key="SnooStream" />
+        <core:SnooStreamViewModel x:Key="SnooStream"/>
     </Application.Resources>
 
     <Application.ApplicationLifetimeObjects>

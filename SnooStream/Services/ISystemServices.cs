@@ -14,9 +14,10 @@ namespace SnooStream.Services
         void StopTimer(object tickHandle);
         void RunAsync(Func<object, Task> action);
         void StartThreadPoolTimer(Func<object, Task> action, TimeSpan timer);
-        bool IsOnMeteredConnection { get; }
-        bool IsNearingDataLimit { get; }
         Task<byte[]> DownloadWithProgress(string uri, Action<int> progress, CancellationToken cancelToken);
         Task<byte[]> ResizeImage(byte[] data, int maxWidth, int maxHeight);
+        void ShowMessage(string title, string text);
+        bool IsLowPriorityNetworkOk { get; }
+        bool IsHighPriorityNetworkOk { get; }
     }
 }

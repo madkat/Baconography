@@ -38,6 +38,7 @@
     <Compile Include="Common\CacheStore.cs" />
     <Compile Include="Common\EndlessStack.cs" />
     <Compile Include="Common\ImageSource.cs" />
+    <Compile Include="Common\NotificationService.cs" />
     <Compile Include="Model\InitializationBlob.cs" />
     <Compile Include="Common\CommandDispatcher.cs" />
     <Compile Include="Common\LinkGlyphUtility.cs" />
@@ -53,7 +54,6 @@
     <Compile Include="Services\DefaultUserCredentialService.cs" />
     <Compile Include="Services\IMarkdownProcessor.cs" />
     <Compile Include="Services\INavigationService.cs" />
-    <Compile Include="Services\INotificationService.cs" />
     <Compile Include="Services\ISystemServices.cs" />
     <Compile Include="Services\IUserCredentialService.cs" />
     <Compile Include="ViewModel\ActivityViewModel.cs" />

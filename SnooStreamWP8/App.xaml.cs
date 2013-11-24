@@ -7,6 +7,10 @@ using System.Windows.Navigation;
 using Microsoft.Phone.Controls;
 using Microsoft.Phone.Shell;
 using SnooStreamWP8.Resources;
+using SnooStream.ViewModel;
+using SnooStream.Common;
+using Telerik.Windows.Controls;
+using SnooStreamWP8.PlatformServices;
 
 namespace SnooStreamWP8
 {
@@ -23,19 +27,17 @@ namespace SnooStreamWP8
         /// </summary>
         public App()
         {
-            SnooStream.ViewModel.SnooStreamViewModel.CurrentWorkingDirectory = Windows.Storage.ApplicationData.Current.LocalFolder.Path;
             // Global handler for uncaught exceptions.
             UnhandledException += Application_UnhandledException;
 
             // Standard XAML initialization
             InitializeComponent();
-
+            
             // Phone-specific initialization
             InitializePhoneApplication();
 
             // Language display initialization
             InitializeLanguage();
-
             // Show graphics profiling information while debugging.
             if (Debugger.IsAttached)
             {
@@ -92,13 +94,22 @@ namespace SnooStreamWP8
             }
         }
 
+        static bool _crashing = false;
         // Code to execute on Unhandled Exceptions
         private void Application_UnhandledException(object sender, ApplicationUnhandledExceptionEventArgs e)
         {
             if (Debugger.IsAttached)
             {
+                
                 // An unhandled exception has occurred; break into the debugger
                 Debugger.Break();
+            }
+
+            if (!_crashing)
+            {
+                _crashing = true;
+                e.Handled = true;
+                RadMessageBox.Show("crashing", MessageBoxButtons.OK, e.ExceptionObject.ToString(), closedHandler: (args) => { throw e.ExceptionObject; });
             }
         }
 
@@ -116,6 +127,7 @@ namespace SnooStreamWP8
             // Create the frame but don't set it as RootVisual yet; this allows the splash
             // screen to remain active until the application is ready to render.
             RootFrame = new PhoneApplicationFrame();
+            SnooStreamViewModel.SystemServices = new SystemServices(RootFrame.Dispatcher);
             RootFrame.Navigated += CompleteInitializePhoneApplication;
 
             // Handle navigation failures

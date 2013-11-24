@@ -40,32 +40,33 @@ namespace SnooStream.Common
             DB.Purge(filename);
         }
 
-        public OfflineService(string cwd)
+        public OfflineService()
         {
-            _blobsFileName = cwd + "\\blobs_v4.ism";
-            _linksFileName = cwd + "\\links_v4.ism";
-            _subredditStatisticsFileName = cwd + "\\subreddit_statistics_v1.ism";
-            _domainStatisticsFileName = cwd + "\\domain_statistics_v1.ism";
-            _actionDeferalFileName = cwd + "\\actionss_v1.ism";
+            _blobsFileName = "blobs_v4.ism";
+            _linksFileName = "links_v4.ism";
+            _subredditStatisticsFileName = "subreddit_statistics_v1.ism";
+            _domainStatisticsFileName = "domain_statistics_v1.ism";
+            _actionDeferalFileName = "actionss_v1.ism";
 
+            
             _blobsDb = DB.Create(_blobsFileName, DBCreateFlags.None, 0, new DBKey[]
-                { 
-                    new DBKey(4, 0, DBKeyFlags.Integer, "default", false, false, false, 0),
-                    new DBKey(8, 4, DBKeyFlags.AutoTime, "timestamp", false, true, false, 1),
-                    new DBKey(8, 12, DBKeyFlags.AutoSequence, "timestamp", false, false, false, 2)
-                });
+            { 
+                new DBKey(4, 0, DBKeyFlags.Integer, "default", false, false, false, 0),
+                new DBKey(8, 4, DBKeyFlags.AutoTime, "timestamp", false, true, false, 1),
+                new DBKey(8, 12, DBKeyFlags.AutoSequence, "timestamp", false, false, false, 2)
+            });
 
             _actionDeferalDb = DB.Create(_actionDeferalFileName, DBCreateFlags.None, 0, new DBKey[]
-                { 
-                    new DBKey(8, 0, DBKeyFlags.AutoSequence, "insertion-order", false, false, false, 0) 
-                });
+            { 
+                new DBKey(8, 0, DBKeyFlags.AutoSequence, "insertion-order", false, false, false, 0) 
+            });
 
             _linksDb = DB.Create(_linksFileName, DBCreateFlags.None, 0, new DBKey[]
-                {
-                    new DBKey(10, 0, DBKeyFlags.Alpha, "thing-id", false, false, false, 0),
-                    new DBKey(8, 10, DBKeyFlags.AutoTime, "timestamp", false, true, false, 1),
-                    new DBKey(8, 18, DBKeyFlags.AutoSequence, "insertion-order", false, false, true, 2) 
-                });
+            {
+                new DBKey(10, 0, DBKeyFlags.Alpha, "thing-id", false, false, false, 0),
+                new DBKey(8, 10, DBKeyFlags.AutoTime, "timestamp", false, true, false, 1),
+                new DBKey(8, 18, DBKeyFlags.AutoSequence, "insertion-order", false, false, true, 2) 
+            });
 
             _subredditStatisticsDb = DB.Create(_subredditStatisticsFileName, DBCreateFlags.None, 28, new DBKey[]
             {
@@ -84,6 +85,7 @@ namespace SnooStream.Common
             });
 
             _history = LoadHistory();
+            
         }
 
 

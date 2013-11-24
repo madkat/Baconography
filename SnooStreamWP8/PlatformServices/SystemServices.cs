@@ -1,4 +1,5 @@
-﻿using Nokia.InteropServices.WindowsRuntime;
+﻿using Microsoft.Phone.Net.NetworkInformation;
+using Nokia.InteropServices.WindowsRuntime;
 using SnooStream.Services;
 using System;
 using System.Collections.Generic;
@@ -10,6 +11,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Threading;
+using Telerik.Windows.Controls;
 using Windows.Foundation;
 using Windows.Networking.Connectivity;
 using Windows.Storage.Streams;
@@ -19,23 +21,18 @@ namespace SnooStreamWP8.PlatformServices
 {
     class SystemServices : ISystemServices
     {
-        public static Dispatcher _uiDispatcher;
-        public SystemServices()
+        private Dispatcher _uiDispatcher;
+        public SystemServices(Dispatcher uiDispatcher)
         {
+            _uiDispatcher = uiDispatcher;
             NetworkInformation.NetworkStatusChanged += networkStatusChanged;
             networkStatusChanged(null);
         }
 
         private void networkStatusChanged(object sender)
         {
-            var connectionProfile = NetworkInformation.GetInternetConnectionProfile();
-            var connectionCostType = connectionProfile.GetConnectionCost().NetworkCostType;
-            if (connectionCostType == NetworkCostType.Unknown || connectionCostType == NetworkCostType.Unrestricted)
-                IsOnMeteredConnection = false;
-            else
-                IsOnMeteredConnection = true;
-
-            IsNearingDataLimit = connectionProfile.GetConnectionCost().ApproachingDataLimit || connectionProfile.GetConnectionCost().OverDataLimit || connectionProfile.GetConnectionCost().Roaming;
+            _lowPriorityNetworkOk = new Lazy<bool>(LowPriorityNetworkOkImpl);
+            _highPriorityNetworkOk = new Lazy<bool>(IsHighPriorityNetworkOkImpl);
         }
 
         public void StopTimer(object tickHandle)
@@ -228,5 +225,58 @@ namespace SnooStreamWP8.PlatformServices
             var rect = new Windows.Foundation.Rect(left, top, cropWidth, cropheight);
             return rect;
         }
+
+
+        public void ShowMessage(string title, string text)
+        {
+            RadMessageBox.Show(title, MessageBoxButtons.OK, text);
+        }
+
+        private static bool LowPriorityNetworkOkImpl()
+        {
+            if (DeviceNetworkInformation.IsNetworkAvailable && DeviceNetworkInformation.IsWiFiEnabled)
+                return true;
+
+            var connectionProfile = NetworkInformation.GetInternetConnectionProfile();
+            var connectionCost = connectionProfile.GetConnectionCost();
+            var connectionCostType = connectionCost.NetworkCostType;
+            if (connectionCostType != NetworkCostType.Unrestricted && connectionCostType != NetworkCostType.Unknown)
+                return false;
+
+            var interfaces = new NetworkInterfaceList();
+            var targetInterface = interfaces.FirstOrDefault(net => net.InterfaceState == ConnectState.Connected);
+            if (targetInterface == null)
+                return false;
+
+            if (targetInterface.Bandwidth < 1024 && targetInterface.Bandwidth > 0) //less then 1 meg means its a pretty shitty connection
+                return false;
+
+            var interfaceType = targetInterface.InterfaceSubtype;
+            if (!(interfaceType == NetworkInterfaceSubType.Cellular_HSPA || interfaceType == NetworkInterfaceSubType.Cellular_LTE ||
+                interfaceType == NetworkInterfaceSubType.Desktop_PassThru || interfaceType == NetworkInterfaceSubType.Cellular_EHRPD ||
+                interfaceType == NetworkInterfaceSubType.WiFi || interfaceType == NetworkInterfaceSubType.Unknown))
+                return false;
+
+            return !(connectionCost.ApproachingDataLimit || connectionCost.OverDataLimit || connectionCost.Roaming);
+        }
+
+        private static bool IsHighPriorityNetworkOkImpl()
+        {
+            if (DeviceNetworkInformation.IsNetworkAvailable && DeviceNetworkInformation.IsWiFiEnabled)
+                return true;
+
+            var connectionProfile = NetworkInformation.GetInternetConnectionProfile();
+            if (connectionProfile.GetConnectionCost().NetworkCostType != NetworkCostType.Unrestricted)
+                return false;
+
+            return DeviceNetworkInformation.IsNetworkAvailable && !connectionProfile.GetConnectionCost().OverDataLimit;
+        }
+
+        Lazy<bool> _lowPriorityNetworkOk;
+        public bool IsLowPriorityNetworkOk { get { return _lowPriorityNetworkOk.Value; } }
+
+
+        Lazy<bool> _highPriorityNetworkOk;
+        public bool IsHighPriorityNetworkOk { get { return _highPriorityNetworkOk.Value; } }
     }
 }

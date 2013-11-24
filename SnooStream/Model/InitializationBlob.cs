@@ -16,5 +16,8 @@ namespace SnooStream.Common
         public string AfterSelfSentMessage { get; set; }
         public string AfterSelfAction { get; set; }
         public IEnumerable<Thing> SelfThings { get; set; }
+        //original linkid, url, date first seen
+        public List<Tuple<string, string, DateTime>> LockscreenImages { get; set; }
+        public List<Tuple<string, string, DateTime>> LiveTileImages { get; set; }
     }
 }
