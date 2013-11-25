@@ -39,6 +39,7 @@
     <Compile Include="Common\EndlessStack.cs" />
     <Compile Include="Common\ImageSource.cs" />
     <Compile Include="Common\NotificationService.cs" />
+    <Compile Include="Messages\SettingsChangedMessage.cs" />
     <Compile Include="Messages\UserLoggedInMessage.cs" />
     <Compile Include="Model\InitializationBlob.cs" />
     <Compile Include="Common\CommandDispatcher.cs" />

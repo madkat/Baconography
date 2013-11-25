@@ -22,7 +22,7 @@ namespace SnooStreamWP8
         /// </summary>
         /// <returns>The root frame of the Phone Application.</returns>
         public static PhoneApplicationFrame RootFrame { get; private set; }
-
+        public static ResourceDictionary StaticResources { get; private set; }
         /// <summary>
         /// Constructor for the Application object.
         /// </summary>
@@ -32,6 +32,7 @@ namespace SnooStreamWP8
             UnhandledException += Application_UnhandledException;
 
             SnooStreamViewModel.UserCredentialService = new DefaultUserCredentialService();
+            SnooStreamViewModel.MarkdownProcessor = new MarkdownProvider();
 
             // Standard XAML initialization
             InitializeComponent();
@@ -134,6 +135,7 @@ namespace SnooStreamWP8
             // Create the frame but don't set it as RootVisual yet; this allows the splash
             // screen to remain active until the application is ready to render.
             RootFrame = new PhoneApplicationFrame();
+            StaticResources = Resources;
             SnooStreamViewModel.SystemServices = new SystemServices(RootFrame.Dispatcher);
             RootFrame.Navigated += CompleteInitializePhoneApplication;
 

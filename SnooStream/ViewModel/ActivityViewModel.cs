@@ -233,12 +233,12 @@ namespace SnooStream.ViewModel
 
     public class ModeratorMessageActivityViewModel :ActivityViewModel
     {
-        private Message messageThing;
+        private Message MessageThing;
 
         public ModeratorMessageActivityViewModel(Message messageThing)
         {
             Created = messageThing.CreatedUTC.ToLocalTime();
-            messageThing = messageThing;
+            MessageThing = messageThing;
         }
     }
 }

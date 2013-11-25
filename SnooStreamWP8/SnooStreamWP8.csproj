@@ -95,7 +95,13 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Common\LinkViewLayoutManager.cs" />
+    <Compile Include="Converters\DomainConverter.cs" />
+    <Compile Include="Converters\LinkGlyphConverter.cs" />
+    <Compile Include="Converters\TimeRelationConverter.cs" />
     <Compile Include="Converters\VisibilityConverter.cs" />
+    <Compile Include="Converters\VisitedLinkConverter.cs" />
+    <Compile Include="Converters\VoteIndicatorConverter.cs" />
     <Compile Include="LocalizedStrings.cs" />
     <Compile Include="PlatformServices\MarkdownProvider.cs" />
     <Compile Include="PlatformServices\SystemServices.cs" />
@@ -112,12 +118,17 @@
     <Compile Include="View\Controls\SelfActivityView.xaml.cs">
       <DependentUpon>SelfActivityView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="View\Controls\SimpleLinkView.xaml.cs">
+      <DependentUpon>SimpleLinkView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="View\Controls\SubredditRiver.xaml.cs">
       <DependentUpon>SubredditRiver.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\Pages\SnooStreamHub.xaml.cs">
       <DependentUpon>SnooStreamHub.xaml</DependentUpon>
     </Compile>
+    <Compile Include="View\Selectors\TypedTemplateSelector.cs" />
+    <Compile Include="View\Selectors\UserActivityTemplateSelector.cs" />
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml">
@@ -129,6 +140,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="View\Controls\SelfActivityView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\Controls\SimpleLinkView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -260,6 +275,14 @@
   <ItemGroup />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\$(TargetFrameworkIdentifier)\$(TargetFrameworkVersion)\Microsoft.$(TargetFrameworkIdentifier).$(TargetFrameworkVersion).Overrides.targets" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\$(TargetFrameworkIdentifier)\$(TargetFrameworkVersion)\Microsoft.$(TargetFrameworkIdentifier).CSharp.targets" />
+  <PropertyGroup>
+    <FilesToXapDependsOn>$(FilesToXapDependsOn);AfterFilesToXapDependsOn</FilesToXapDependsOn>
+  </PropertyGroup>
+  <Target Name="AfterFilesToXapDependsOn">
+    <ItemGroup>
+      <FilteredPackagingOutputs Remove="@(FilteredPackagingOutputs)" Condition="'%(FilteredPackagingOutputs.OutputGroup)' == 'CopyLocalFilesOutputGroup' AND '%(FilteredPackagingOutputs.Extension)' == '.xml'" />
+    </ItemGroup>
+  </Target>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

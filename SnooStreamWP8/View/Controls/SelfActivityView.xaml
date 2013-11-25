@@ -15,25 +15,20 @@
     <Grid x:Name="LayoutRoot">
         <Grid.Resources>
             <DataTemplate x:Key="WrapModeDataTemplate">
-                <TextBlock Text="{Binding Title}" />
+                <TextBlock Text="{Binding Test}" />
             </DataTemplate>
         </Grid.Resources>
 
         <telerikPrimitives:RadDataBoundListBox 
             EmptyContent="Loading..."
-            IsCheckModeActiveChanged="listBox_IsCheckModeActiveChanged"
             IsAsyncBalanceEnabled="True"
             x:Name="listBox" 
             Margin="0,0,-12,0"
             ItemsSource="{Binding UserHub.Self.Activities}"
+            
             ItemTemplate="{StaticResource WrapModeDataTemplate}" 
             DataVirtualizationMode="OnDemandAutomatic" 
             DataRequested="listBox_DataRequested">
-            <telerikPrimitives:RadDataBoundListBox.CheckBoxStyle>
-                <Style TargetType="telerikPrimitives:ItemCheckBox">
-                    <Setter Property="Background" Value="#CCCCCC"/>
-                </Style>
-            </telerikPrimitives:RadDataBoundListBox.CheckBoxStyle>
             <telerikPrimitives:RadDataBoundListBox.DataVirtualizationItemTemplate>
                 <DataTemplate>
                     <localC:LoadMoreControl x:Name="ctrLoadMore" Tap="ctrLoadMore_Tap">
@@ -101,7 +96,7 @@
                 </DataTemplate>
             </telerikPrimitives:RadDataBoundListBox.DataVirtualizationItemTemplate>
             <telerikPrimitives:RadDataBoundListBox.VirtualizationStrategyDefinition>
-                <telerikPrimitives:WrapVirtualizationStrategyDefinition Orientation="Horizontal"/>
+                <telerikPrimitives:StackVirtualizationStrategyDefinition Orientation="Vertical"/>
             </telerikPrimitives:RadDataBoundListBox.VirtualizationStrategyDefinition>
         </telerikPrimitives:RadDataBoundListBox>
     </Grid>
