@@ -1,6 +1,7 @@
 ﻿using GalaSoft.MvvmLight;
 using SnooSharp;
 using SnooStream.Common;
+using SnooStream.Messages;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -32,6 +33,16 @@ namespace SnooStream.ViewModel
             OldestMessage = oldestMessage;
             OldestSentMessage = oldestSentMessage;
             OldestActivity = oldestActivity;
+
+            MessengerInstance.Register<UserLoggedInMessage>(this, OnUserLoggedIn);
+        }
+
+        private async void OnUserLoggedIn(UserLoggedInMessage obj)
+        {
+            RaisePropertyChanged("IsLoggedIn");
+            RaisePropertyChanged("Activities");
+            Activities.Clear();
+            await PullNew();
         }
 
         public bool IsLoggedIn

@@ -17,7 +17,7 @@ namespace SnooStream.ViewModel
             }
         }
 
-        public DateTime Created { get; private set; }
+        public DateTime Created { get; protected set; }
         public string Test
         {
             get
@@ -97,6 +97,7 @@ namespace SnooStream.ViewModel
         public PostedLinkActivityViewModel(Link link)
         {
             Link = link;
+            Created = link.CreatedUTC.ToLocalTime();
         }
     }
 
@@ -127,6 +128,7 @@ namespace SnooStream.ViewModel
         public PostedCommentActivityViewModel(Comment comment)
         {
             Comment = comment;
+            Created = comment.CreatedUTC.ToLocalTime();
         }
     }
 
@@ -139,6 +141,7 @@ namespace SnooStream.ViewModel
         public RecivedCommentReplyActivityViewModel(Message messageThing)
         {
             Message = messageThing;
+            Created = messageThing.CreatedUTC.ToLocalTime();
         }
         public string Body
         {
@@ -189,11 +192,12 @@ namespace SnooStream.ViewModel
     public class MessageActivityViewModel : ActivityViewModel
     {
         private string _body;
-        private Message messageThing;
+        private Message MessageThing;
 
         public MessageActivityViewModel(Message messageThing)
         {
-            messageThing = messageThing;
+            MessageThing = messageThing;
+            Created = messageThing.CreatedUTC.ToLocalTime();
         }
         public string Body
         {
@@ -218,12 +222,12 @@ namespace SnooStream.ViewModel
 
     public class ModeratorActivityViewModel :ActivityViewModel
     {
-        private ModAction modAction;
+        private ModAction ModAction;
 
         public ModeratorActivityViewModel(ModAction modAction)
         {
-            // TODO: Complete member initialization
-            this.modAction = modAction;
+            ModAction = modAction;
+            Created = modAction.CreatedUTC.ToLocalTime();
         }
     }
 
@@ -233,6 +237,7 @@ namespace SnooStream.ViewModel
 
         public ModeratorMessageActivityViewModel(Message messageThing)
         {
+            Created = messageThing.CreatedUTC.ToLocalTime();
             messageThing = messageThing;
         }
     }

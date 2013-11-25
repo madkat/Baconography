@@ -1,0 +1,35 @@
+﻿<UserControl x:Class="SnooStreamWP8.View.Controls.SubredditRiver"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:telerikPrimitives="clr-namespace:Telerik.Windows.Controls;assembly=Telerik.Windows.Controls.Primitives"
+    xmlns:localC="clr-namespace:SnooStreamWP8.View.Controls"
+    xmlns:s="clr-namespace:System;assembly=mscorlib"
+    mc:Ignorable="d"
+    FontFamily="{StaticResource PhoneFontFamilyNormal}"
+    FontSize="{StaticResource PhoneFontSizeNormal}"
+    Foreground="{StaticResource PhoneForegroundBrush}"
+    d:DesignHeight="480" d:DesignWidth="480">
+    
+    <Grid x:Name="LayoutRoot">
+        <Grid.Resources>
+            <DataTemplate x:Key="WrapModeDataTemplate">
+                <TextBlock Text="{Binding Thing.DisplayName}" />
+            </DataTemplate>
+        </Grid.Resources>
+        
+        <telerikPrimitives:RadDataBoundListBox 
+            EmptyContent="Loading..."
+            IsAsyncBalanceEnabled="False"
+            x:Name="listBox" 
+            Margin="0,0,-12,0"
+            ItemsSource="{Binding SubscribedRivers}"
+            ItemTemplate="{StaticResource WrapModeDataTemplate}">
+            
+            <telerikPrimitives:RadDataBoundListBox.VirtualizationStrategyDefinition>
+                <telerikPrimitives:StackVirtualizationStrategyDefinition Orientation="Vertical"/>
+            </telerikPrimitives:RadDataBoundListBox.VirtualizationStrategyDefinition>
+        </telerikPrimitives:RadDataBoundListBox>
+    </Grid>
+</UserControl>

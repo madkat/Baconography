@@ -13,15 +13,26 @@ namespace SnooStream.ViewModel
     public class LinkRiverViewModel : ViewModelBase, ICollection<LinkViewModel>, INotifyCollectionChanged
     {
         //need to come up with an init blob setup for this, meaining a per river blob
-        public string Subreddit { get; private set; }
+        public Subreddit Thing { get; private set; }
         public string Sort { get; private set; }
-        public string Title { get; private set; }
         public bool Loading { get { return _loadingTask != null; } }
         private string LastLinkId { get; set; }
-        public LinkRiverViewModel(string subreddit, string sort, IEnumerable<Link> initialLinks)
+        public LinkRiverViewModel(Subreddit thing, string sort, IEnumerable<Link> initialLinks)
         {
-            Subreddit = subreddit;
-            Sort = sort;
+            Thing = thing;
+            Sort = sort ?? "hot";
+            if(initialLinks != null)
+            {
+                ProcessLinkThings(initialLinks);
+            }
+        }
+
+        private void ProcessLinkThings(IEnumerable<Link> links)
+        {
+            foreach (var link in links)
+            {
+                Content.Add(new LinkViewModel(this, link));
+            }
         }
 
         public ObservableCollection<LinkViewModel> Content { get; set; }
@@ -43,6 +54,19 @@ namespace SnooStream.ViewModel
 
         public async Task LoadMoreImpl()
         {
+            await SnooStreamViewModel.NotificationService.Report("loading posts", async () =>
+                {
+                    var postListing = await SnooStreamViewModel.RedditService.GetPostsBySubreddit(Thing.Url, Sort);
+                    if (postListing != null)
+                    {
+                        foreach (var thing in postListing.Data.Children)
+                        {
+                            if (thing.Data is Link)
+                                Content.Add(new LinkViewModel(this, thing.Data as Link));
+                        }
+                    }
+                });
+            
             //clear the loading task when we're done
             _loadingTask = null;
         }

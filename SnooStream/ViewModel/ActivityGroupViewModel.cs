@@ -65,10 +65,13 @@ namespace SnooStream.ViewModel
             if (additional.Data is Link)
             {
                 _linkActivity = ActivityViewModel.CreateActivity(additional);
+                Created = _linkActivity.Created;
             }
             else
             {
-                Activities.Add(ActivityViewModel.CreateActivity(additional));
+                var thingName = ((ThingData)additional.Data).Name;
+                if (!Activities.ContainsKey(thingName))
+                    Activities.Add(thingName, ActivityViewModel.CreateActivity(additional));
             }
             Created = FirstActivity.Created;
         }
@@ -91,7 +94,10 @@ namespace SnooStream.ViewModel
 
         public override void Merge(Thing additional)
         {
-            Activities.Add(ActivityViewModel.CreateActivity(additional));
+            var thingName = ((ThingData)additional.Data).Name;
+            if(!Activities.ContainsKey(thingName))
+                Activities.Add(thingName, ActivityViewModel.CreateActivity(additional));
+
             Created = FirstActivity.Created;
         }
     }

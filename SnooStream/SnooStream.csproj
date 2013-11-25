@@ -39,6 +39,7 @@
     <Compile Include="Common\EndlessStack.cs" />
     <Compile Include="Common\ImageSource.cs" />
     <Compile Include="Common\NotificationService.cs" />
+    <Compile Include="Messages\UserLoggedInMessage.cs" />
     <Compile Include="Model\InitializationBlob.cs" />
     <Compile Include="Common\CommandDispatcher.cs" />
     <Compile Include="Common\LinkGlyphUtility.cs" />
@@ -64,7 +65,9 @@
     <Compile Include="ViewModel\CommentViewModel.cs" />
     <Compile Include="ViewModel\ContentSettingsViewModel.cs" />
     <Compile Include="ViewModel\ContentViewModel.cs" />
+    <Compile Include="ViewModel\ErrorContentViewModel.cs" />
     <Compile Include="ViewModel\ImageViewModel.cs" />
+    <Compile Include="ViewModel\InternalRedditContentViewModel.cs" />
     <Compile Include="ViewModel\LinkStreamViewModel.cs" />
     <Compile Include="ViewModel\LinkViewModel.cs" />
     <Compile Include="ViewModel\LockScreenViewModel.cs" />

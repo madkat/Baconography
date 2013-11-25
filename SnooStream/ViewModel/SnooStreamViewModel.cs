@@ -1,6 +1,7 @@
 ﻿using GalaSoft.MvvmLight;
 using SnooSharp;
 using SnooStream.Common;
+using SnooStream.Messages;
 using SnooStream.Model;
 using SnooStream.Services;
 using System;
@@ -19,17 +20,18 @@ namespace SnooStream.ViewModel
         {
             _listingFilter = new NSFWListingFilter();
             OfflineService = new OfflineService();
-            RedditUserState = new UserState();
-            NotificationService = new Common.NotificationService();
-            RedditService = new Reddit(_listingFilter, RedditUserState, OfflineService, CaptchaProvider);
             _initializationBlob = OfflineService.LoadInitializationBlob("");
             Settings = new Model.Settings(_initializationBlob.Settings);
+            RedditUserState = _initializationBlob.DefaultUser ?? new UserState();
+            NotificationService = new Common.NotificationService();
+            RedditService = new Reddit(_listingFilter, RedditUserState, OfflineService, CaptchaProvider);
+            
             _listingFilter.Initialize(Settings, OfflineService, RedditService, _initializationBlob.NSFWFilter);
             CommandDispatcher = new CommandDispatcher();
-            UserHub = new UserHubViewModel(_initializationBlob);
+            UserHub = new UserHubViewModel(_initializationBlob.Self);
             ModeratorHub = new ModeratorHubViewModel();
             SettingsHub = new SettingsViewModel();
-            SubredditRiver = new SubredditRiverViewModel();
+            SubredditRiver = new SubredditRiverViewModel(_initializationBlob.Subreddits);
             if (_initializationBlob.LockscreenImages != null && _initializationBlob.LockscreenImages.Count > 0)
             {
                 Random rnd = new Random();
@@ -38,6 +40,16 @@ namespace SnooStream.ViewModel
             else
                 FeaturedImage = "http://www.darelparker.com/dp/wp-content/uploads/2011/01/reddit-coat-of-arms-logo-widescreen-1440-900-wallpaper.jpg";
             LoadLargeImages();
+
+            MessengerInstance.Register<UserLoggedInMessage>(this, OnUserLoggedIn);
+        }
+
+        private void OnUserLoggedIn(UserLoggedInMessage obj)
+        {
+            if (obj.IsDefault)
+            {
+                _initializationBlob.DefaultUser = RedditUserState;
+            }
         }
 
         private async void LoadLargeImages()
@@ -47,7 +59,7 @@ namespace SnooStream.ViewModel
             {
                 await NotificationService.Report("loading secondary images", async () =>
                 {
-                    var posts = await RedditService.GetPostsBySubreddit(Settings.LockScreenReddit, 25);
+                    var posts = await RedditService.GetPostsBySubreddit(Settings.LockScreenReddit);
                     if (posts != null)
                     {
                         foreach (var post in posts.Data.Children)

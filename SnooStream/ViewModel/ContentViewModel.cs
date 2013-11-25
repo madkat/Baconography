@@ -9,6 +9,11 @@ namespace SnooStream.ViewModel
 {
     public abstract class ContentViewModel : ViewModelBase
     {
+        public ContentViewModel(ViewModelBase context)
+        {
+            Context = context;
+        }
+
         public void BeginLoad()
         {
             if (ContentLoadTask == null)
@@ -32,6 +37,7 @@ namespace SnooStream.ViewModel
         }
         Task ContentLoadTask { get; set; }
         protected abstract Task LoadContent();
+        public ViewModelBase Context { get; private set; }
         public bool Loaded { get; set; }
         public bool Loading { get; set; }
         public int PreviewLoadPercent { get; set; }

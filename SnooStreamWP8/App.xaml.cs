@@ -11,6 +11,7 @@ using SnooStream.ViewModel;
 using SnooStream.Common;
 using Telerik.Windows.Controls;
 using SnooStreamWP8.PlatformServices;
+using SnooStream.Services;
 
 namespace SnooStreamWP8
 {
@@ -29,6 +30,8 @@ namespace SnooStreamWP8
         {
             // Global handler for uncaught exceptions.
             UnhandledException += Application_UnhandledException;
+
+            SnooStreamViewModel.UserCredentialService = new DefaultUserCredentialService();
 
             // Standard XAML initialization
             InitializeComponent();

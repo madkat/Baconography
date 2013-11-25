@@ -11,9 +11,9 @@ namespace SnooStream.Services
     public class DefaultUserCredentialService : IUserCredentialService
     {
 
-        public DefaultUserCredentialService(string cwd)
+        public DefaultUserCredentialService()
         {
-            _userInfoDbPath = cwd + "\\userinfodb.ism";
+            _userInfoDbPath = "userinfodb.ism";
         }
 
         private string _userInfoDbPath;
@@ -54,7 +54,7 @@ namespace SnooStream.Services
                         existingCredential.IsDefault = newCredential.IsDefault;
 
                         //go find the one we're updating and actually do it
-                        var userCredentialsCursor = userInfoDb.Select(userInfoDb.GetKeys().First(), "credentials", DBReadFlags.NoLock);
+                        var userCredentialsCursor = userInfoDb.Select(userInfoDb.GetKeys().First(), "credentials", DBReadFlags.AutoLock);
                         if (userCredentialsCursor != null)
                         {
                             using (userCredentialsCursor)

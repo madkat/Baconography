@@ -15,15 +15,17 @@ namespace SnooStream.Common
     {
         private Dictionary<string, LinkViewModel> _nameMap = new Dictionary<string, LinkViewModel>();
         private List<LinkViewModel> _elements = new List<LinkViewModel>();
-        public ObservableOrderedLinkGroup(IEnumerable<Link> initialValues)
+        ViewModelBase _context;
+        public ObservableOrderedLinkGroup(ViewModelBase context, IEnumerable<Link> initialValues)
         {
+            _context = context;
             foreach (var element in initialValues)
             {
                 if (_nameMap.ContainsKey(element.Name))
                     continue;
                 else
                 {
-                    var newViewModel = new LinkViewModel(element);
+                    var newViewModel = new LinkViewModel(context, element);
                     _nameMap.Add(newViewModel.Link.Name, newViewModel);
                     _elements.Add(newViewModel);
                 }
@@ -53,7 +55,7 @@ namespace SnooStream.Common
                 }
                 else
                 {
-                    var newViewModel = new LinkViewModel(replacements[i]);
+                    var newViewModel = new LinkViewModel(_context, replacements[i]);
                     namePosMap.Add(replacements[i].Name, Tuple.Create(-1, i, newViewModel));
                 }
             }

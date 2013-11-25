@@ -10,7 +10,7 @@ namespace CommonImageAquisition
     public class ImageAquisition
     {
 
-        public async Task<IEnumerable<Tuple<string, string>>> GetImagesFromUrl(string title, string url)
+        public static async Task<IEnumerable<Tuple<string, string>>> GetImagesFromUrl(string title, string url)
         {
             try
             {
@@ -52,7 +52,7 @@ namespace CommonImageAquisition
             }
         }
 
-        public bool MightHaveImagesFromUrl(string url)
+        public static bool MightHaveImagesFromUrl(string url)
         {
             try
             {
@@ -91,7 +91,7 @@ namespace CommonImageAquisition
         }
 
 
-        public bool IsImage(string url)
+        public static bool IsImage(string url)
         {
             try
             {
@@ -109,7 +109,7 @@ namespace CommonImageAquisition
             return false;
         }
 
-        public bool IsImageAPI(string url)
+        public static bool IsImageAPI(string url)
         {
             try
             {

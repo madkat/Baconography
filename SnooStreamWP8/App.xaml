@@ -4,11 +4,14 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:phone="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone"
     xmlns:shell="clr-namespace:Microsoft.Phone.Shell;assembly=Microsoft.Phone"
-    xmlns:core="clr-namespace:SnooStream.ViewModel;assembly=SnooStream">
+    xmlns:core="clr-namespace:SnooStream.ViewModel;assembly=SnooStream"
+    xmlns:converters="clr-namespace:SnooStreamWP8.Converters;assembly=SnooStreamWP8">
 
     <!--Application Resources-->
     <Application.Resources>
         <local:LocalizedStrings xmlns:local="clr-namespace:SnooStreamWP8" x:Key="LocalizedStrings"/>
+        <converters:BooleanVisibilityConverter x:Key="booleanVisibilityConverter"/>
+        <converters:InvertedBooleanVisibilityConverter x:Key="invertedBooleanVisibilityConverter"/>
         <core:SnooStreamViewModel x:Key="SnooStream"/>
     </Application.Resources>
 

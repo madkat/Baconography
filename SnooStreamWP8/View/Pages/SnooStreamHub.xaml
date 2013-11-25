@@ -4,6 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:phone="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone"
     xmlns:shell="clr-namespace:Microsoft.Phone.Shell;assembly=Microsoft.Phone"
+    xmlns:local="clr-namespace:SnooStreamWP8.View.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
@@ -16,17 +17,29 @@
 
     <!--LayoutRoot contains the root grid where all other page content is placed-->
     <Grid x:Name="LayoutRoot">
-        <phone:Panorama Title="my application" >
+        <phone:Panorama Title="Snoo Stream" >
 
             <phone:Panorama.Background>
                 <ImageBrush ImageSource="http://www.darelparker.com/dp/wp-content/uploads/2011/01/reddit-coat-of-arms-logo-widescreen-1440-900-wallpaper.jpg"/>
             </phone:Panorama.Background>
 
-            <phone:PanoramaItem Header="item1">
-                <Grid/>
+            <phone:PanoramaItem Header="Subreddits" DataContext="{Binding SubredditRiver}">
+                <local:SubredditRiver/>
             </phone:PanoramaItem>
 
-            <phone:PanoramaItem Header="item2">
+            <phone:PanoramaItem Header="Self" DataContext="{Binding UserHub.Self}" Visibility="{Binding IsLoggedIn, Converter={StaticResource booleanVisibilityConverter}}">
+                <local:SelfActivityView/>
+            </phone:PanoramaItem>
+
+            <phone:PanoramaItem Header="Login" DataContext="{Binding UserHub}" Visibility="{Binding Self.IsLoggedIn, Converter={StaticResource invertedBooleanVisibilityConverter}}">
+                <local:LoginView DataContext="{Binding Login}"/>
+            </phone:PanoramaItem>
+            
+            <phone:PanoramaItem Header="Settings">
+                <Grid/>
+            </phone:PanoramaItem>
+            
+            <phone:PanoramaItem Header="Moderator">
                 <Grid/>
             </phone:PanoramaItem>
         </phone:Panorama>

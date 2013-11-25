@@ -1,4 +1,5 @@
-﻿using SnooStream.Common;
+﻿using GalaSoft.MvvmLight;
+using SnooStream.Common;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,6 +10,16 @@ namespace SnooStream.ViewModel
 {
     public class ImageViewModel : ContentViewModel
     {
+
+        public ImageViewModel(ViewModelBase context, string url, string title, ImageSource imageSource) : base(context)
+        {
+            Url = url;
+            ImageSource = imageSource;
+            Title = title;
+            Domain = new Uri(url).DnsSafeHost;
+            Loaded = imageSource != null;
+        }
+
         public string Url { get; set; }
         public string Domain { get; set; }
         public string Title { get; set; }

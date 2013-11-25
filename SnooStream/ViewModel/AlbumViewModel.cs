@@ -1,4 +1,5 @@
-﻿using SnooStream.Common;
+﻿using GalaSoft.MvvmLight;
+using SnooStream.Common;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -10,7 +11,7 @@ namespace SnooStream.ViewModel
 {
     public class AlbumViewModel : ContentViewModel
     {
-        public AlbumViewModel(string originalUrl, IEnumerable<Tuple<string, string>> apiResults, string albumTitle)
+        public AlbumViewModel(ViewModelBase context, string originalUrl, IEnumerable<Tuple<string, string>> apiResults, string albumTitle) : base(context)
         {
             Url = originalUrl;
             Domain = new Uri(originalUrl).Host;
@@ -52,7 +53,7 @@ namespace SnooStream.ViewModel
                     if (bytes != null && bytes.Length > 6) //minimum to identify the image type
                     {
                         loadedOne = true;
-                        Images.Add(new ImageViewModel { ImageSource = new ImageSource(source.ToString(), bytes), Title = title, Url = source.ToString(), Domain = source.Host });
+                        Images.Add(new ImageViewModel(this, source.ToString(), title, new ImageSource(source.ToString(), bytes)));
                     }
                 });
             return loadedOne;

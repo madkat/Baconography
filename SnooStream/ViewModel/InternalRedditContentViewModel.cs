@@ -1,5 +1,4 @@
 ﻿using GalaSoft.MvvmLight;
-using SnooSharp;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,18 +7,16 @@ using System.Threading.Tasks;
 
 namespace SnooStream.ViewModel
 {
-    public class SelfContentViewModel : ContentViewModel
+    public class InternalRedditContentViewModel : ContentViewModel
     {
-        public SelfContentViewModel(ViewModelBase context, Link link) : base(context)
+        public InternalRedditContentViewModel(ViewModelBase context, string url) : base(context)
         {
-            Link = link;
-        }
 
-        public Link Link { get; private set; }
+        }
 
         protected override async Task LoadContent()
         {
-            //load the comments
+            //nothing to load here
         }
     }
 }

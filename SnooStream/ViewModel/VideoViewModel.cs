@@ -1,4 +1,5 @@
 ﻿using CommonVideoAquisition;
+using GalaSoft.MvvmLight;
 using SnooStream.Common;
 using System;
 using System.Collections.Generic;
@@ -11,7 +12,11 @@ namespace SnooStream.ViewModel
 {
     public class VideoViewModel : ContentViewModel
     {
-
+        public VideoViewModel(ViewModelBase context, string url) : base(context)
+        {
+            AvailableStreams = new ObservableCollection<Tuple<string, string>>();
+            Url = url;
+        }
         public ObservableCollection<Tuple<string, string>> AvailableStreams { get; private set; }
 
         public ImageSource Preview { get; private set; }

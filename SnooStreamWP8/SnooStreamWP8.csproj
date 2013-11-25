@@ -95,6 +95,7 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Converters\VisibilityConverter.cs" />
     <Compile Include="LocalizedStrings.cs" />
     <Compile Include="PlatformServices\MarkdownProvider.cs" />
     <Compile Include="PlatformServices\SystemServices.cs" />
@@ -105,8 +106,14 @@
       <DependentUpon>AppResources.resx</DependentUpon>
     </Compile>
     <Compile Include="View\Controls\LoadMoreControl.cs" />
+    <Compile Include="View\Controls\LoginView.xaml.cs">
+      <DependentUpon>LoginView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="View\Controls\SelfActivityView.xaml.cs">
       <DependentUpon>SelfActivityView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Controls\SubredditRiver.xaml.cs">
+      <DependentUpon>SubredditRiver.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\Pages\SnooStreamHub.xaml.cs">
       <DependentUpon>SnooStreamHub.xaml</DependentUpon>
@@ -117,7 +124,15 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </ApplicationDefinition>
+    <Page Include="View\Controls\LoginView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="View\Controls\SelfActivityView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\Controls\SubredditRiver.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

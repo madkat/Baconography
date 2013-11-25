@@ -414,8 +414,7 @@ namespace SnooStream.Common
                 new InitializationBlob 
                 { 
                     Settings = new Dictionary<string, string>(), 
-                    NSFWFilter = new Dictionary<string,bool>(),
-                    SelfThings = new List<Thing>()
+                    NSFWFilter = new Dictionary<string,bool>()
                 };
         }
 
