@@ -127,6 +127,7 @@
     <Compile Include="View\Pages\SnooStreamHub.xaml.cs">
       <DependentUpon>SnooStreamHub.xaml</DependentUpon>
     </Compile>
+    <Compile Include="View\Selectors\ContentTemplateSelector.cs" />
     <Compile Include="View\Selectors\TypedTemplateSelector.cs" />
     <Compile Include="View\Selectors\UserActivityTemplateSelector.cs" />
   </ItemGroup>

@@ -98,7 +98,15 @@ namespace SnooStream.ViewModel
                     ActivityGroupViewModel existingGroup;
                     if (Activities.TryGetValue(childName, out existingGroup))
                     {
-                        existingGroup.Merge(child);
+                        if (existingGroup.Activities.Count <= 1)
+                        {
+                            existingGroup.Merge(child);
+                            Activities.Remove(childName);
+                            //Jiggle it to force a rebind of the data template
+                            Activities.Add(childName, existingGroup);
+                        }
+                        else
+                            existingGroup.Merge(child);
                     }
                     else
                     {

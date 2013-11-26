@@ -12,6 +12,7 @@ namespace SnooStream.ViewModel
         public bool NoPreview { get; private set; }
         public bool TextPreview { get; private set; }
         public bool ImagePreview { get; private set; }
+        public bool NotText { get; private set; }
 
         public WebViewModel(ViewModelBase context, bool notText, string url) : base(context)
         {
