@@ -14,14 +14,25 @@ namespace SnooStream.ViewModel
 {
     public class SubredditRiverViewModel : ViewModelBase
     {
-        public ObservableCollection<LinkRiverViewModel> PinnedRivers { get; private set; }
-        public ObservableCollection<LinkRiverViewModel> SubscribedRivers { get; private set; }
+        public string SmallGroupNameSelector(LinkRiverViewModel viewModel)
+        {
+            return viewModel.IsLocal ? "local" : "subscribed";
+        }
+
+        public string LargeGroupNameSelector(LinkRiverViewModel viewModel)
+        {
+            return viewModel.Thing.DisplayName.Substring(0, 1);
+        }
+
+        public ObservableCollection<LinkRiverViewModel> CombinedRivers { get; private set; }
         public SubredditRiverViewModel(SubredditRiverInit initBlob)
         {
             if (initBlob != null)
             {
-                PinnedRivers = new ObservableCollection<LinkRiverViewModel>(initBlob.Pinned.Select(blob => new LinkRiverViewModel(blob.Thing, blob.DefaultSort, blob.Links)));
-                SubscribedRivers = new ObservableCollection<LinkRiverViewModel>(initBlob.Subscribed.Select(blob => new LinkRiverViewModel(blob.Thing, blob.DefaultSort, blob.Links)));
+                var localSubreddits = initBlob.Pinned.Select(blob => new LinkRiverViewModel(true, blob.Thing, blob.DefaultSort, blob.Links));
+                var subscribbedSubreddits = initBlob.Subscribed.Select(blob => new LinkRiverViewModel(false, blob.Thing, blob.DefaultSort, blob.Links));
+
+                CombinedRivers = new ObservableCollection<LinkRiverViewModel>(localSubreddits.Concat(subscribbedSubreddits));
                 ReloadSubscribed(false);
             }
             else
@@ -32,8 +43,7 @@ namespace SnooStream.ViewModel
 
         private async void LoadWithoutInitial()
         {
-            PinnedRivers = new ObservableCollection<LinkRiverViewModel>();
-            SubscribedRivers = new ObservableCollection<LinkRiverViewModel>();
+            CombinedRivers = new ObservableCollection<LinkRiverViewModel>();
             Listing subscribedListing = null; 
             if (SnooStreamViewModel.RedditUserState != null && !string.IsNullOrWhiteSpace(SnooStreamViewModel.RedditUserState.Username))
             {
@@ -44,9 +54,9 @@ namespace SnooStream.ViewModel
                 subscribedListing = await SnooStreamViewModel.RedditService.GetDefaultSubreddits();
             }
 
-            foreach (var river in subscribedListing.Data.Children.Select(thing => new LinkRiverViewModel(thing.Data as Subreddit, "hot", null)))
+            foreach (var river in subscribedListing.Data.Children.Select(thing => new LinkRiverViewModel(false, thing.Data as Subreddit, "hot", null)))
             {
-                SubscribedRivers.Add(river);
+                CombinedRivers.Add(river);
             }
         }
 
@@ -64,7 +74,8 @@ namespace SnooStream.ViewModel
 
             foreach (var river in subscribedListing.Data.Children.Select(thing => new LinkRiverViewModel(thing.Data as Subreddit, "hot", null)))
             {
-                SubscribedRivers.Add(river);
+                //TODO dont touch things that are already there only add/remove
+                CombinedRivers.Add(river);
             }
         }
     }

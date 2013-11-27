@@ -10,7 +10,14 @@ namespace SnooStream.Services
     public interface INavigationService
     {
         void NavigateToComments(CommentsViewModel viewModel);
-
+        void NavigateToLinkRiver(LinkRiverViewModel viewModel);
+        void NavigateToLinkStream(LinkStreamViewModel viewModel);
+        void NavigateToMessageReply(ReplyMessageViewModel viewModel);
+        void NavigateToPost(PostViewModel viewModel);
+        void NavigateToUpload(UploadViewModel viewModel);
+        void NavigateToSearch(SearchViewModel viewModel);
+        void NavigateToAboutReddit(AboutRedditViewModel viewModel);
+        void NavigateToSettingsWithPreview(SettingsViewModel viewModel);
         void GoBack();
     }
 }

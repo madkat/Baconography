@@ -278,5 +278,100 @@ namespace SnooStreamWP8.PlatformServices
 
         Lazy<bool> _highPriorityNetworkOk;
         public bool IsHighPriorityNetworkOk { get { return _highPriorityNetworkOk.Value; } }
+
+
+        public Stream ResizeImage(Stream source, int maxWidth, int maxHeight)
+        {
+            return new NokiaResizeStream(source, maxWidth, maxHeight);
+        }
+        private class NokiaResizeStream : Stream
+        {
+            public NokiaResizeStream(Stream sourceStream, int maxWidth, int maxHeight)
+            {
+                _innerStream = new Lazy<Stream>(() =>
+                    {
+                        var desiredSize = new Size(maxWidth, maxHeight);
+                        using (var dataWriter = new DataWriter(sourceStream.AsOutputStream()))
+                        {
+                            var resize = Nokia.Graphics.Imaging.JpegTools.AutoResizeAsync(dataWriter.DetachBuffer(),
+                                new Nokia.Graphics.Imaging.AutoResizeConfiguration(5 * 1024 * 1024, desiredSize, desiredSize, Nokia.Graphics.Imaging.AutoResizeMode.PrioritizeHighEncodingQuality, 1.0, Nokia.Graphics.Imaging.ColorSpace.Undefined)).AsTask();
+
+                            resize.Wait();
+                            return resize.Result.AsStream();
+                        }
+                    });
+            }
+
+
+            protected override void Dispose(bool disposing)
+            {
+                if (disposing && _innerStream.IsValueCreated)
+                {
+                    _innerStream.Value.Dispose();
+                }
+
+                _innerStream = null;
+
+                base.Dispose(disposing);
+            }
+
+            Lazy<Stream> _innerStream;
+            public override bool CanRead
+            {
+                get { return true; }
+            }
+
+            public override bool CanSeek
+            {
+                get { return true; }
+            }
+
+            public override bool CanWrite
+            {
+                get { return false; }
+            }
+
+            public override void Flush()
+            {
+                _innerStream.Value.Flush();
+            }
+
+            public override long Length
+            {
+                get { return _innerStream.Value.Length; }
+            }
+
+            public override long Position
+            {
+                get
+                {
+                    return _innerStream.Value.Position;
+                }
+                set
+                {
+                    _innerStream.Value.Position = value;
+                }
+            }
+
+            public override int Read(byte[] buffer, int offset, int count)
+            {
+                return _innerStream.Value.Read(buffer, offset, count);
+            }
+
+            public override long Seek(long offset, SeekOrigin origin)
+            {
+                return _innerStream.Value.Seek(offset, origin);
+            }
+
+            public override void SetLength(long value)
+            {
+                _innerStream.Value.SetLength(value);
+            }
+
+            public override void Write(byte[] buffer, int offset, int count)
+            {
+                throw new NotImplementedException();
+            }
+        }
     }
 }

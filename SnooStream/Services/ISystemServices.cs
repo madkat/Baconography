@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -16,6 +17,7 @@ namespace SnooStream.Services
         void StartThreadPoolTimer(Func<object, Task> action, TimeSpan timer);
         Task<byte[]> DownloadWithProgress(string uri, Action<int> progress, CancellationToken cancelToken);
         Task<byte[]> ResizeImage(byte[] data, int maxWidth, int maxHeight);
+        Stream ResizeImage(Stream source, int maxWidth, int maxHeight);
         void ShowMessage(string title, string text);
         bool IsLowPriorityNetworkOk { get; }
         bool IsHighPriorityNetworkOk { get; }

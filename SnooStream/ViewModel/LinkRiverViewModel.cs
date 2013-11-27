@@ -17,8 +17,10 @@ namespace SnooStream.ViewModel
         public string Sort { get; private set; }
         public bool Loading { get { return _loadingTask != null; } }
         private string LastLinkId { get; set; }
-        public LinkRiverViewModel(Subreddit thing, string sort, IEnumerable<Link> initialLinks)
+        public bool IsLocal { get; private set; }
+        public LinkRiverViewModel(bool isLocal, Subreddit thing, string sort, IEnumerable<Link> initialLinks)
         {
+            IsLocal = isLocal;
             Thing = thing;
             Sort = sort ?? "hot";
             if(initialLinks != null)

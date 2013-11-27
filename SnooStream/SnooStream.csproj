@@ -53,11 +53,13 @@
     <Compile Include="Common\UserStreamUnificationUtility.cs" />
     <Compile Include="Model\Settings.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ViewModel\AboutRedditViewModel.cs" />
     <Compile Include="Services\DefaultUserCredentialService.cs" />
     <Compile Include="Services\IMarkdownProcessor.cs" />
     <Compile Include="Services\INavigationService.cs" />
     <Compile Include="Services\ISystemServices.cs" />
     <Compile Include="Services\IUserCredentialService.cs" />
+    <Compile Include="ViewModel\SearchViewModel.cs" />
     <Compile Include="ViewModel\ActivityViewModel.cs" />
     <Compile Include="ViewModel\AlbumViewModel.cs" />
     <Compile Include="ViewModel\AppearanceSettingsViewModel.cs" />
@@ -77,6 +79,7 @@
     <Compile Include="ViewModel\PostViewModel.cs" />
     <Compile Include="ViewModel\PrimaryLiveTileViewModel.cs" />
     <Compile Include="ViewModel\LinkRiverViewModel.cs" />
+    <Compile Include="ViewModel\ReplyMessageViewModel.cs" />
     <Compile Include="ViewModel\SecondaryLiveTileHubViewModel.cs" />
     <Compile Include="ViewModel\ActivityGroupViewModel.cs" />
     <Compile Include="ViewModel\SelfContentViewModel.cs" />

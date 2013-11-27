@@ -19,7 +19,7 @@
             </DataTemplate>
         </Grid.Resources>
         
-        <telerikPrimitives:RadDataBoundListBox 
+        <telerikPrimitives:Rad 
             EmptyContent="Loading..."
             IsAsyncBalanceEnabled="False"
             x:Name="listBox" 
