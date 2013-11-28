@@ -29,16 +29,28 @@ namespace SnooStream.ViewModel
         {
             if (initBlob != null)
             {
+                
                 var localSubreddits = initBlob.Pinned.Select(blob => new LinkRiverViewModel(true, blob.Thing, blob.DefaultSort, blob.Links));
                 var subscribbedSubreddits = initBlob.Subscribed.Select(blob => new LinkRiverViewModel(false, blob.Thing, blob.DefaultSort, blob.Links));
 
                 CombinedRivers = new ObservableCollection<LinkRiverViewModel>(localSubreddits.Concat(subscribbedSubreddits));
+                EnsureFrontPage();
                 ReloadSubscribed(false);
             }
             else
             {
                 LoadWithoutInitial();
+                EnsureFrontPage();
             }
+        }
+
+        private void EnsureFrontPage()
+        {
+            if (!CombinedRivers.Any((lrvm) => lrvm.Thing.Url == "/"))
+            {
+                CombinedRivers.Add(new LinkRiverViewModel(true, new Subreddit("/"), "hot", null));
+            }
+
         }
 
         private async void LoadWithoutInitial()
@@ -72,7 +84,7 @@ namespace SnooStream.ViewModel
 
             var subscribedListing = await SnooStreamViewModel.RedditService.GetSubscribedSubredditListing();
 
-            foreach (var river in subscribedListing.Data.Children.Select(thing => new LinkRiverViewModel(thing.Data as Subreddit, "hot", null)))
+            foreach (var river in subscribedListing.Data.Children.Select(thing => new LinkRiverViewModel(false, thing.Data as Subreddit, "hot", null)))
             {
                 //TODO dont touch things that are already there only add/remove
                 CombinedRivers.Add(river);

@@ -11,11 +11,18 @@ namespace SnooStream.ViewModel
     //provides load more behavior
     public class LinkStreamViewModel : ViewModelBase
     {
-        private SubredditRiverViewModel _context;
+        private LinkRiverViewModel _context;
 
-        public LinkStreamViewModel(SubredditRiverViewModel context, string linkId)
+        public LinkStreamViewModel(LinkRiverViewModel context, string linkId)
         {
             _context = context;
+        }
+
+        public LinkViewModel Current { get; private set; }
+
+        public Task<bool> MoveNext()
+        {
+            throw new NotImplementedException();
         }
     }
 }

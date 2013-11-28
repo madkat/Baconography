@@ -5,7 +5,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
     FontFamily="{StaticResource PhoneFontFamilyNormal}"
-    FontSize="{StaticResource PhoneFontSizeNormal}"
+    FontSize="{StaticResource PhoneFontSizeMedium}"
     Foreground="{StaticResource PhoneForegroundBrush}"
     d:DesignHeight="480" d:DesignWidth="480">
 
@@ -18,43 +18,90 @@
             <RowDefinition />
             <RowDefinition />
         </Grid.RowDefinitions>
-        <Button Grid.Column="{Binding Source={StaticResource linkViewLayoutManager}, Path=TextColumn}"
-                Grid.Row="0" BorderThickness="0" Margin="0" Padding="0" HorizontalContentAlignment="Left"
-                FontFamily="Segoe WP" Tap="TitleButton_Tap" Hold="TitleButton_Hold">
-            <Button.Content>
-                <StackPanel>
-                    <TextBlock FontSize="22" HorizontalAlignment="Left" Text="{Binding Title}" TextWrapping="Wrap">
-                        <TextBlock.Foreground>
-                            <Binding Converter="{StaticResource visitedMainLinkConverter}"/>
-                        </TextBlock.Foreground>
-                    </TextBlock>
-                    <StackPanel Margin="0,2,0,2" Orientation="Horizontal">
-                        <TextBlock FontSize="18"  Foreground="{StaticResource PhoneAccentBrush}" Text="{Binding Author}" />
-                        <TextBlock Foreground="{StaticResource PhoneAccentBrush}" Opacity="0.75" FontStyle="Italic"
-                                   FontSize="15" Text="{Binding Path=AuthorFlairText}" Margin="4,3,0,0"
-                                   Visibility="{Binding HasAuthorFlair, Converter={StaticResource booleanVisibilityConverter}}"/>
-                        <TextBlock Margin="8,2,0,0" Foreground="Gray" FontSize="16" Text="{Binding Path=Votable.TotalVotes}"/>
-                        <TextBlock Margin="3,2,0,0" Foreground="Gray" FontSize="16" Text="points"/>
+        <StackPanel Grid.Row="0" Grid.Column="{Binding Source={StaticResource linkViewLayoutManager}, Path=TextColumn}">
+            <Button 
+                BorderThickness="0" Margin="0" Padding="0" HorizontalContentAlignment="Left"
+                FontFamily="Segoe WP" Tap="Button_Tap">
+                <Button.Content>
+                    <StackPanel>
+                        <TextBlock HorizontalAlignment="Left" Text="{Binding Title}" TextWrapping="Wrap">
+                            <TextBlock.Foreground>
+                                <Binding Converter="{StaticResource visitedMainLinkConverter}"/>
+                            </TextBlock.Foreground>
+                        </TextBlock>
                     </StackPanel>
-                    <StackPanel VerticalAlignment="Top" Orientation="Horizontal" Margin="0,3,0,0">
-                        <ContentControl Content="{Binding Votable, Converter={StaticResource voteIndicatorConverter}}"/>
-                        <TextBlock FontSize="15" Foreground="Gray" VerticalAlignment="Center" Text="{Binding CreatedUTC, Converter={StaticResource timeRelationConverter}}" />
-                        <StackPanel Orientation="Horizontal" Visibility="{Binding FromMultiReddit, Converter={StaticResource booleanVisibilityConverter}}">
-                            <TextBlock FontSize="15" Foreground="Gray" VerticalAlignment="Center" Text=" in " />
-                            <TextBlock FontSize="15" Foreground="Gray" VerticalAlignment="Center" Text="{Binding Subreddit}" />
-                        </StackPanel>
-                        <TextBlock Margin="8,0,0,0" FontSize="15" Foreground="Gray" VerticalAlignment="Center" Text="{Binding Link.Url, Converter={StaticResource domainConverter}}" />
-                    </StackPanel>
+                </Button.Content>
+            </Button>
+            <Button
+                BorderThickness="0" Margin="0,-18,0,0" Padding="0" HorizontalContentAlignment="Left"
+                Visibility="{Binding FromMultiReddit, Converter={StaticResource booleanVisibilityConverter}}"
+                FontFamily="Segoe WP"
+                Command="{Binding GotoSubreddit}" CommandParameter="{Binding}">
+                <StackPanel  Orientation="Horizontal">
+                    <TextBlock Foreground="Gray" VerticalAlignment="Center" Text="in " />
+                    <TextBlock Foreground="Gray" VerticalAlignment="Center" Text="{Binding Subreddit}" />
                 </StackPanel>
-            </Button.Content>
-        </Button>
+            </Button>
+            <StackPanel Orientation="Horizontal" Margin="12,-6,0,0">
+                <TextBlock Foreground="Gray" VerticalAlignment="Center" Text="{Binding CreatedUTC, Converter={StaticResource timeRelationConverter}}" />
+                <TextBlock Foreground="Gray" VerticalAlignment="Center" Text="{Binding Domain, Converter={StaticResource domainConverter}}"
+                           Margin="3,0,0,0"/>
+            </StackPanel>
+        </StackPanel>
+        <Grid Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" HorizontalAlignment="Stretch">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="120" />
+                <ColumnDefinition Width="90" />
+            </Grid.ColumnDefinitions>
+
+            <Button Grid.Column="0"
+                BorderThickness="0" Margin="0,-16,0,0" Padding="0" HorizontalContentAlignment="Left"
+                FontFamily="Segoe WP"
+                Command="{Binding GotoUserDetails}" CommandParameter="{Binding}">
+                <StackPanel  Orientation="Horizontal">
+                    <TextBlock Foreground="Gray" VerticalAlignment="Center" Text="by " />
+                    <TextBlock Foreground="{StaticResource PhoneAccentBrush}" Text="{Binding Author}" />
+                    <TextBlock Foreground="{StaticResource PhoneAccentBrush}" Opacity="0.75" FontStyle="Italic"
+                        Text="{Binding Path=AuthorFlairText}" Margin="4,3,0,0"
+                        Visibility="{Binding HasAuthorFlair, Converter={StaticResource booleanVisibilityConverter}}"/>
+                </StackPanel>
+            </Button>
+
+            <Button Grid.Column="1"
+                    BorderThickness="0" Margin="0,-16,0,0" Padding="0" HorizontalContentAlignment="Left"
+                    FontFamily="Segoe WP" HorizontalAlignment="Center"
+                    Command="{Binding Votable.ToggleVote}" CommandParameter="{Binding Votable}">
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Margin="0,0,0,0" Foreground="{Binding Votable, Converter={StaticResource voteColorConverter}, ConverterParameter=1, Mode=TwoWay}" FontSize="18" Text="&#xE110;" FontFamily="Segoe UI Symbol"/>
+                    <TextBlock Margin="-6,4,0,0" Foreground="{Binding Votable, Converter={StaticResource voteColorConverter}, ConverterParameter=0, Mode=TwoWay}" FontSize="18" Text="&#xE110;" FontFamily="Segoe UI Symbol">
+                        <TextBlock.RenderTransform>
+                            <RotateTransform Angle="180" CenterX="9" CenterY="12" />
+                        </TextBlock.RenderTransform>
+                    </TextBlock>
+                    <TextBlock Margin="-2,0,0,0" Text="{Binding Path=Votable.TotalVotes}"
+                               Foreground="{Binding Votable, Converter={StaticResource voteColorConverter}, Mode=TwoWay}"/>
+                </StackPanel>
+            </Button>
+
+            <Button Grid.Column="2"
+                    BorderThickness="0" Margin="-5,-16,0,0" Padding="0" HorizontalContentAlignment="Left"
+                    FontFamily="Segoe UI Symbol" HorizontalAlignment="Center"
+                    Command="{Binding NavigateToComments}" CommandParameter="{Binding}">
+                <Grid>
+                    <TextBlock Margin="0,0,0,0" Foreground="{StaticResource PhoneContrastBackgroundBrush}" FontSize="45" Text="&#xE200;" />
+                    <TextBlock FontSize="{StaticResource PhoneFontSizeNormal}"  Margin="2,17,0,0" Foreground="{StaticResource PhoneContrastForegroundBrush}" Text="{Binding Path=CommentCount}"
+                               HorizontalAlignment="Center"/>
+                </Grid>
+            </Button>
+        </Grid>
 
         <Grid Grid.Column="{Binding Source={StaticResource linkViewLayoutManager}, Path=PictureColumn}" Grid.Row="0" VerticalAlignment="Stretch"
               MinHeight="90" Width="100">
             <Button BorderThickness="0" VerticalContentAlignment="Center"
                     HorizontalAlignment="Center" VerticalAlignment="Center"
-                    Height="120" Width="100" Padding="5,15,5,15" Margin="0"
-                    Tap="Link_Tap" HorizontalContentAlignment="Center">
+                    Height="100" Width="100" Padding="5,5,5,5" Margin="0"
+                    Tap="Button_Tap" HorizontalContentAlignment="Center">
                 <Button.Content>
                     <Grid Margin="0,0,0,0" VerticalAlignment="Stretch">
                         <Border BorderThickness="0" Height="70" Width="70"

@@ -36,6 +36,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Common\CacheStore.cs" />
+    <Compile Include="Common\CaptchaService.cs" />
     <Compile Include="Common\EndlessStack.cs" />
     <Compile Include="Common\ImageSource.cs" />
     <Compile Include="Common\NotificationService.cs" />
@@ -59,6 +60,9 @@
     <Compile Include="Services\INavigationService.cs" />
     <Compile Include="Services\ISystemServices.cs" />
     <Compile Include="Services\IUserCredentialService.cs" />
+    <Compile Include="ViewModel\CaptchaViewModel.cs" />
+    <Compile Include="ViewModel\LoadFullCommentsViewModel.cs" />
+    <Compile Include="ViewModel\MoreViewModel.cs" />
     <Compile Include="ViewModel\SearchViewModel.cs" />
     <Compile Include="ViewModel\ActivityViewModel.cs" />
     <Compile Include="ViewModel\AlbumViewModel.cs" />

@@ -288,6 +288,7 @@ namespace SnooStreamWP8.PlatformServices
         {
             public NokiaResizeStream(Stream sourceStream, int maxWidth, int maxHeight)
             {
+                
                 _innerStream = new Lazy<Stream>(() =>
                     {
                         var desiredSize = new Size(maxWidth, maxHeight);

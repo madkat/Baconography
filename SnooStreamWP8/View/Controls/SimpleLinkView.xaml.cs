@@ -16,5 +16,10 @@ namespace SnooStreamWP8.View.Controls
         {
             InitializeComponent();
         }
+
+        private void Button_Tap(object sender, System.Windows.Input.GestureEventArgs e)
+        {
+
+        }
     }
 }

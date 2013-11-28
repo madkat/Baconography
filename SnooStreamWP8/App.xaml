@@ -15,11 +15,11 @@
         <converters:BooleanVisibilityConverter x:Key="booleanVisibilityConverter"/>
         <converters:InvertedBooleanVisibilityConverter x:Key="invertedBooleanVisibilityConverter"/>
         <converters:LinkGlyphConverter x:Key="linkGlyphConverter"/>
-        <converters:VoteIndicatorConverter x:Key="voteIndicatorConverter"/>
         <converters:TimeRelationConverter x:Key="timeRelationConverter"/>
         <converters:DomainConverter x:Key="domainConverter" />
         <converters:VisitedLinkConverter x:Key="visitedLinkConverter" />
         <converters:VisitedMainLinkConverter x:Key="visitedMainLinkConverter" />
+        <converters:VoteColorConverter x:Key="voteColorConverter" />
         <common:LinkViewLayoutManager x:Key="linkViewLayoutManager" />
     </Application.Resources>
 

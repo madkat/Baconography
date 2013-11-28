@@ -14,7 +14,7 @@ namespace SnooStream.ViewModel
             Context = context;
         }
 
-        public void BeginLoad()
+        public Task BeginLoad()
         {
             if (ContentLoadTask == null)
             {
@@ -34,6 +34,7 @@ namespace SnooStream.ViewModel
                     }
                 }
             }
+            return ContentLoadTask;
         }
         Task ContentLoadTask { get; set; }
         protected abstract Task LoadContent();

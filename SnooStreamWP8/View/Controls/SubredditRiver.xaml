@@ -4,6 +4,8 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:telerikPrimitives="clr-namespace:Telerik.Windows.Controls;assembly=Telerik.Windows.Controls.Primitives"
+    xmlns:telerikJumpList="clr-namespace:Telerik.Windows.Controls.JumpList;assembly=Telerik.Windows.Controls.Data"
+    xmlns:telerikData="clr-namespace:Telerik.Windows.Controls;assembly=Telerik.Windows.Controls.Data"
     xmlns:localC="clr-namespace:SnooStreamWP8.View.Controls"
     xmlns:s="clr-namespace:System;assembly=mscorlib"
     mc:Ignorable="d"
@@ -18,18 +20,14 @@
                 <TextBlock Text="{Binding Thing.DisplayName}" />
             </DataTemplate>
         </Grid.Resources>
-        
-        <telerikPrimitives:Rad 
+
+        <telerikData:RadJumpList
             EmptyContent="Loading..."
             IsAsyncBalanceEnabled="False"
             x:Name="listBox" 
             Margin="0,0,-12,0"
             ItemsSource="{Binding SubscribedRivers}"
             ItemTemplate="{StaticResource WrapModeDataTemplate}">
-            
-            <telerikPrimitives:RadDataBoundListBox.VirtualizationStrategyDefinition>
-                <telerikPrimitives:StackVirtualizationStrategyDefinition Orientation="Vertical"/>
-            </telerikPrimitives:RadDataBoundListBox.VirtualizationStrategyDefinition>
-        </telerikPrimitives:RadDataBoundListBox>
+        </telerikData:RadJumpList>
     </Grid>
 </UserControl>

@@ -1,4 +1,5 @@
-﻿using SnooStream.ViewModel;
+﻿using GalaSoft.MvvmLight;
+using SnooStream.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,6 +19,7 @@ namespace SnooStream.Services
         void NavigateToSearch(SearchViewModel viewModel);
         void NavigateToAboutReddit(AboutRedditViewModel viewModel);
         void NavigateToSettingsWithPreview(SettingsViewModel viewModel);
+        Task<bool> ShowPopup(ViewModelBase viewModel);
         void GoBack();
     }
 }

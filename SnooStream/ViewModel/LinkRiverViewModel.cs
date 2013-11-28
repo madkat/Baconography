@@ -6,6 +6,7 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace SnooStream.ViewModel
@@ -27,6 +28,21 @@ namespace SnooStream.ViewModel
             {
                 ProcessLinkThings(initialLinks);
             }
+        }
+
+        public async Task<IEnumerable<ContentViewModel>> PreloadContent(Func<LinkViewModel, bool> predicate, int count, CancellationToken cancelToken)
+        {
+            List<ContentViewModel> results = new List<ContentViewModel>();
+            var linkStream = new LinkStreamViewModel(this, null);
+            while (results.Count < count && await linkStream.MoveNext() && !cancelToken.IsCancellationRequested)
+            {
+                if (predicate(linkStream.Current))
+                {
+                    await linkStream.Current.Content.BeginLoad();
+                    results.Add(linkStream.Current.Content);
+                }
+            }
+            return results;
         }
 
         private void ProcessLinkThings(IEnumerable<Link> links)

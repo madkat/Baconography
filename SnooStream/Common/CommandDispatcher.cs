@@ -25,22 +25,27 @@ namespace SnooStream.Common
             throw new NotImplementedException();
         }
 
-        internal void GotoReplyToComment(ViewModelBase currentContext, CommentViewModel source)
+        public void GotoReplyToComment(ViewModelBase currentContext, CommentViewModel source)
         {
             throw new NotImplementedException();
         }
 
-        internal void GotoEditComment(ViewModelBase currentContext, CommentViewModel source)
+        public void GotoEditComment(ViewModelBase currentContext, CommentViewModel source)
         {
             throw new NotImplementedException();
         }
 
-        internal void UpdateComment(ViewModelBase _context, Thing theComment)
+        public void UpdateComment(ViewModelBase _context, Thing theComment)
         {
             throw new NotImplementedException();
         }
 
-        internal void InsertComment(ViewModelBase _context, Thing theComment)
+        public void InsertComment(ViewModelBase _context, Thing theComment)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void GotoLink(ViewModelBase context, string url)
         {
             throw new NotImplementedException();
         }

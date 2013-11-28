@@ -1,6 +1,8 @@
-﻿using SnooStream.ViewModel;
+﻿using CommonImageAquisition;
+using SnooStream.ViewModel;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
@@ -10,12 +12,19 @@ namespace SnooStream.Common
 {
     public class ImageSource
     {
+        public JpegUtility.Dimensions Dimensions { get; private set; }
         public string UrlSource { get; private set; }
         public ImageSource(string urlSource, byte[] initialData)
         {
             UrlSource = urlSource;
-            if(initialData != null)
+            if (initialData != null)
+            {
+                using (var stream = new MemoryStream(initialData))
+                {
+                    Dimensions = JpegUtility.GetJpegDimensions(stream);
+                }
                 _cachedData = new WeakReference<byte[]>(initialData);
+            }
         }
 
         protected WeakReference<byte[]> _cachedData;

@@ -13,9 +13,40 @@ namespace SnooStream.ViewModel
 {
     public class CommentViewModel : ViewModelBase
     {
-        ViewModelBase _parent;
+        CommentsViewModel _parent;
         Comment _comment;
         VotableViewModel _votable;
+        string _linkId;
+
+        public CommentViewModel(Comment comment, string linkId, int depth = 0)
+        {
+            _isMinimized = false;
+            _comment = comment;
+            _linkId = linkId;
+            Depth = depth;
+            AuthorFlair = SnooStreamViewModel.RedditService.GetUsernameModifiers(_comment.Author, _linkId, _comment.Subreddit);
+            AuthorFlairText = _comment.AuthorFlairText;
+
+            //_showExtendedView = new RelayCommand(ShowExtendedViewImpl);
+            //_gotoReply = new RelayCommand(GotoReplyImpl);
+            //_save = new RelayCommand(SaveImpl);
+            //_report = new RelayCommand(ReportImpl);
+            //_gotoFullLink = new RelayCommand(GotoFullLinkImpl);
+            //_gotoContext = new RelayCommand(GotoContextImpl);
+            //_gotoUserDetails = new RelayCommand(GotoUserDetailsImpl);
+            //_gotoEdit = new RelayCommand(GotoEditImpl);
+            //_minimizeCommand = new RelayCommand(() => IsMinimized = !IsMinimized);
+            Body = _comment.Body;
+        }
+
+        public string Id
+        {
+            get
+            {
+                return _comment.Id;
+            }
+        }
+
         public VotableViewModel Votable
         {
             get

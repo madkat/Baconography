@@ -40,6 +40,7 @@
     <Compile Include="HttpUtility.cs" />
     <Compile Include="ImageAquisition.cs" />
     <Compile Include="Imgur.cs" />
+    <Compile Include="JpegUtility.cs" />
     <Compile Include="Livememe.cs" />
     <Compile Include="Memecrunch.cs" />
     <Compile Include="Minus.cs" />

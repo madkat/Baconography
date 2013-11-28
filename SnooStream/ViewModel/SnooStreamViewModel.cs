@@ -1,4 +1,5 @@
-﻿using GalaSoft.MvvmLight;
+﻿using CommonImageAquisition;
+using GalaSoft.MvvmLight;
 using SnooSharp;
 using SnooStream.Common;
 using SnooStream.Messages;
@@ -24,6 +25,7 @@ namespace SnooStream.ViewModel
             Settings = new Model.Settings(_initializationBlob.Settings);
             RedditUserState = _initializationBlob.DefaultUser ?? new UserState();
             NotificationService = new Common.NotificationService();
+            CaptchaProvider = new CaptchaService();
             RedditService = new Reddit(_listingFilter, RedditUserState, OfflineService, CaptchaProvider);
             
             _listingFilter.Initialize(Settings, OfflineService, RedditService, _initializationBlob.NSFWFilter);
@@ -40,7 +42,6 @@ namespace SnooStream.ViewModel
             else
                 FeaturedImage = "http://www.darelparker.com/dp/wp-content/uploads/2011/01/reddit-coat-of-arms-logo-widescreen-1440-900-wallpaper.jpg";
             LoadLargeImages();
-
             MessengerInstance.Register<UserLoggedInMessage>(this, OnUserLoggedIn);
         }
 
@@ -59,10 +60,19 @@ namespace SnooStream.ViewModel
             {
                 await NotificationService.Report("loading secondary images", async () =>
                 {
-                    var posts = await RedditService.GetPostsBySubreddit(Settings.LockScreenReddit);
-                    if (posts != null)
+                    //check if there is a LinkRiver for the target subreddit, then cache things 
+                    //into it directly so we arent making 2x the reddit calls
+                    var targetRiver = SubredditRiver.CombinedRivers.FirstOrDefault(lrvm => string.Compare(lrvm.Thing.Url, Settings.LockScreenReddit, StringComparison.CurrentCultureIgnoreCase) == 0);
+                    if (targetRiver != null)
                     {
-                        foreach (var post in posts.Data.Children)
+                        targetRiver = new LinkRiverViewModel(true, new Subreddit(Settings.LockScreenReddit), "hot", null);
+                    }
+
+
+                    var loadedContent = await targetRiver.PreloadContent((link) => ImageAquisition.MightHaveImagesFromUrl(link.Link.Url) && !link.Link.Url.EndsWith(".gif"), 12, BackgroundCancellationToken);
+                    foreach (var content in loadedContent.OfType<ImageViewModel>())
+                    {
+                        if (content.ImageSource.Dimensions != null)
                         {
 
                         }
@@ -81,7 +91,7 @@ namespace SnooStream.ViewModel
         public static UserState RedditUserState { get; private set; }
         public static Reddit RedditService { get; private set; }
         public static NotificationService NotificationService { get; private set; }
-        public static ICaptchaProvider CaptchaProvider { get; set; }
+        public static CaptchaService CaptchaProvider { get; set; }
         public static IMarkdownProcessor MarkdownProcessor { get; set; }
         public static IUserCredentialService UserCredentialService { get; set; }
         public static INavigationService NavigationService { get; set; }
@@ -95,7 +105,23 @@ namespace SnooStream.ViewModel
         public UploadViewModel UploadHub { get; private set; }
         public string FeaturedImage { get; private set; }
 
-        public static CancellationToken UIContextCancellationToken { get; set; }
+        private static CancellationTokenSource _uiContextCancellationSource = new CancellationTokenSource();
+        public static CancellationToken UIContextCancellationToken
+        {
+            get
+            {
+                return _uiContextCancellationSource.Token;
+            }
+        }
+
+        private static CancellationTokenSource _backgroundCancellationTokenSource = new CancellationTokenSource();
+        public static CancellationToken BackgroundCancellationToken
+        {
+            get
+            {
+                return _backgroundCancellationTokenSource.Token;
+            }
+        }
 
         public void DumpInitBlob()
         {
