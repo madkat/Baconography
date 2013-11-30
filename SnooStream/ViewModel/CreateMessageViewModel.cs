@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace SnooStream.ViewModel
 {
-    public class ReplyMessageViewModel : ViewModelBase
+    public class CreateMessageViewModel : ViewModelBase
     {
     }
 }

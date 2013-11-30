@@ -1,4 +1,5 @@
 ﻿using GalaSoft.MvvmLight;
+using SnooStream.Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,5 +15,6 @@ namespace SnooStream.ViewModel
         public LockScreenViewModel LockScreen { get; private set; }
         public AppearanceSettingsViewModel LayoutSettings { get; private set; }
         public ContentSettingsViewModel ContentSettings { get; private set; }
+        public Settings Settings { get; private set; }
     }
 }

@@ -58,8 +58,10 @@ namespace SnooStream.Common
 
             _realLookup.Remove(key);
             var indexOfRemoveal = _realSorted.IndexOfKey(removedElement);
-            _realSorted.RemoveAt(indexOfRemoveal);
-            if (CollectionChanged != null)
+            if(indexOfRemoveal != -1)
+                _realSorted.RemoveAt(indexOfRemoveal);
+
+            if (CollectionChanged != null && indexOfRemoveal != -1)
                 CollectionChanged(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, removedElement, indexOfRemoveal));
 
             return true;

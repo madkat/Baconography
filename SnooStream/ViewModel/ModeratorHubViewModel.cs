@@ -9,5 +9,6 @@ namespace SnooStream.ViewModel
 {
     public class ModeratorHubViewModel : ViewModelBase
     {
+        public bool IsUserModerator { get; private set; }
     }
 }

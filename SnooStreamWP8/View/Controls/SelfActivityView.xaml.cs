@@ -23,9 +23,9 @@ namespace SnooStreamWP8.View.Controls
         {
         }
 
-        private void listBox_DataRequested(object sender, EventArgs e)
+        private async void listBox_DataRequested(object sender, EventArgs e)
         {
-            ((SnooStreamViewModel)DataContext).UserHub.Self.PullNew();
+            await ((SelfViewModel)DataContext).PullNew();
         }
         private void ctrLoadMore_Tap(object sender, System.Windows.Input.GestureEventArgs e)
         {

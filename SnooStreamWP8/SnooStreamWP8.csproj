@@ -96,12 +96,16 @@
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
     <Compile Include="Common\LinkViewLayoutManager.cs" />
+    <Compile Include="Converters\CommentDepthColorConverter.cs" />
+    <Compile Include="Converters\CommentDepthMarginConverter.cs" />
     <Compile Include="Converters\DomainConverter.cs" />
+    <Compile Include="Converters\InvertedBooleanConverter.cs" />
     <Compile Include="Converters\LinkGlyphConverter.cs" />
     <Compile Include="Converters\TimeRelationConverter.cs" />
     <Compile Include="Converters\VisibilityConverter.cs" />
     <Compile Include="Converters\VisitedLinkConverter.cs" />
     <Compile Include="Converters\VoteColorConverter.cs" />
+    <Compile Include="Converters\VoteIndicatorConverter.cs" />
     <Compile Include="LocalizedStrings.cs" />
     <Compile Include="PlatformServices\MarkdownProvider.cs" />
     <Compile Include="PlatformServices\SystemServices.cs" />
@@ -114,8 +118,20 @@
     <Compile Include="View\Controls\CaptchaControl.xaml.cs">
       <DependentUpon>CaptchaControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="View\Controls\CommentsView.xaml.cs">
+      <DependentUpon>CommentsView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="View\Controls\CommentView.xaml.cs">
       <DependentUpon>CommentView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Controls\ComposeMessageView.xaml.cs">
+      <DependentUpon>ComposeMessageView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Controls\ComposePostView.xaml.cs">
+      <DependentUpon>ComposePostView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Controls\LargeTextEditor.xaml.cs">
+      <DependentUpon>LargeTextEditor.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\Controls\LoadMoreControl.cs" />
     <Compile Include="View\Controls\LoginView.xaml.cs">
@@ -137,6 +153,12 @@
     <Compile Include="View\Controls\Markdown\RichMarkdownButton.xaml.cs">
       <DependentUpon>RichMarkdownButton.xaml</DependentUpon>
     </Compile>
+    <Compile Include="View\Controls\MoreCommentsView.xaml.cs">
+      <DependentUpon>MoreCommentsView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Controls\SelectSortTypeView.xaml.cs">
+      <DependentUpon>SelectSortTypeView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="View\Controls\SelfActivityView.xaml.cs">
       <DependentUpon>SelfActivityView.xaml</DependentUpon>
     </Compile>
@@ -149,6 +171,7 @@
     <Compile Include="View\Pages\SnooStreamHub.xaml.cs">
       <DependentUpon>SnooStreamHub.xaml</DependentUpon>
     </Compile>
+    <Compile Include="View\Selectors\CommentTemplateSelector.cs" />
     <Compile Include="View\Selectors\ContentTemplateSelector.cs" />
     <Compile Include="View\Selectors\TypedTemplateSelector.cs" />
     <Compile Include="View\Selectors\UserActivityTemplateSelector.cs" />
@@ -162,7 +185,23 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="View\Controls\CommentsView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="View\Controls\CommentView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\Controls\ComposeMessageView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\Controls\ComposePostView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\Controls\LargeTextEditor.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -187,6 +226,14 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="View\Controls\Markdown\RichMarkdownButton.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\Controls\MoreCommentsView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\Controls\SelectSortTypeView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

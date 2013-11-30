@@ -24,6 +24,7 @@ namespace SnooStream.ViewModel
             IsLocal = isLocal;
             Thing = thing;
             Sort = sort ?? "hot";
+            Links = new ObservableCollection<LinkViewModel>();
             if(initialLinks != null)
             {
                 ProcessLinkThings(initialLinks);
@@ -49,11 +50,11 @@ namespace SnooStream.ViewModel
         {
             foreach (var link in links)
             {
-                Content.Add(new LinkViewModel(this, link));
+                Links.Add(new LinkViewModel(this, link));
             }
         }
 
-        public ObservableCollection<LinkViewModel> Content { get; set; }
+        public ObservableCollection<LinkViewModel> Links { get; set; }
         private Task _loadingTask;
         public Task LoadMore()
         {
@@ -80,7 +81,7 @@ namespace SnooStream.ViewModel
                         foreach (var thing in postListing.Data.Children)
                         {
                             if (thing.Data is Link)
-                                Content.Add(new LinkViewModel(this, thing.Data as Link));
+                                Links.Add(new LinkViewModel(this, thing.Data as Link));
                         }
                     }
                 });
@@ -91,27 +92,27 @@ namespace SnooStream.ViewModel
 
         public void Add(LinkViewModel item)
         {
-            Content.Add(item);
+            Links.Add(item);
         }
 
         public void Clear()
         {
-            Content.Clear();
+            Links.Clear();
         }
 
         public bool Contains(LinkViewModel item)
         {
-            return Content.Contains(item);
+            return Links.Contains(item);
         }
 
         public void CopyTo(LinkViewModel[] array, int arrayIndex)
         {
-            Content.CopyTo(array, arrayIndex);
+            Links.CopyTo(array, arrayIndex);
         }
 
         public int Count
         {
-            get { return Content.Count; }
+            get { return Links.Count; }
         }
 
         public bool IsReadOnly
@@ -121,28 +122,28 @@ namespace SnooStream.ViewModel
 
         public bool Remove(LinkViewModel item)
         {
-            return Content.Remove(item);
+            return Links.Remove(item);
         }
 
         public IEnumerator<LinkViewModel> GetEnumerator()
         {
-            return Content.GetEnumerator();
+            return Links.GetEnumerator();
         }
 
         System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
         {
-            return Content.GetEnumerator();
+            return Links.GetEnumerator();
         }
 
         public event NotifyCollectionChangedEventHandler CollectionChanged
         {
             add
             {
-                Content.CollectionChanged += value;
+                Links.CollectionChanged += value;
             }
             remove
             {
-                Content.CollectionChanged -= value;
+                Links.CollectionChanged -= value;
             }
         }
     }

@@ -13,7 +13,8 @@ namespace SnooStream.ViewModel
         {
             public int Compare(ActivityViewModel x, ActivityViewModel y)
             {
-                return x.Created.CompareTo(y.Created);
+                //invert the sort
+                return y.Created.CompareTo(x.Created);
             }
         }
 

@@ -38,8 +38,8 @@
             <phone:PanoramaItem Header="Settings">
                 <Grid/>
             </phone:PanoramaItem>
-            
-            <phone:PanoramaItem Header="Moderator">
+
+            <phone:PanoramaItem Header="Moderator" DataContext="{Binding ModeratorHub}" Visibility="{Binding IsUserModerator, Converter={StaticResource booleanVisibilityConverter}}">
                 <Grid/>
             </phone:PanoramaItem>
         </phone:Panorama>

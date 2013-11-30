@@ -1,4 +1,5 @@
 ﻿using GalaSoft.MvvmLight;
+using GalaSoft.MvvmLight.Command;
 using SnooSharp;
 using System;
 using System.Collections.Generic;
@@ -27,13 +28,26 @@ namespace SnooStream.ViewModel
         private Dictionary<string, List<string>> _knownUnloaded = new Dictionary<string, List<string>>();
         private string _firstChild;
         private LoadFullCommentsViewModel _loadFullSentinel;
+        private ViewModelBase _context;
 
 
         public bool IsContext {get; private set;}
         public string ContextTargetID { get; private set; }
-        public string Sort { get; private set; }
+        private string _sort;
+        public string Sort
+        {
+            get
+            {
+                return _sort;
+            }
+            set
+            {
+                _sort = value;
+                RaisePropertyChanged("Sort");
+            }
+        }
         public string BaseUrl { get; private set; }
-        public Link Thing { get; private set; }
+        public LinkViewModel Link { get; private set; }
 
         public ObservableCollection<ViewModelBase> FlatComments { get; private set; }
 
@@ -268,7 +282,7 @@ namespace SnooStream.ViewModel
             string moreId = null;
             await Task.Run<Task>(async () =>
                 {
-                    var listing = await SnooStreamViewModel.RedditService.GetMoreOnListing(target.Children, Thing.Id, Thing.Subreddit);
+                    var listing = await SnooStreamViewModel.RedditService.GetMoreOnListing(target.Children, Link.Link.Id, Link.Link.Subreddit);
                     lock(this)
                     {
                         FixupParentage(listing);
@@ -299,7 +313,7 @@ namespace SnooStream.ViewModel
 
             await Task.Run<Task>(async () =>
             {
-                var listing = await SnooStreamViewModel.RedditService.GetCommentsOnPost(Thing.Subreddit, BaseUrl, null);
+                var listing = await SnooStreamViewModel.RedditService.GetCommentsOnPost(Link.Link.Subreddit, BaseUrl, null);
                 lock (this)
                 {
                     var firstChild = listing.Data.Children.FirstOrDefault(thing => thing.Data is Comment);
@@ -326,5 +340,30 @@ namespace SnooStream.ViewModel
                 }
             }
         }
+
+        public RelayCommand GotoLink
+        {
+            get 
+            {
+                return new RelayCommand(() => SnooStreamViewModel.CommandDispatcher.GotoLink(_context, Link.Link.Url));
+            }
+        }
+
+        public RelayCommand GotoReply
+        {
+            get
+            {
+                return new RelayCommand(() => SnooStreamViewModel.CommandDispatcher.GotoReplyToPost(_context, this));
+            }
+        }
+
+        public RelayCommand GotoEditPost
+        {
+            get
+            {
+                return new RelayCommand(() => SnooStreamViewModel.CommandDispatcher.GotoEditPost(_context, Link));
+            }
+        }
+
     }
 }

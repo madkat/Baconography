@@ -30,7 +30,17 @@ namespace SnooStream.Common
             throw new NotImplementedException();
         }
 
+        public void GotoReplyToPost(ViewModelBase currentContext, CommentsViewModel source)
+        {
+            throw new NotImplementedException();
+        }
+
         public void GotoEditComment(ViewModelBase currentContext, CommentViewModel source)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void GotoEditPost(ViewModelBase currentContext, LinkViewModel source)
         {
             throw new NotImplementedException();
         }
@@ -46,6 +56,11 @@ namespace SnooStream.Common
         }
 
         public void GotoLink(ViewModelBase context, string url)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void GotoLogin(ViewModelBase vm)
         {
             throw new NotImplementedException();
         }
