@@ -20,8 +20,15 @@ namespace SnooStream.ViewModel
         public SnooStreamViewModel()
         {
             _listingFilter = new NSFWListingFilter();
-            OfflineService = new OfflineService();
-            _initializationBlob = OfflineService.LoadInitializationBlob("");
+            if (IsInDesignMode)
+            {
+                _initializationBlob = new InitializationBlob { Settings = new Dictionary<string, string>(), NSFWFilter = new Dictionary<string,bool>() };
+            }
+            else
+            {
+                OfflineService = new OfflineService();
+                _initializationBlob = OfflineService.LoadInitializationBlob("");
+            }
             Settings = new Model.Settings(_initializationBlob.Settings);
             RedditUserState = _initializationBlob.DefaultUser ?? new UserState();
             NotificationService = new Common.NotificationService();
@@ -41,7 +48,11 @@ namespace SnooStream.ViewModel
             }
             else
                 FeaturedImage = "http://www.darelparker.com/dp/wp-content/uploads/2011/01/reddit-coat-of-arms-logo-widescreen-1440-900-wallpaper.jpg";
-            LoadLargeImages();
+
+            if (!IsInDesignMode)
+            {
+                LoadLargeImages();
+            }
             MessengerInstance.Register<UserLoggedInMessage>(this, OnUserLoggedIn);
         }
 

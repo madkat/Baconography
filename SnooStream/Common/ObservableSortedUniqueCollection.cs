@@ -157,7 +157,7 @@ namespace SnooStream.Common
 
         System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
         {
-            return _realLookup.GetEnumerator();
+            return _realSorted.Values.GetEnumerator();
         }
 
         public event NotifyCollectionChangedEventHandler CollectionChanged;

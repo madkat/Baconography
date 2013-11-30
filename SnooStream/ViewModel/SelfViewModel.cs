@@ -101,9 +101,6 @@ namespace SnooStream.ViewModel
                         if (existingGroup.Activities.Count <= 1)
                         {
                             existingGroup.Merge(child);
-                            Activities.Remove(childName);
-                            //Jiggle it to force a rebind of the data template
-                            Activities.Add(childName, existingGroup);
                         }
                         else
                             existingGroup.Merge(child);
@@ -129,26 +126,36 @@ namespace SnooStream.ViewModel
             Listing outbox = null;
             Listing activity = null;
 
-            await SnooStreamViewModel.NotificationService.Report("getting additional inbox", async () =>
+            if (!string.IsNullOrWhiteSpace(OldestMessage))
             {
-                inbox = await SnooStreamViewModel.RedditService.GetAdditionalFromListing(string.Format(Reddit.MailBaseUrlFormat, "inbox"), OldestMessage, null);
-            });
+                await SnooStreamViewModel.NotificationService.Report("getting additional inbox", async () =>
+                {
+                    inbox = await SnooStreamViewModel.RedditService.GetAdditionalFromListing(string.Format(Reddit.MailBaseUrlFormat, "inbox"), OldestMessage, null);
+                });
 
-            OldestMessage = ProcessListing(inbox, OldestMessage);
+                OldestMessage = ProcessListing(inbox, OldestMessage);
+            }
 
-            await SnooStreamViewModel.NotificationService.Report("getting additional outbox", async () =>
+            if (!string.IsNullOrWhiteSpace(OldestSentMessage))
             {
-                outbox = await SnooStreamViewModel.RedditService.GetAdditionalFromListing(string.Format(Reddit.MailBaseUrlFormat, "sent"), OldestSentMessage, null);
-            });
+                await SnooStreamViewModel.NotificationService.Report("getting additional outbox", async () =>
+                {
+                    outbox = await SnooStreamViewModel.RedditService.GetAdditionalFromListing(string.Format(Reddit.MailBaseUrlFormat, "sent"), OldestSentMessage, null);
+                });
 
-            OldestSentMessage = ProcessListing(inbox, OldestSentMessage);
+                OldestSentMessage = ProcessListing(inbox, OldestSentMessage);
+            }
 
-            await SnooStreamViewModel.NotificationService.Report("getting additional activity", async () =>
+
+            if (!string.IsNullOrWhiteSpace(OldestActivity))
             {
-                activity = await SnooStreamViewModel.RedditService.GetAdditionalFromListing(string.Format(Reddit.PostByUserBaseFormat, SnooStreamViewModel.RedditService.CurrentUserName), OldestActivity, null);
-            });
+                await SnooStreamViewModel.NotificationService.Report("getting additional activity", async () =>
+                {
+                    activity = await SnooStreamViewModel.RedditService.GetAdditionalFromListing(string.Format(Reddit.PostByUserBaseFormat, SnooStreamViewModel.RedditService.CurrentUserName), OldestActivity, null);
+                });
 
-            OldestActivity = ProcessListing(inbox, OldestActivity);
+                OldestActivity = ProcessListing(inbox, OldestActivity);
+            }
         }
     }
 }

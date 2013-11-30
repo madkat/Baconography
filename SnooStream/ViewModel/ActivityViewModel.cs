@@ -14,18 +14,11 @@ namespace SnooStream.ViewModel
             public int Compare(ActivityViewModel x, ActivityViewModel y)
             {
                 //invert the sort
-                return y.Created.CompareTo(x.Created);
+                return y.CreatedUTC.CompareTo(x.CreatedUTC);
             }
-        }
+        } 
 
-        public DateTime Created { get; protected set; }
-        public string Test
-        {
-            get
-            {
-                return "Test";
-            }
-        }
+        public DateTime CreatedUTC { get; protected set; }
 
         public static string GetActivityGroupName(Thing thing)
         {
@@ -35,7 +28,12 @@ namespace SnooStream.ViewModel
             if (thing.Data is Link)
                 return ((Link)thing.Data).Id;
             else if (thing.Data is Comment)
-                return ((Comment)thing.Data).LinkId;
+            {
+                if(((Comment)thing.Data).LinkId != null)
+                    return ((Comment)thing.Data).LinkId;
+                else
+                    return ((Comment)thing.Data).ParentId;
+            } 
             else if (thing.Data is Message)
             {
                 var messageThing = thing.Data as Message;
@@ -89,6 +87,8 @@ namespace SnooStream.ViewModel
             else
                 throw new ArgumentOutOfRangeException();
         }
+
+        public bool IsNew { get; protected set; }
     }
 
     public class PostedLinkActivityViewModel : ActivityViewModel
@@ -98,8 +98,12 @@ namespace SnooStream.ViewModel
         public PostedLinkActivityViewModel(Link link)
         {
             Link = link;
-            Created = link.CreatedUTC.ToLocalTime();
+            CreatedUTC = link.CreatedUTC;
         }
+
+        public string Author { get { return Link.Author; } }
+        public string Subject { get { return Link.Title; } }
+        public string Subreddit { get { return Link.Subreddit; } }
     }
 
     public class PostedCommentActivityViewModel : ActivityViewModel
@@ -121,15 +125,17 @@ namespace SnooStream.ViewModel
             }
         }
 
+        public string Author { get { return Comment.Author; } }
         public object BodyMD { get; private set; }
-        public string Subject { get; private set; }
+        public string Subject { get { return Comment.Body.Substring(0, Math.Min(Comment.Body.Length, 30)); } }
+        public string Subreddit { get { return Comment.Subreddit; } }
         public string ParentId { get; private set; }
-        public string LinkId { get; private set; }
 
         public PostedCommentActivityViewModel(Comment comment)
         {
             Comment = comment;
-            Created = comment.CreatedUTC.ToLocalTime();
+            CreatedUTC = comment.CreatedUTC;
+            Body = Comment.Body;
         }
     }
 
@@ -142,7 +148,8 @@ namespace SnooStream.ViewModel
         public RecivedCommentReplyActivityViewModel(Message messageThing)
         {
             Message = messageThing;
-            Created = messageThing.CreatedUTC.ToLocalTime();
+            CreatedUTC = messageThing.CreatedUTC;
+            Body = Message.Body;
         }
         public string Body
         {
@@ -158,11 +165,10 @@ namespace SnooStream.ViewModel
                 RaisePropertyChanged("BodyMD");
             }
         }
-
+        public string Author { get { return Message.Author; } }
         public object BodyMD { get; private set; }
-        public string Subject { get; private set; }
+        public string Subject { get { return Message.LinkTitle; } }
         public string ParentId { get; private set; }
-        public string LinkId { get; private set; }
     }
 
     public class MentionActivityViewModel : ActivityViewModel
@@ -184,10 +190,10 @@ namespace SnooStream.ViewModel
             }
         }
 
+        public string Author { get { return Message.Author; } }
         public object BodyMD { get; private set; }
         public string Subject { get; private set; }
         public string ParentId { get; private set; }
-        public string LinkId { get; private set; }
     }
 
     public class MessageActivityViewModel : ActivityViewModel
@@ -198,7 +204,9 @@ namespace SnooStream.ViewModel
         public MessageActivityViewModel(Message messageThing)
         {
             MessageThing = messageThing;
-            Created = messageThing.CreatedUTC.ToLocalTime();
+            CreatedUTC = messageThing.CreatedUTC;
+            Body = messageThing.Body;
+            IsNew = MessageThing.New;
         }
         public string Body
         {
@@ -215,10 +223,10 @@ namespace SnooStream.ViewModel
             }
         }
 
+        public string Author { get { return MessageThing.Author; } }
         public object BodyMD { get; private set; }
-        public string Subject { get; private set; }
-        public string ParentId { get; private set; }
-        public string LinkId { get; private set; }
+        public string Subject { get { return MessageThing.Subject; } }
+        public string ParentId { get { return MessageThing.ParentId; } }
     }
 
     public class ModeratorActivityViewModel :ActivityViewModel
@@ -228,7 +236,7 @@ namespace SnooStream.ViewModel
         public ModeratorActivityViewModel(ModAction modAction)
         {
             ModAction = modAction;
-            Created = modAction.CreatedUTC.ToLocalTime();
+            CreatedUTC = modAction.CreatedUTC;
         }
     }
 
@@ -238,7 +246,7 @@ namespace SnooStream.ViewModel
 
         public ModeratorMessageActivityViewModel(Message messageThing)
         {
-            Created = messageThing.CreatedUTC.ToLocalTime();
+            CreatedUTC = messageThing.CreatedUTC;
             MessageThing = messageThing;
         }
     }

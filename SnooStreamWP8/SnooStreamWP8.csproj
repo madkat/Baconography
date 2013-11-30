@@ -96,12 +96,15 @@
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
     <Compile Include="Common\LinkViewLayoutManager.cs" />
+    <Compile Include="Converters\BoolToAccentBrushConverter.cs" />
     <Compile Include="Converters\CommentDepthColorConverter.cs" />
     <Compile Include="Converters\CommentDepthMarginConverter.cs" />
     <Compile Include="Converters\DomainConverter.cs" />
     <Compile Include="Converters\InvertedBooleanConverter.cs" />
     <Compile Include="Converters\LinkGlyphConverter.cs" />
+    <Compile Include="Converters\ActivityGroupCountConverter.cs" />
     <Compile Include="Converters\TimeRelationConverter.cs" />
+    <Compile Include="Converters\UnixTimeConverter.cs" />
     <Compile Include="Converters\VisibilityConverter.cs" />
     <Compile Include="Converters\VisitedLinkConverter.cs" />
     <Compile Include="Converters\VoteColorConverter.cs" />
@@ -181,6 +184,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </ApplicationDefinition>
+    <Page Include="View\Controls\ActivitiesResources.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="View\Controls\CaptchaControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

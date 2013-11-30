@@ -15,7 +15,8 @@ namespace SnooStream.ViewModel
         {
             public int Compare(ActivityGroupViewModel x, ActivityGroupViewModel y)
             {
-                return x.Created.CompareTo(y.Created);
+                //invert the sort
+                return y.CreatedUTC.CompareTo(x.CreatedUTC);
             }
         }
 
@@ -40,7 +41,7 @@ namespace SnooStream.ViewModel
 
         public abstract void Merge(Thing additional);
 
-        public DateTime Created {get; protected set;}
+        public DateTime CreatedUTC {get; protected set;}
         public virtual ActivityViewModel FirstActivity 
         {
             get
@@ -48,6 +49,8 @@ namespace SnooStream.ViewModel
                 return ((IEnumerable<ActivityViewModel>)Activities).First();
             }
         }
+
+        public bool IsConversation { get; protected set; }
         public ObservableSortedUniqueCollection<string, ActivityViewModel> Activities { get; protected set; }
     }
 
@@ -65,15 +68,23 @@ namespace SnooStream.ViewModel
             if (additional.Data is Link)
             {
                 _linkActivity = ActivityViewModel.CreateActivity(additional);
-                Created = _linkActivity.Created;
+                CreatedUTC = _linkActivity.CreatedUTC;
             }
             else
             {
                 var thingName = ((ThingData)additional.Data).Name;
                 if (!Activities.ContainsKey(thingName))
+                {
                     Activities.Add(thingName, ActivityViewModel.CreateActivity(additional));
+
+                    if (!IsConversation)
+                    {
+                        IsConversation = true;
+                        RaisePropertyChanged("IsConversation");
+                    }
+                }
             }
-            Created = FirstActivity.Created;
+            CreatedUTC = FirstActivity.CreatedUTC;
         }
 
         public override ActivityViewModel FirstActivity
@@ -95,10 +106,17 @@ namespace SnooStream.ViewModel
         public override void Merge(Thing additional)
         {
             var thingName = ((ThingData)additional.Data).Name;
-            if(!Activities.ContainsKey(thingName))
+            if (!Activities.ContainsKey(thingName))
+            {
                 Activities.Add(thingName, ActivityViewModel.CreateActivity(additional));
+                if (!IsConversation && Activities.Count > 0)
+                {
+                    IsConversation = true;
+                    RaisePropertyChanged("IsConversation");
+                }
+            }
 
-            Created = FirstActivity.Created;
+            CreatedUTC = FirstActivity.CreatedUTC;
         }
     }
 }

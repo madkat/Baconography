@@ -24,6 +24,8 @@
         <converters:CommentDepthColorConverter x:Key="commentDepthColorConverter" />
         <converters:CommentDepthMarginConverter x:Key="commentDepthMarginConverter" />
         <converters:InvertedBooleanConverter x:Key="invertedBooleanConverter" />
+        <converters:BoolToAccentBrushConverter x:Key="boolToAccentBrushConverter" />
+        <converters:UnixTimeConverter x:Key="unixTimeConverter" />
         <common:LinkViewLayoutManager x:Key="linkViewLayoutManager" />
     </Application.Resources>
 
