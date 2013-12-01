@@ -19,8 +19,7 @@
 
                 <selectors:UserActivityTemplateSelector x:Key="activityTemplateSelector"
                         MessageActivityTemplate="{StaticResource messageActivityTemplate}"
-                        CommentActivityTemplate="{StaticResource commentActivityTemplate}"
-                        LinkActivityTemplate="{StaticResource linkActivityTemplate}" />
+                        CommentActivityTemplate="{StaticResource commentActivityTemplate}" />
             </ResourceDictionary>
         </Grid.Resources>
 

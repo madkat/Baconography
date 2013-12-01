@@ -17,11 +17,7 @@
 
     <!--LayoutRoot contains the root grid where all other page content is placed-->
     <Grid x:Name="LayoutRoot">
-        <phone:Panorama Title="Snoo Stream" >
-
-            <phone:Panorama.Background>
-                <ImageBrush ImageSource="http://www.darelparker.com/dp/wp-content/uploads/2011/01/reddit-coat-of-arms-logo-widescreen-1440-900-wallpaper.jpg"/>
-            </phone:Panorama.Background>
+        <phone:Panorama Title="Snoo Stream">
 
             <phone:PanoramaItem Header="Subreddits" DataContext="{Binding SubredditRiver}">
                 <local:SubredditRiver/>

@@ -122,5 +122,137 @@ namespace SnooStream.ViewModel
         {
             throw new NotImplementedException();
         }
+
+        object _selfText;
+        public object SelfText
+        {
+            get
+            {
+                if (_selfText == null)
+                {
+                    _selfText = SnooStreamViewModel.MarkdownProcessor.Process(Link.Selftext);
+                }
+                return _selfText;
+            }
+        }
+        public bool FromMultiReddit { get; set; }
+
+        string _domain = null;
+		public string Domain
+		{
+			get
+			{
+				if (_domain == null)
+				{
+                    _domain = new Uri(Link.Url).Authority;
+                    if (_domain == "reddit.com" && Link.Url.ToLower().Contains(Subreddit.ToLower()))
+						_domain = "self." + Subreddit.ToLower();
+				}
+				return _domain;
+			}
+		}
+
+        //this should show only moderator info
+        public AuthorFlairKind AuthorFlair
+        {
+            get
+            {
+                return AuthorFlairKind.None;
+            }
+        }
+
+        public string AuthorFlairText { get; set; }
+
+        public bool HasAuthorFlair
+        {
+            get
+            {
+                return (!String.IsNullOrWhiteSpace(AuthorFlairText));
+            }
+        }
+
+        public string Author
+        {
+            get
+            {
+                return Link.Author;
+            }
+        }
+
+        public string Subreddit
+        {
+            get
+            {
+                return Link.Subreddit;
+            }
+        }
+
+        public string Title
+        {
+            get
+            {
+                return Link.Title.Replace("&amp;", "&").Replace("&lt;", "<").Replace("&gt;", ">").Replace("&quot;", "\"").Replace("&apos;", "'").Trim();
+            }
+        }
+
+        public int CommentCount
+        {
+            get
+            {
+                return Link.CommentCount;
+            }
+        }
+
+        public bool IsSelfPost
+        {
+            get
+            {
+                return Link.IsSelf;
+            }
+        }
+
+        public string Url
+        {
+            get
+            {
+                return Link.Url;
+            }
+        }
+
+        VotableViewModel _votable;
+        public VotableViewModel Votable
+        {
+            get
+            {
+                if (_votable == null)
+                    _votable = new VotableViewModel(Link, () => RaisePropertyChanged("Votable"));
+                return _votable;
+            }
+        }
+
+        public bool HasThumbnail
+        {
+            get
+            {
+                return !string.IsNullOrWhiteSpace(Thumbnail) && Thumbnail != "self" && Thumbnail != "nsfw" && Thumbnail != "default";
+            }
+        }
+
+        public string Thumbnail
+        {
+            get
+            {
+                return Link.Thumbnail;
+            }
+        }
+
+
+        public DateTime CreatedUTC
+        {
+            get
+            {
+                return Link.CreatedUTC;
+            }
+        }
     }
 }

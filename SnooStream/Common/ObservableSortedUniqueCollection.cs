@@ -34,8 +34,7 @@ namespace SnooStream.Common
         public void Add(TKey key, TValue value)
         {
             _realLookup.Add(key, value);
-            _realSorted.Add(value, value);
-            var indexOfAdd = _realSorted.IndexOfKey(value);
+            var indexOfAdd = _realSorted.Add(value, value);
             if (CollectionChanged != null)
                 CollectionChanged(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, value, indexOfAdd));
         }
@@ -150,12 +149,12 @@ namespace SnooStream.Common
             return Remove(item.Key);
         }
 
-        public IEnumerator<KeyValuePair<TKey, TValue>> GetEnumerator()
+        IEnumerator<KeyValuePair<TKey, TValue>> IEnumerable<KeyValuePair<TKey, TValue>>.GetEnumerator()
         {
             return _realLookup.GetEnumerator();
         }
 
-        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+        public IEnumerator<TValue> GetEnumerator()
         {
             return _realSorted.Values.GetEnumerator();
         }
@@ -183,9 +182,9 @@ namespace SnooStream.Common
             throw new NotImplementedException();
         }
 
-        IEnumerator<TValue> IEnumerable<TValue>.GetEnumerator()
+        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
         {
-            return _realSorted.Values.GetEnumerator();
+            return GetEnumerator();
         }
     }
 }

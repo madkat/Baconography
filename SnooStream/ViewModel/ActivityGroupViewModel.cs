@@ -9,7 +9,7 @@ using System.Text;
 
 namespace SnooStream.ViewModel
 {
-    public abstract class ActivityGroupViewModel : ViewModelBase
+    public class ActivityGroupViewModel : ViewModelBase
     {
         public class ActivityAgeComparitor : IComparer<ActivityGroupViewModel>
         {
@@ -25,91 +25,40 @@ namespace SnooStream.ViewModel
             if (thing == null)
                 throw new ArgumentNullException();
 
-            ActivityGroupViewModel group;
-            if (thing.Data is Link)
-            {
-                group = new LinkGroupActivityViewModel();
-            }
-            else
-            {
-                group = new SimpleGroupActivityViewModel();
-            }
+            var group = new ActivityGroupViewModel();
 
             group.Merge(thing);
             return group;
         }
 
-        public abstract void Merge(Thing additional);
-
-        public DateTime CreatedUTC {get; protected set;}
-        public virtual ActivityViewModel FirstActivity 
-        {
-            get
-            {
-                return ((IEnumerable<ActivityViewModel>)Activities).First();
-            }
-        }
-
-        public bool IsConversation { get; protected set; }
-        public ObservableSortedUniqueCollection<string, ActivityViewModel> Activities { get; protected set; }
-    }
-
-    public class LinkGroupActivityViewModel : ActivityGroupViewModel
-    {
-
-        public LinkGroupActivityViewModel()
+        public ActivityGroupViewModel()
         {
             Activities = new ObservableSortedUniqueCollection<string, ActivityViewModel>(new ActivityViewModel.ActivityAgeComparitor());
         }
 
-        ActivityViewModel _linkActivity;
-        public override void Merge(Thing additional)
+        public void Merge(Thing additional)
         {
-            if (additional.Data is Link)
-            {
-                _linkActivity = ActivityViewModel.CreateActivity(additional);
-                CreatedUTC = _linkActivity.CreatedUTC;
-            }
-            else
-            {
-                var thingName = ((ThingData)additional.Data).Name;
-                if (!Activities.ContainsKey(thingName))
-                {
-                    Activities.Add(thingName, ActivityViewModel.CreateActivity(additional));
+            var currentFirstActivity = Activities.Count > 0 ? FirstActivity : null;
 
-                    if (!IsConversation)
-                    {
-                        IsConversation = true;
-                        RaisePropertyChanged("IsConversation");
-                    }
-                }
-            }
-            CreatedUTC = FirstActivity.CreatedUTC;
-        }
-
-        public override ActivityViewModel FirstActivity
-        {
-            get
-            {
-                return _linkActivity;
-            }
-        }
-    }
-
-    public class SimpleGroupActivityViewModel : ActivityGroupViewModel
-    {
-        public SimpleGroupActivityViewModel()
-        {
-            Activities = new ObservableSortedUniqueCollection<string, ActivityViewModel>(new ActivityViewModel.ActivityAgeComparitor());
-        }
-
-        public override void Merge(Thing additional)
-        {
             var thingName = ((ThingData)additional.Data).Name;
             if (!Activities.ContainsKey(thingName))
             {
-                Activities.Add(thingName, ActivityViewModel.CreateActivity(additional));
-                if (!IsConversation && Activities.Count > 0)
+                var targetActivity = ActivityViewModel.CreateActivity(additional);
+
+                if (Activities.Count == 0 && _innerFirstActivity == null)
+                {
+                    _innerFirstActivity = targetActivity;
+                    _innerFirstActivityName = thingName;
+                }
+                else if (Activities.Count == 0 && _innerFirstActivityName != thingName)
+                {
+                    Activities.Add(_innerFirstActivityName, _innerFirstActivity);
+                    Activities.Add(thingName, targetActivity);
+                }
+                else if (Activities.Count > 0)
+                    Activities.Add(thingName, targetActivity);
+
+                if (!IsConversation && Activities.Count > 1)
                 {
                     IsConversation = true;
                     RaisePropertyChanged("IsConversation");
@@ -117,6 +66,28 @@ namespace SnooStream.ViewModel
             }
 
             CreatedUTC = FirstActivity.CreatedUTC;
+
+            ActivityViewModel.FixupFirstActivity(FirstActivity, Activities);
+
+            if (currentFirstActivity != FirstActivity)
+                RaisePropertyChanged("FirstActivity");
         }
+
+        public DateTime CreatedUTC {get; protected set;}
+        private ActivityViewModel _innerFirstActivity;
+        private string _innerFirstActivityName;
+        public ActivityViewModel FirstActivity 
+        {
+            get
+            {
+                if (Activities.Count == 0)
+                    return _innerFirstActivity;
+                else
+                    return ((IEnumerable<ActivityViewModel>)Activities).First();
+            }
+        }
+
+        public bool IsConversation { get; protected set; }
+        public ObservableSortedUniqueCollection<string, ActivityViewModel> Activities { get; protected set; }
     }
 }

@@ -57,7 +57,7 @@ namespace SnooStreamWP8.Converters
 
             foreach (var activity in group.Activities)
             {
-                readCount = activity.Value.IsNew ? readCount + 1 : readCount;
+                readCount = activity.IsNew ? readCount + 1 : readCount;
             }
 
             var adjustedCount = group.FirstActivity is PostedLinkActivityViewModel ? group.Activities.Count - 1 : group.Activities.Count;

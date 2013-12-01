@@ -13,8 +13,15 @@ namespace SnooStream.ViewModel
         {
             public int Compare(ActivityViewModel x, ActivityViewModel y)
             {
-                //invert the sort
-                return y.CreatedUTC.CompareTo(x.CreatedUTC);
+                if (x is PostedLinkActivityViewModel)
+                    return 1;
+                else if (y is PostedLinkActivityViewModel)
+                    return -1;
+                else
+                {
+                    //invert the sort
+                    return y.CreatedUTC.CompareTo(x.CreatedUTC);
+                }
             }
         } 
 
@@ -88,22 +95,40 @@ namespace SnooStream.ViewModel
                 throw new ArgumentOutOfRangeException();
         }
 
+        public static void FixupFirstActivity(ActivityViewModel activity, IEnumerable<ActivityViewModel> siblings)
+        {
+            if (activity is PostedCommentActivityViewModel)
+            {
+                foreach (var sibling in siblings)
+                {
+                    if (sibling is RecivedCommentReplyActivityViewModel)
+                    {
+                        ((PostedCommentActivityViewModel)activity).Subject = ((RecivedCommentReplyActivityViewModel)sibling).Subject;
+                        break;
+                    }
+                }
+            }
+        }
+
         public bool IsNew { get; protected set; }
     }
 
     public class PostedLinkActivityViewModel : ActivityViewModel
     {
         public Link Link { get; private set; }
-
+        public LinkViewModel LinkVM { get; private set; }
         public PostedLinkActivityViewModel(Link link)
         {
             Link = link;
             CreatedUTC = link.CreatedUTC;
+            LinkVM = new LinkViewModel(this, link);
         }
 
         public string Author { get { return Link.Author; } }
         public string Subject { get { return Link.Title; } }
         public string Subreddit { get { return Link.Subreddit; } }
+        public string Body { get { return Link.Selftext; } }
+
     }
 
     public class PostedCommentActivityViewModel : ActivityViewModel
@@ -127,7 +152,7 @@ namespace SnooStream.ViewModel
 
         public string Author { get { return Comment.Author; } }
         public object BodyMD { get; private set; }
-        public string Subject { get { return Comment.Body.Substring(0, Math.Min(Comment.Body.Length, 30)); } }
+        public string Subject { get; set; }
         public string Subreddit { get { return Comment.Subreddit; } }
         public string ParentId { get; private set; }
 
@@ -136,6 +161,7 @@ namespace SnooStream.ViewModel
             Comment = comment;
             CreatedUTC = comment.CreatedUTC;
             Body = Comment.Body;
+            Subject = Comment.Body.Substring(0, Math.Min(Comment.Body.Length, 30));
         }
     }
 
@@ -143,13 +169,13 @@ namespace SnooStream.ViewModel
     {
         private Message Message { get; set; }
         private string _body;
-        private SnooSharp.Message messageThing;
 
         public RecivedCommentReplyActivityViewModel(Message messageThing)
         {
             Message = messageThing;
             CreatedUTC = messageThing.CreatedUTC;
             Body = Message.Body;
+
         }
         public string Body
         {
@@ -165,6 +191,7 @@ namespace SnooStream.ViewModel
                 RaisePropertyChanged("BodyMD");
             }
         }
+        public string Subreddit { get { return Message.Subreddit; } }
         public string Author { get { return Message.Author; } }
         public object BodyMD { get; private set; }
         public string Subject { get { return Message.LinkTitle; } }

@@ -78,14 +78,14 @@ namespace SnooStream.ViewModel
                     outbox = await SnooStreamViewModel.RedditService.GetSentMessages(null);
                 });
 
-            OldestSentMessage = ProcessListing(inbox, OldestSentMessage);
+            OldestSentMessage = ProcessListing(outbox, OldestSentMessage);
 
             await SnooStreamViewModel.NotificationService.Report("refreshing activity", async () =>
                 {
                     activity = await SnooStreamViewModel.RedditService.GetPostsByUser(SnooStreamViewModel.RedditService.CurrentUserName, null);
                 });
 
-            OldestActivity = ProcessListing(inbox, OldestActivity);
+            OldestActivity = ProcessListing(activity, OldestActivity);
         }
 
         private string ProcessListing(Listing listing, string after)

@@ -294,7 +294,15 @@ namespace SnooStream.Common
         // Public instance methods.
         //
 
-        public void Add(TKey key, TValue value)
+        public int Add(TKey key, TValue value)
+        {
+            if (key == null)
+                throw new ArgumentNullException("key");
+
+            return PutImpl(key, value, false);
+        }
+
+        void IDictionary<TKey, TValue>.Add(TKey key, TValue value)
         {
             if (key == null)
                 throw new ArgumentNullException("key");
@@ -617,7 +625,7 @@ namespace SnooStream.Common
             }
         }
 
-        private void PutImpl(TKey key, TValue value, bool overwrite)
+        private int PutImpl(TKey key, TValue value, bool overwrite)
         {
             if (key == null)
                 throw new ArgumentNullException("null key");
@@ -642,7 +650,7 @@ namespace SnooStream.Common
 
                 table[freeIndx] = new KeyValuePair<TKey, TValue>(key, value);
                 ++modificationCount;
-                return;
+                return freeIndx;
             }
 
             freeIndx = ~freeIndx;
@@ -658,7 +666,7 @@ namespace SnooStream.Common
 
             ++inUse;
             ++modificationCount;
-
+            return freeIndx;
         }
 
         private void Init(IComparer<TKey> comparer, int capacity, bool forceSize)

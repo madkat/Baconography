@@ -12,16 +12,6 @@ namespace SnooStreamWP8.View.Selectors
 {
     public class UserActivityTemplateSelector : DataTemplateSelector
     {
-        public DataTemplate LinkActivityTemplate
-        {
-            get { return (DataTemplate)GetValue(LinkActivityTemplateProperty); }
-            set { SetValue(LinkActivityTemplateProperty, value); }
-        }
-
-        // Using a DependencyProperty as the backing store for SelfContentTemplate.  This enables animation, styling, binding, etc...
-        public static readonly DependencyProperty LinkActivityTemplateProperty =
-            DependencyProperty.Register("LinkActivityTemplate", typeof(DataTemplate), typeof(UserActivityTemplateSelector), new PropertyMetadata(null));
-
         public DataTemplate CommentActivityTemplate
         {
             get { return (DataTemplate)GetValue(CommentActivityTemplateProperty); }
@@ -58,11 +48,9 @@ namespace SnooStreamWP8.View.Selectors
             var group = item as ActivityGroupViewModel;
             var firstActivity = group.FirstActivity;
 
-            if (firstActivity is PostedLinkActivityViewModel)
-            {
-                return LinkActivityTemplate;
-            }
-            else if (firstActivity is PostedCommentActivityViewModel || firstActivity is RecivedCommentReplyActivityViewModel)
+            if (firstActivity is PostedCommentActivityViewModel || 
+                firstActivity is RecivedCommentReplyActivityViewModel ||
+                firstActivity is PostedLinkActivityViewModel)
             {
                 return CommentActivityTemplate;
             }

@@ -1,6 +1,7 @@
 ﻿using GalaSoft.MvvmLight;
 using SnooSharp;
 using SnooStream.Common;
+using SnooStream.Messages;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -42,6 +43,12 @@ namespace SnooStream.ViewModel
                 LoadWithoutInitial();
                 EnsureFrontPage();
             }
+            MessengerInstance.Register<UserLoggedInMessage>(this, OnUserLoggedIn);
+        }
+
+        private void OnUserLoggedIn(UserLoggedInMessage obj)
+        {
+            ReloadSubscribed(true);
         }
 
         private void EnsureFrontPage()
