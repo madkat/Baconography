@@ -6,9 +6,49 @@
     xmlns:converters="clr-namespace:SnooStreamWP8.Converters">
 
     <converters:ActivityGroupCountConverter x:Name="activityGroupCountConverter" />
+
+    <DataTemplate x:Name="plainExpandableContentTemplate">
+        <Grid Margin="24, 0, 0, 0" MinHeight="0"
+                Visibility="{Binding IsConversation, Converter={StaticResource booleanVisibilityConverter}}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" MinHeight="0" />
+            </Grid.RowDefinitions>
+            <Border VerticalAlignment="Stretch" MinHeight="0" BorderThickness="3, 0, 0, 0"
+                    BorderBrush="{StaticResource PhoneAccentBrush}" />
+            <telerikPrimitives:RadDataBoundListBox Grid.Column="1" MinHeight="0"
+                    ScrollViewer.VerticalScrollBarVisibility="Disabled" ItemsSource="{Binding Activities}">
+                <telerikPrimitives:RadDataBoundListBox.ItemTemplate>
+                    <DataTemplate>
+                        <Grid Margin="8, 8, 0, 12" MinHeight="70">
+                            <Grid.RowDefinitions>
+                                <RowDefinition />
+                                <RowDefinition />
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition />
+                                <ColumnDefinition MinWidth="60" Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Foreground="{StaticResource PhoneForegroundBrush}" Text="{Binding Author}"
+                                    FontSize="{StaticResource PhoneFontSizeExtraLarge}" FontFamily="Segoe WP SemiLight" />
+                            <TextBlock Grid.Row="1" Foreground="{StaticResource PhoneSubtleBrush}" Text="{Binding Body}"
+                                    TextWrapping="Wrap" MaxHeight="54" />
+                            <TextBlock HorizontalAlignment="Right" VerticalAlignment="Bottom" Grid.Column="1"
+                                    Text="{Binding CreatedUTC, Converter={StaticResource unixTimeConverter}}" />
+                        </Grid>
+                    </DataTemplate>
+                </telerikPrimitives:RadDataBoundListBox.ItemTemplate>
+            </telerikPrimitives:RadDataBoundListBox>
+        </Grid>
+    </DataTemplate>
+
     <DataTemplate x:Name="messageActivityTemplate">
         <telerikPrimitives:RadExpanderControl Content="{Binding}" ExpandableContent="{Binding}"
-                Foreground="{StaticResource PhoneForegroundBrush}">
+                ExpandableContentTemplate="{StaticResource plainExpandableContentTemplate}"
+                Foreground="{StaticResource PhoneForegroundBrush}" IsExpanded="{Binding IsExpanded, Mode=TwoWay}">
             <telerikPrimitives:RadExpanderControl.AnimatedIndicatorContentTemplate>
                 <DataTemplate />
             </telerikPrimitives:RadExpanderControl.AnimatedIndicatorContentTemplate>
@@ -39,58 +79,20 @@
                                     Text="{Binding Converter={StaticResource activityGroupCountConverter}}" />
                             <TextBlock
                                     Visibility="{Binding IsConversation, Converter={StaticResource invertedBooleanVisibilityConverter}}"
-                                    Text="{Binding FirstActivity.Body}" />
+                                    Text="{Binding FirstActivity.Body}" MaxHeight="52"/>
                         </StackPanel>
                         <TextBlock VerticalAlignment="Bottom" Grid.Column="2"
                                 Text="{Binding FirstActivity.CreatedUTC, Converter={StaticResource unixTimeConverter}}" />
                     </Grid>
                 </DataTemplate>
             </telerikPrimitives:RadExpanderControl.ContentTemplate>
-            <telerikPrimitives:RadExpanderControl.ExpandableContentTemplate>
-                <DataTemplate>
-                    <Grid Margin="24, 0, 0, 0">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition />
-                        </Grid.ColumnDefinitions>
-                        <Border VerticalAlignment="Stretch" BorderThickness="3, 0, 0, 0"
-                                BorderBrush="{StaticResource PhoneAccentBrush}" />
-                        <telerikPrimitives:RadDataBoundListBox Grid.Column="1"
-                                ScrollViewer.VerticalScrollBarVisibility="Disabled" MinHeight="0"
-                                ItemsSource="{Binding Activities}">
-                            <telerikPrimitives:RadDataBoundListBox.ItemTemplate>
-                                <DataTemplate>
-                                    <Grid Margin="8, 8, 0, 12">
-                                        <Grid.RowDefinitions>
-                                            <RowDefinition />
-                                            <RowDefinition />
-                                        </Grid.RowDefinitions>
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition />
-                                            <ColumnDefinition MinWidth="60" Width="Auto" />
-                                        </Grid.ColumnDefinitions>
-                                        <TextBlock Foreground="{StaticResource PhoneForegroundBrush}"
-                                                Text="{Binding Author}"
-                                                FontSize="{StaticResource PhoneFontSizeExtraLarge}"
-                                                FontFamily="Segoe WP SemiLight" />
-                                        <TextBlock Grid.Row="1" Foreground="{StaticResource PhoneSubtleBrush}"
-                                                Text="{Binding Body}" TextWrapping="Wrap" MaxHeight="54" />
-                                        <TextBlock HorizontalAlignment="Right" VerticalAlignment="Bottom"
-                                                Grid.Column="1"
-                                                Text="{Binding CreatedUTC, Converter={StaticResource unixTimeConverter}}" />
-                                    </Grid>
-                                </DataTemplate>
-                            </telerikPrimitives:RadDataBoundListBox.ItemTemplate>
-                        </telerikPrimitives:RadDataBoundListBox>
-                    </Grid>
-                </DataTemplate>
-            </telerikPrimitives:RadExpanderControl.ExpandableContentTemplate>
         </telerikPrimitives:RadExpanderControl>
     </DataTemplate>
 
     <DataTemplate x:Name="commentActivityTemplate">
         <telerikPrimitives:RadExpanderControl Content="{Binding}" ExpandableContent="{Binding}"
-                Foreground="{StaticResource PhoneForegroundBrush}">
+                ExpandableContentTemplate="{StaticResource plainExpandableContentTemplate}"
+                Foreground="{StaticResource PhoneForegroundBrush}" IsExpanded="{Binding IsExpanded, Mode=TwoWay}">
             <telerikPrimitives:RadExpanderControl.AnimatedIndicatorContentTemplate>
                 <DataTemplate />
             </telerikPrimitives:RadExpanderControl.AnimatedIndicatorContentTemplate>
@@ -129,45 +131,6 @@
                     </Grid>
                 </DataTemplate>
             </telerikPrimitives:RadExpanderControl.ContentTemplate>
-            <telerikPrimitives:RadExpanderControl.ExpandableContentTemplate>
-                <DataTemplate>
-                    <Grid Margin="24, 0, 0, 0">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition />
-                        </Grid.ColumnDefinitions>
-                        <Border VerticalAlignment="Stretch" BorderThickness="3, 0, 0, 0"
-                                BorderBrush="{StaticResource PhoneAccentBrush}" />
-                        <telerikPrimitives:RadDataBoundListBox Grid.Column="1"
-                                ScrollViewer.VerticalScrollBarVisibility="Disabled" MinHeight="0"
-                                ItemsSource="{Binding Activities}">
-                            <telerikPrimitives:RadDataBoundListBox.ItemTemplate>
-                                <DataTemplate>
-                                    <Grid Margin="8, 8, 0, 12">
-                                        <Grid.RowDefinitions>
-                                            <RowDefinition />
-                                            <RowDefinition />
-                                        </Grid.RowDefinitions>
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition />
-                                            <ColumnDefinition MinWidth="60" Width="Auto" />
-                                        </Grid.ColumnDefinitions>
-                                        <TextBlock Foreground="{StaticResource PhoneForegroundBrush}"
-                                                Text="{Binding Author}"
-                                                FontSize="{StaticResource PhoneFontSizeExtraLarge}"
-                                                FontFamily="Segoe WP SemiLight" />
-                                        <TextBlock Grid.Row="1" Foreground="{StaticResource PhoneSubtleBrush}"
-                                                Text="{Binding Body}" TextWrapping="Wrap" MaxHeight="54" />
-                                        <TextBlock HorizontalAlignment="Right" VerticalAlignment="Bottom"
-                                                Grid.Column="1"
-                                                Text="{Binding CreatedUTC, Converter={StaticResource unixTimeConverter}}" />
-                                    </Grid>
-                                </DataTemplate>
-                            </telerikPrimitives:RadDataBoundListBox.ItemTemplate>
-                        </telerikPrimitives:RadDataBoundListBox>
-                    </Grid>
-                </DataTemplate>
-            </telerikPrimitives:RadExpanderControl.ExpandableContentTemplate>
         </telerikPrimitives:RadExpanderControl>
     </DataTemplate>
 </ResourceDictionary>

@@ -23,9 +23,10 @@
             </ResourceDictionary>
         </Grid.Resources>
 
-        <telerikPrimitives:RadDataBoundListBox EmptyContent="Loading..." IsAsyncBalanceEnabled="True" x:Name="listBox"
+        <telerikPrimitives:RadDataBoundListBox EmptyContent="Loading..." IsAsyncBalanceEnabled="False" x:Name="listBox"
                 Margin="0,0,-12,0" ItemsSource="{Binding Activities}"
                 ItemTemplateSelector="{StaticResource activityTemplateSelector}"
+                ItemAnimationMode="PlayAll" IsItemReorderEnabled="False"
                 DataVirtualizationMode="OnDemandAutomatic" DataRequested="listBox_DataRequested">
         </telerikPrimitives:RadDataBoundListBox>
     </Grid>
