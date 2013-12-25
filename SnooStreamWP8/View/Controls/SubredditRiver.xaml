@@ -7,18 +7,24 @@
     xmlns:telerikJumpList="clr-namespace:Telerik.Windows.Controls.JumpList;assembly=Telerik.Windows.Controls.Data"
     xmlns:telerikData="clr-namespace:Telerik.Windows.Controls;assembly=Telerik.Windows.Controls.Data"
     xmlns:localC="clr-namespace:SnooStreamWP8.View.Controls"
+    xmlns:selectors="clr-namespace:SnooStreamWP8.View.Selectors"
     xmlns:s="clr-namespace:System;assembly=mscorlib"
     mc:Ignorable="d"
     FontFamily="{StaticResource PhoneFontFamilyNormal}"
     FontSize="{StaticResource PhoneFontSizeNormal}"
     Foreground="{StaticResource PhoneForegroundBrush}"
     d:DesignHeight="480" d:DesignWidth="480">
-    
+
     <Grid x:Name="LayoutRoot">
         <Grid.Resources>
-            <DataTemplate x:Key="WrapModeDataTemplate">
-                <TextBlock Text="{Binding Thing.DisplayName}" />
-            </DataTemplate>
+            <ResourceDictionary>
+                <ResourceDictionary.MergedDictionaries>
+                    <ResourceDictionary Source="SubredditRiverResources.xaml" />
+                </ResourceDictionary.MergedDictionaries>
+                <selectors:SubredditRiverTemplateSelector x:Name="subredditRiverTemplateSelector"
+                                                          ImagesTemplate="{StaticResource imageSubreddit}"
+                                                          NormalTemplate="{StaticResource normalSubreddit}"/>
+            </ResourceDictionary>
         </Grid.Resources>
 
         <telerikData:RadJumpList
@@ -26,7 +32,7 @@
             IsAsyncBalanceEnabled="False"
             x:Name="listBox" 
             Margin="0,0,-12,0" ItemsSource="{Binding CombinedRivers}"
-            ItemTemplate="{StaticResource WrapModeDataTemplate}">
+            ItemTemplateSelector="{StaticResource subredditRiverTemplateSelector}">
         </telerikData:RadJumpList>
     </Grid>
 </UserControl>

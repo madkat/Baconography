@@ -87,11 +87,15 @@ namespace SnooStream.Common
             try
             {
                 AddNotificationInfo(notificationInfo);
-                await operation((progress) => 
+                
+                await PriorityLoadQueue.QueueHelper(() =>
                     {
-                        notificationInfo.Progress = progress;
-                        ReprocessForProgress();
-                    });
+                        return operation((progress) =>
+                        {
+                            notificationInfo.Progress = progress;
+                            ReprocessForProgress();
+                        });
+                    })();
             }
             catch (Exception ex)
             {

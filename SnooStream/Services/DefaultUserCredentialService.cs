@@ -1,5 +1,6 @@
 ﻿using KitaroDB;
 using Newtonsoft.Json;
+using SnooStream.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,7 +14,7 @@ namespace SnooStream.Services
 
         public DefaultUserCredentialService()
         {
-            _userInfoDbPath = "userinfodb.ism";
+            _userInfoDbPath = SnooStreamViewModel.CWD + "\\userinfodb.ism";
         }
 
         private string _userInfoDbPath;

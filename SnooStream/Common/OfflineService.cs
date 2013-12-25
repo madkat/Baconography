@@ -1,6 +1,7 @@
 ﻿using KitaroDB;
 using Newtonsoft.Json;
 using SnooSharp;
+using SnooStream.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -42,11 +43,11 @@ namespace SnooStream.Common
 
         public OfflineService()
         {
-            _blobsFileName = "blobs_v4.ism";
-            _linksFileName = "links_v4.ism";
-            _subredditStatisticsFileName = "subreddit_statistics_v1.ism";
-            _domainStatisticsFileName = "domain_statistics_v1.ism";
-            _actionDeferalFileName = "actionss_v1.ism";
+            _blobsFileName = SnooStreamViewModel.CWD + "\\blobs_v4.ism";
+            _linksFileName = SnooStreamViewModel.CWD + "\\links_v4.ism";
+            _subredditStatisticsFileName = SnooStreamViewModel.CWD + "\\subreddit_statistics_v1.ism";
+            _domainStatisticsFileName = SnooStreamViewModel.CWD + "\\domain_statistics_v1.ism";
+            _actionDeferalFileName = SnooStreamViewModel.CWD + "\\actionss_v1.ism";
 
             
             _blobsDb = DB.Create(_blobsFileName, DBCreateFlags.None, 0, new DBKey[]

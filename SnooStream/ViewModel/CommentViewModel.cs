@@ -170,5 +170,18 @@ namespace SnooStream.ViewModel
         {
             SnooStreamViewModel.CommandDispatcher.GotoEditComment(_parent, this);
         }
+
+        public Comment Thing
+        {
+            get
+            {
+                return _comment;
+            }
+            //todo this needs to raise events
+            set
+            {
+                _comment = value;
+            }
+        }
     }
 }

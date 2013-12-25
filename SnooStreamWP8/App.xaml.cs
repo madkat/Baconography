@@ -34,6 +34,8 @@ namespace SnooStreamWP8
             SnooStreamViewModel.UserCredentialService = new DefaultUserCredentialService();
             SnooStreamViewModel.MarkdownProcessor = new MarkdownProvider();
 
+            SnooStreamViewModel.CWD = Windows.Storage.ApplicationData.Current.LocalFolder.Path;
+
             // Standard XAML initialization
             InitializeComponent();
             

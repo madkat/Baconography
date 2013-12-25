@@ -90,5 +90,20 @@ namespace SnooStream.ViewModel
         public bool IsExpanded { get; set; }
         public bool IsConversation { get; protected set; }
         public ObservableSortedUniqueCollection<string, ActivityViewModel> Activities { get; protected set; }
+
+        internal void DumpThings(List<Thing> things)
+        {
+            if (Activities.Count > 0)
+            {
+                foreach (var activity in Activities)
+                {
+                    things.Add(activity.GetThing());
+                }
+            }
+            else
+            {
+                things.Add(_innerFirstActivity.GetThing());
+            }
+        }
     }
 }

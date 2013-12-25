@@ -39,6 +39,7 @@
     <Compile Include="Common\CaptchaService.cs" />
     <Compile Include="Common\EndlessStack.cs" />
     <Compile Include="Common\ImageSource.cs" />
+    <Compile Include="Common\LinkStreamPreviewEnumerator.cs" />
     <Compile Include="Common\NeverEndingRedditEnumerator.cs" />
     <Compile Include="Common\NotificationService.cs" />
     <Compile Include="Messages\SettingsChangedMessage.cs" />
@@ -52,7 +53,6 @@
     <Compile Include="Common\OfflineService.cs" />
     <Compile Include="Common\OfflineUtility.cs" />
     <Compile Include="Common\SortedList.cs" />
-    <Compile Include="Common\UserStreamUnificationUtility.cs" />
     <Compile Include="Model\Settings.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ViewModel\AboutRedditViewModel.cs" />
@@ -64,6 +64,7 @@
     <Compile Include="ViewModel\CaptchaViewModel.cs" />
     <Compile Include="ViewModel\LoadFullCommentsViewModel.cs" />
     <Compile Include="ViewModel\MoreViewModel.cs" />
+    <Compile Include="Common\PriorityLoadQueue.cs" />
     <Compile Include="ViewModel\SearchViewModel.cs" />
     <Compile Include="ViewModel\ActivityViewModel.cs" />
     <Compile Include="ViewModel\AlbumViewModel.cs" />

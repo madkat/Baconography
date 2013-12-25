@@ -7,7 +7,7 @@ using System.Text;
 
 namespace SnooStream.ViewModel
 {
-    public class ActivityViewModel : ViewModelBase
+    public abstract class ActivityViewModel : ViewModelBase
     {
         public class ActivityAgeComparitor : IComparer<ActivityViewModel>
         {
@@ -23,8 +23,8 @@ namespace SnooStream.ViewModel
                     return y.CreatedUTC.CompareTo(x.CreatedUTC);
                 }
             }
-        } 
-
+        }
+        public abstract Thing GetThing();
         public DateTime CreatedUTC { get; protected set; }
 
         public static string GetActivityGroupName(Thing thing)
@@ -48,8 +48,8 @@ namespace SnooStream.ViewModel
                 {
                     // "/r/{subreddit}/comments/{linkname}/{linktitleish}/{thingname}?context=3"
 
-                    var splitContext = messageThing.Context.Split('/');
-                    return "t3_" + splitContext[4];
+                    var splitContext = messageThing.Context.Split(new char[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
+                    return "t3_" + splitContext[3];
                 }
                 else
                 {
@@ -129,6 +129,11 @@ namespace SnooStream.ViewModel
         public string Subreddit { get { return Link.Subreddit; } }
         public string Body { get { return Link.Selftext; } }
 
+
+        public override Thing GetThing()
+        {
+            return new Thing { Kind = "t3", Data = Link };
+        }
     }
 
     public class PostedCommentActivityViewModel : ActivityViewModel
@@ -163,6 +168,11 @@ namespace SnooStream.ViewModel
             Body = Comment.Body;
             Subject = Comment.Body.Substring(0, Math.Min(Comment.Body.Length, 30));
         }
+
+        public override Thing GetThing()
+        {
+            return new Thing { Kind = "t1", Data = Comment };
+        }
     }
 
     public class RecivedCommentReplyActivityViewModel : ActivityViewModel
@@ -196,6 +206,11 @@ namespace SnooStream.ViewModel
         public object BodyMD { get; private set; }
         public string Subject { get { return Message.LinkTitle; } }
         public string ParentId { get; private set; }
+
+        public override Thing GetThing()
+        {
+            return new Thing { Kind = "t4", Data = Message };
+        }
     }
 
     public class MentionActivityViewModel : ActivityViewModel
@@ -221,6 +236,11 @@ namespace SnooStream.ViewModel
         public object BodyMD { get; private set; }
         public string Subject { get; private set; }
         public string ParentId { get; private set; }
+
+        public override Thing GetThing()
+        {
+            return new Thing { Kind = "t4", Data = Message };
+        }
     }
 
     public class MessageActivityViewModel : ActivityViewModel
@@ -250,6 +270,11 @@ namespace SnooStream.ViewModel
             }
         }
 
+        public override Thing GetThing()
+        {
+            return new Thing { Kind = "t4", Data = MessageThing };
+        }
+
         public string Author { get { return MessageThing.Author; } }
         public object BodyMD { get; private set; }
         public string Subject { get { return MessageThing.Subject; } }
@@ -265,6 +290,11 @@ namespace SnooStream.ViewModel
             ModAction = modAction;
             CreatedUTC = modAction.CreatedUTC;
         }
+
+        public override Thing GetThing()
+        {
+            return new Thing { Kind = "modaction", Data = ModAction };
+        }
     }
 
     public class ModeratorMessageActivityViewModel :ActivityViewModel
@@ -275,6 +305,11 @@ namespace SnooStream.ViewModel
         {
             CreatedUTC = messageThing.CreatedUTC;
             MessageThing = messageThing;
+        }
+
+        public override Thing GetThing()
+        {
+            return new Thing { Kind = "t4", Data = MessageThing };
         }
     }
 }

@@ -75,7 +75,10 @@ namespace SnooStream.ViewModel
         {
             await SnooStreamViewModel.NotificationService.Report("loading posts", async () =>
                 {
-                    var postListing = await SnooStreamViewModel.RedditService.GetPostsBySubreddit(Thing.Url, Sort);
+                    var postListing = LastLinkId != null ? 
+                        await SnooStreamViewModel.RedditService.GetAdditionalFromListing(Thing.Url, LastLinkId, null) :
+                        await SnooStreamViewModel.RedditService.GetPostsBySubreddit(Thing.Url, Sort);
+
                     if (postListing != null)
                     {
                         foreach (var thing in postListing.Data.Children)
@@ -83,6 +86,8 @@ namespace SnooStream.ViewModel
                             if (thing.Data is Link)
                                 Links.Add(new LinkViewModel(this, thing.Data as Link));
                         }
+
+                        LastLinkId = postListing.Data.After;
                     }
                 });
             
