@@ -2,6 +2,7 @@
 using CommonVideoAquisition;
 using GalaSoft.MvvmLight;
 using SnooSharp;
+using SnooStream.Common;
 using SnooStream.Model;
 using System;
 using System.Collections.Generic;
@@ -253,6 +254,14 @@ namespace SnooStream.ViewModel
             {
                 return Link.CreatedUTC;
             }
+        }
+
+        public LinkMeta Metadata { get; private set; }
+
+        internal void UpdateMetadata(LinkMeta linkMeta)
+        {
+            Metadata = linkMeta;
+            RaisePropertyChanged("Metadata");
         }
     }
 }

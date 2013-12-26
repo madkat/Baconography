@@ -31,10 +31,12 @@ namespace SnooStreamWP8
             // Global handler for uncaught exceptions.
             UnhandledException += Application_UnhandledException;
 
+            SnooStreamViewModel.CWD = Windows.Storage.ApplicationData.Current.LocalFolder.Path;
+
             SnooStreamViewModel.UserCredentialService = new DefaultUserCredentialService();
             SnooStreamViewModel.MarkdownProcessor = new MarkdownProvider();
 
-            SnooStreamViewModel.CWD = Windows.Storage.ApplicationData.Current.LocalFolder.Path;
+            
 
             // Standard XAML initialization
             InitializeComponent();

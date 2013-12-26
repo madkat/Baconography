@@ -33,7 +33,7 @@ namespace SnooStream.ViewModel
                 throw new ArgumentNullException();
 
             if (thing.Data is Link)
-                return ((Link)thing.Data).Id;
+                return ((Link)thing.Data).Name;
             else if (thing.Data is Comment)
             {
                 if(((Comment)thing.Data).LinkId != null)

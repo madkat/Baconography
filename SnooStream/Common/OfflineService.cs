@@ -287,7 +287,7 @@ namespace SnooStream.Common
             }
         }
 
-        private Tuple<int, int, int> GetLinkMetadataImpl(string linkId)
+        private LinkMeta GetLinkMetadataImpl(string linkId)
         {
             try
             {
@@ -298,7 +298,7 @@ namespace SnooStream.Common
                     if (linkCursor != null)
                     {
                         var bytes = linkCursor.Get();
-                        JsonConvert.DeserializeObject<LinkMeta>(Encoding.UTF8.GetString(bytes, 13, bytes.Length - 13));
+                        return JsonConvert.DeserializeObject<LinkMeta>(Encoding.UTF8.GetString(bytes, 13, bytes.Length - 13));
                     }
                 }
             }
@@ -306,10 +306,18 @@ namespace SnooStream.Common
             {
                 Debug.WriteLine("exception while getting link metadata {0}", ex);
             }
-            return Tuple.Create(0, 0, 0);
+            return null;
         }
 
-        public Task<Tuple<int, int, int>> GetLinkMetadata(string linkId)
+        public Task<IEnumerable<LinkMeta>> GetLinkMetadata(IEnumerable<string> linkIds)
+        {
+            return Task.Run(() =>
+                {
+                    return (IEnumerable<LinkMeta>)linkIds.Select(GetLinkMetadataImpl).ToList();
+                });
+        }
+
+        public Task<LinkMeta> GetLinkMetadata(string linkId)
         {
             return Task.Run(() => GetLinkMetadataImpl(linkId));
         }
