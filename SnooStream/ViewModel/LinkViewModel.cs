@@ -18,7 +18,12 @@ namespace SnooStream.ViewModel
         {
             Context = context;
             Link = link;
-            _content = new Lazy<Task<ContentViewModel>>(LoadContent);
+            _content = new Lazy<Task<ContentViewModel>>(() =>
+                {
+                    var contentTask = LoadContent();
+                    contentTask.ContinueWith((tsk) => RaisePropertyChanged("Content"), SnooStreamViewModel.UIScheduler);
+                    return contentTask;
+                });
 
         }
 

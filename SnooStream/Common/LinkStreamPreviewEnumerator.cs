@@ -28,9 +28,10 @@ namespace SnooStream.Common
             }
 
             var previewEnumerator = new LinkStreamPreviewEnumerator(context, linkStream, imagePreviewableCount > 10);
-            if(previewEnumerator.IsImagePreview)
-                SnooStreamViewModel.LoadQueue.QueueLoadItem(context.Thing.Url, LoadContextType.Minor, () => FillPreviewEnumerator(previewEnumerator, 10, SnooStreamViewModel.UIContextCancellationToken));
-            
+            if (previewEnumerator.IsImagePreview)
+            {
+                var queuedTask = SnooStreamViewModel.LoadQueue.QueueLoadItem(context.Thing.Url, LoadContextType.Minor, () => FillPreviewEnumerator(previewEnumerator, 10, SnooStreamViewModel.UIContextCancellationToken));
+            }
             return previewEnumerator;
         }
 
@@ -57,6 +58,7 @@ namespace SnooStream.Common
         {
             IsImagePreview = isImagePreview;
             _linkStream = linkStream;
+            _context = context;
         }
 
         //when this gets bound it means someone is looking at us, so its reasonable to put ourselves in line to be loaded

@@ -1,5 +1,6 @@
 ﻿using GalaSoft.MvvmLight;
 using SnooSharp;
+using SnooStream.Common;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -29,21 +30,38 @@ namespace SnooStream.ViewModel
             {
                 ProcessLinkThings(initialLinks);
             }
+
+            _previewTask = new Lazy<Task<LinkStreamPreviewEnumerator>>(() =>
+                {
+                    var previewTask = PreviewTaskImpl();
+                    previewTask.ContinueWith(tsk => RaisePropertyChanged("PreviewBinding"), SnooStreamViewModel.UIScheduler);
+                    previewTask.ContinueWith(async tsk =>
+                        {
+                            if (tsk.IsCompleted)
+                                await LinkStreamPreviewEnumerator.FillPreviewEnumerator(tsk.Result, 6, SnooStreamViewModel.UIContextCancellationToken);
+                        });
+                    return previewTask;
+                });
         }
 
-        public async Task<IEnumerable<ContentViewModel>> PreloadContent(Func<LinkViewModel, bool> predicate, int count, CancellationToken cancelToken)
+        public LinkStreamPreviewEnumerator PreviewBinding
         {
-            List<ContentViewModel> results = new List<ContentViewModel>();
-            var linkStream = new LinkStreamViewModel(this, null);
-            while (results.Count < count && await linkStream.MoveNext() && !cancelToken.IsCancellationRequested)
+            get
             {
-                if (predicate(linkStream.Current))
+                if (_previewTask.Value.IsCompleted)
+                    return _previewTask.Value.Result;
+                else
                 {
-                    await linkStream.Current.Content.BeginLoad();
-                    results.Add(linkStream.Current.Content);
+                    return null;
                 }
             }
-            return results;
+        }
+
+        Lazy<Task<LinkStreamPreviewEnumerator>> _previewTask;
+        private async Task<LinkStreamPreviewEnumerator> PreviewTaskImpl()
+        {
+            var enumerator = await LinkStreamPreviewEnumerator.MakePreviewEnumerator(this, new LinkStreamViewModel(this, null));
+            return enumerator;
         }
 
         private void ProcessLinkThings(IEnumerable<Link> links)
@@ -81,24 +99,27 @@ namespace SnooStream.ViewModel
 
                     if (postListing != null)
                     {
-                        var linkIds = new List<string>();
-                        var linkViewModels = new List<LinkViewModel>();
-                        foreach (var thing in postListing.Data.Children)
-                        {
-                            if (thing.Data is Link)
+                        await Task.Factory.StartNew(async () =>
                             {
-                                linkIds.Add(((Link)thing.Data).Id);
-                                var viewModel = new LinkViewModel(this, thing.Data as Link);
-                                linkViewModels.Add(viewModel);
-                                Links.Add(viewModel);
-                            }
-                        }
-                        var linkMetadata = (await SnooStreamViewModel.OfflineService.GetLinkMetadata(linkIds)).ToList();
-                        for (int i = 0; i < linkMetadata.Count; i++)
-                        {
-                            linkViewModels[i].UpdateMetadata(linkMetadata[i]);
-                        }
-                        LastLinkId = postListing.Data.After;
+                                var linkIds = new List<string>();
+                                var linkViewModels = new List<LinkViewModel>();
+                                foreach (var thing in postListing.Data.Children)
+                                {
+                                    if (thing.Data is Link)
+                                    {
+                                        linkIds.Add(((Link)thing.Data).Id);
+                                        var viewModel = new LinkViewModel(this, thing.Data as Link);
+                                        linkViewModels.Add(viewModel);
+                                        Links.Add(viewModel);
+                                    }
+                                }
+                                var linkMetadata = (await SnooStreamViewModel.OfflineService.GetLinkMetadata(linkIds)).ToList();
+                                for (int i = 0; i < linkMetadata.Count; i++)
+                                {
+                                    linkViewModels[i].UpdateMetadata(linkMetadata[i]);
+                                }
+                                LastLinkId = postListing.Data.After;
+                            }, SnooStreamViewModel.UIContextCancellationToken, TaskCreationOptions.PreferFairness, SnooStreamViewModel.UIScheduler);
                     }
                 });
             

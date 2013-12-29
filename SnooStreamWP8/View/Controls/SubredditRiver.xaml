@@ -21,9 +21,6 @@
                 <ResourceDictionary.MergedDictionaries>
                     <ResourceDictionary Source="SubredditRiverResources.xaml" />
                 </ResourceDictionary.MergedDictionaries>
-                <selectors:SubredditRiverTemplateSelector x:Name="subredditRiverTemplateSelector"
-                                                          ImagesTemplate="{StaticResource imageSubreddit}"
-                                                          NormalTemplate="{StaticResource normalSubreddit}"/>
             </ResourceDictionary>
         </Grid.Resources>
 
@@ -32,7 +29,7 @@
             IsAsyncBalanceEnabled="False"
             x:Name="listBox" 
             Margin="0,0,-12,0" ItemsSource="{Binding CombinedRivers}"
-            ItemTemplateSelector="{StaticResource subredditRiverTemplateSelector}">
+            ItemTemplate="{StaticResource normalSubreddit}">
         </telerikData:RadJumpList>
     </Grid>
 </UserControl>

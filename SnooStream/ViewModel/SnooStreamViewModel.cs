@@ -20,6 +20,7 @@ namespace SnooStream.ViewModel
         public static string CWD { get; set; }
         public SnooStreamViewModel()
         {
+            UIScheduler = TaskScheduler.FromCurrentSynchronizationContext();
             _listingFilter = new NSFWListingFilter();
             if (IsInDesignMode)
             {
@@ -84,14 +85,14 @@ namespace SnooStream.ViewModel
                     }
 
 
-                    var loadedContent = await targetRiver.PreloadContent((link) => ImageAquisition.MightHaveImagesFromUrl(link.Link.Url) && !link.Link.Url.EndsWith(".gif"), 12, BackgroundCancellationToken);
-                    foreach (var content in loadedContent.OfType<ImageViewModel>())
-                    {
-                        if (content.ImageSource.Dimensions != null)
-                        {
+                    //var loadedContent = await targetRiver.PreloadContent((link) => ImageAquisition.MightHaveImagesFromUrl(link.Link.Url) && !link.Link.Url.EndsWith(".gif"), 12, BackgroundCancellationToken);
+                    //foreach (var content in loadedContent.OfType<ImageViewModel>())
+                    //{
+                    //    if (content.ImageSource.Dimensions != null)
+                    //    {
 
-                        }
-                    }
+                    //    }
+                    //}
                 }));
 
             }
@@ -145,5 +146,7 @@ namespace SnooStream.ViewModel
             _initializationBlob.Self = UserHub.Self.Dump();
             OfflineService.StoreInitializationBlob(_initializationBlob);
         }
+
+        public static TaskScheduler UIScheduler { get; set; }
     }
 }

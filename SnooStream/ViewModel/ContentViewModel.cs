@@ -29,8 +29,11 @@ namespace SnooStream.ViewModel
                                 {
                                     Loaded = true;
                                     Loading = false;
+
+                                    RaisePropertyChanged("Loaded");
+                                    RaisePropertyChanged("Loading");
                                 }
-                            });
+                            }, SnooStreamViewModel.UIScheduler);
                     }
                 }
             }
