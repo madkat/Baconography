@@ -14,7 +14,7 @@ namespace SnooStream.ViewModel
             Context = context;
         }
 
-        public Task BeginLoad()
+        public Task BeginLoad(bool highPriority)
         {
             if (ContentLoadTask == null)
             {

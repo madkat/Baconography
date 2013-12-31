@@ -38,19 +38,25 @@ namespace SnooStream.Common
         public static async Task FillPreviewEnumerator(LinkStreamPreviewEnumerator stream, int fillContentCount, CancellationToken cancelToken)
         {
             int i = 0;
-            while (stream.Count < i && await stream._linkStream.MoveNext())
+            while (fillContentCount > i && await stream._linkStream.MoveNext())
             {
                 if (stream.IsImagePreview &&
                     (ImageAquisition.IsImageAPI(stream._linkStream.Current.Url) ||
                     VideoAquisition.IsAPI(stream._linkStream.Current.Url)))
                 {
-                    i++;
-                    await stream._linkStream.Current.Content.BeginLoad();
+                    if (stream._linkStream.Current.Content != null)
+                    {
+                        i++;
+                        await stream._linkStream.Current.Content.BeginLoad(false);
+                    }
                 }
                 else if(!stream.IsImagePreview)
                 {
-                    i++;
-                    await stream._linkStream.Current.Content.BeginLoad();
+                    if (stream._linkStream.Current.Content != null)
+                    {
+                        i++;
+                        await stream._linkStream.Current.Content.BeginLoad(false);
+                    }
                 }
             }        
         }

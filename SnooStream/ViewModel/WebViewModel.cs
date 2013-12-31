@@ -31,9 +31,9 @@ namespace SnooStream.ViewModel
             //useing nboilerpipe grab the article and get either the first paragraph or the first big image near the top
         //}
 
-        protected override Task LoadContent()
+        protected override async Task LoadContent()
         {
-            throw new NotImplementedException();
+            //throw new NotImplementedException();
         }
     }
 }
