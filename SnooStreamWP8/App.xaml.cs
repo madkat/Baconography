@@ -12,6 +12,7 @@ using SnooStream.Common;
 using Telerik.Windows.Controls;
 using SnooStreamWP8.PlatformServices;
 using SnooStream.Services;
+using System.Threading.Tasks;
 
 namespace SnooStreamWP8
 {
@@ -35,6 +36,17 @@ namespace SnooStreamWP8
 
             SnooStreamViewModel.UserCredentialService = new DefaultUserCredentialService();
             SnooStreamViewModel.MarkdownProcessor = new MarkdownProvider();
+            //CommonVideoAquisition.HttpClientUtility.InitYouTube = (str) =>
+            //{
+            //    return Task.Factory.StartNew(() => { }).ContinueWith(async (tsk) =>
+            //        {
+            //            TaskCompletionSource<bool> completionSource = new TaskCompletionSource<bool>();
+            //            var browser = new WebBrowser();
+            //            browser.LoadCompleted += delegate { completionSource.SetResult(true); };
+            //            browser.Navigate(new Uri(str));
+            //            await completionSource.Task;
+            //        }, SnooStreamViewModel.UIScheduler);
+            //};
 
             
 

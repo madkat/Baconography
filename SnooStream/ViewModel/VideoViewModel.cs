@@ -38,7 +38,7 @@ namespace SnooStream.ViewModel
 
         protected override async Task LoadContent()
         {
-            var videoResult = await VideoAquisition.GetPlayableStreams(Url);
+            var videoResult = await VideoAquisition.GetPlayableStreams(Url, SnooStreamViewModel.SystemServices.SendGet);
             AvailableStreams = new ObservableCollection<Tuple<string,string>>(videoResult.PlayableStreams);
             await SnooStreamViewModel.NotificationService.ReportWithProgress("loading from youtube",
                 async (report) =>

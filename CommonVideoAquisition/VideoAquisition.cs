@@ -15,9 +15,9 @@ namespace CommonVideoAquisition
             return YouTube.IsAPI(originalUrl);
         }
 
-        public static Task<VideoResult> GetPlayableStreams(string originalUrl)
+        public static Task<VideoResult> GetPlayableStreams(string originalUrl, Func<string, Task<string>> getter)
         {
-            return YouTube.GetPlayableStreams(originalUrl);
+            return YouTube.GetPlayableStreams(originalUrl, getter);
         }
     }
 }

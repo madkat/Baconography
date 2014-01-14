@@ -96,6 +96,14 @@ namespace SnooStream.ViewModel
                         else if (imageApiResults != null)
                             return new ImageViewModel(this, imageApiResults.First().Item2, imageApiResults.First().Item1, null);
                     }
+                    else if (fileName.EndsWith(".jpg") ||
+                        fileName.EndsWith(".png") ||
+                        fileName.EndsWith(".gif") ||
+                        fileName.EndsWith(".jpeg"))
+                    {
+                        return new ImageViewModel(this, Link.Url, Link.Title, null);
+                    }
+                    
                     return new WebViewModel(this, true, Link.Url);
                 }
                 else

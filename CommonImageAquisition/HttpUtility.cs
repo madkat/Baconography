@@ -10,9 +10,15 @@ namespace CommonImageAquisition
     class HttpClientUtility
     {
         private static HttpClient _httpClient = new HttpClient(new HttpClientHandler());
-        public static Task<string> Get(string uri)
+        public static async Task<string> Get(string uri, bool ignoreErrors = false)
         {
-            return _httpClient.GetStringAsync(uri);
+            if (ignoreErrors)
+            {
+                var httpRequest = await _httpClient.GetAsync(uri);
+                return await httpRequest.Content.ReadAsStringAsync();
+            }
+            else
+                return await _httpClient.GetStringAsync(uri);
         }
     }
 }
