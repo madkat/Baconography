@@ -33,15 +33,24 @@ namespace SnooStreamWP8.View.Selectors
 
         protected override DataTemplate SelectTemplateCore(object item, DependencyObject container)
         {
-            if (item is SelfContentViewModel)
+            var linkView = item as LinkViewModel;
+
+            if (linkView == null)
+                throw new ArgumentOutOfRangeException();
+
+            var targetItem = linkView.Content;
+
+            if (targetItem is SelfContentViewModel)
                 return NormalTemplate;
-            else if (item is AlbumViewModel)
+            else if (targetItem is AlbumViewModel)
                 return ImagesTemplate;
-            else if (item is ImageViewModel)
+            else if (targetItem is ImageViewModel)
                 return ImagesTemplate;
-            else if (item is VideoViewModel)
+            else if (targetItem is VideoViewModel)
                 return ImagesTemplate;
-            else if (item is WebViewModel)
+            else if (targetItem is WebViewModel)
+                return NormalTemplate;
+            else if (targetItem is InternalRedditContentViewModel)
                 return NormalTemplate;
             else
                 throw new ArgumentOutOfRangeException();

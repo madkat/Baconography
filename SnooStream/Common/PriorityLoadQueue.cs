@@ -168,19 +168,26 @@ namespace SnooStream.Common
 
         async void DrainQueue()
         {
-            LoadItem currentItem = null;
-            while (!_cancelTokenSource.IsCancellationRequested &&
-                (currentItem = GetNextLoadItem()) != null)
+            try
             {
-                try
+                LoadItem currentItem = null;
+                while (!_cancelTokenSource.IsCancellationRequested &&
+                    (currentItem = GetNextLoadItem()) != null)
                 {
-                    await currentItem.Operation();
-                    currentItem.CompletionSource.SetResult(true);
+                    try
+                    {
+                        await currentItem.Operation();
+                        currentItem.CompletionSource.SetResult(true);
+                    }
+                    catch (Exception ex)
+                    {
+                        currentItem.CompletionSource.SetException(ex);
+                    }
                 }
-                catch(Exception ex)
-                {
-                    currentItem.CompletionSource.SetException(ex);
-                }
+            }
+            finally
+            {
+                _isDraining = false;
             }
         }
     }

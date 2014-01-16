@@ -7,7 +7,7 @@
     xmlns:converters="clr-namespace:SnooStreamWP8.Converters">
 
     <DataTemplate x:Name="previewLinkTemplate">
-        <TextBlock TextWrapping="Wrap" Text="{Binding PreviewText}" FontSize="{StaticResource PhoneFontSizeLarge}" MaxHeight="70"/>
+        <TextBlock TextWrapping="Wrap" Text="{Binding Content.PreviewText}" FontSize="{StaticResource PhoneFontSizeLarge}" MaxHeight="70"/>
     </DataTemplate>
 
     <DataTemplate x:Name="previewImageLinkTemplate">

@@ -35,29 +35,21 @@ namespace SnooStream.Common
             return previewEnumerator;
         }
 
+        private void AddContent(LinkViewModel viewModel)
+        {
+            Add(viewModel);
+        }
+
         public static async Task FillPreviewEnumerator(LinkStreamPreviewEnumerator stream, int fillContentCount, CancellationToken cancelToken)
         {
             int i = 0;
             while (fillContentCount > i && await stream._linkStream.MoveNext())
             {
-                if (stream.IsImagePreview &&
-                    (ImageAquisition.IsImageAPI(stream._linkStream.Current.Url) ||
-                    VideoAquisition.IsAPI(stream._linkStream.Current.Url)))
+                if (stream._linkStream.Current.Content != null)
                 {
-                    if (stream._linkStream.Current.Content != null)
-                    {
-                        i++;
-                        await stream._linkStream.Current.Content.BeginLoad(false);
-                    }
-                }
-                else if(!stream.IsImagePreview)
-                {
-                    if (stream._linkStream.Current.Content != null)
-                    {
-                        i++;
-                        await stream._linkStream.Current.Content.BeginLoad(false);
-                    }
-                }
+                    i++;
+                    await stream._linkStream.Current.Content.BeginLoad(false).ContinueWith((tsk) => stream.AddContent(stream._linkStream.Current), SnooStreamViewModel.UIScheduler);
+                }   
             }        
         }
         public LinkStreamPreviewEnumerator(LinkRiverViewModel context, LinkStreamViewModel linkStream, bool isImagePreview)
