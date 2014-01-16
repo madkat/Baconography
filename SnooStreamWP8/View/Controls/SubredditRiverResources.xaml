@@ -11,7 +11,7 @@
     </DataTemplate>
 
     <DataTemplate x:Name="previewImageLinkTemplate">
-        <Image Source="{Binding Content.Preview}" />
+        <Image Source="{Binding Content.Preview, Converter={StaticResource asyncImageSourceConverter}}" />
     </DataTemplate>
     
     <DataTemplate x:Name="linkSelector">

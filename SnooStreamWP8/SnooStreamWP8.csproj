@@ -96,6 +96,7 @@
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
     <Compile Include="Common\LinkViewLayoutManager.cs" />
+    <Compile Include="Converters\AsyncImageSourceConverter.cs" />
     <Compile Include="Converters\BoolToAccentBrushConverter.cs" />
     <Compile Include="Converters\CommentDepthColorConverter.cs" />
     <Compile Include="Converters\CommentDepthMarginConverter.cs" />
