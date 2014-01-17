@@ -43,10 +43,10 @@ namespace SnooStream.ViewModel
             await SnooStreamViewModel.NotificationService.ReportWithProgress("loading from youtube",
                 async (report) =>
                 {
-                    var bytes = await SnooStreamViewModel.SystemServices.DownloadWithProgress(Url, (progress) => report(PreviewLoadPercent = progress), SnooStreamViewModel.UIContextCancellationToken);
+                    var bytes = await SnooStreamViewModel.SystemServices.DownloadWithProgress(videoResult.PreviewUrl, (progress) => report(PreviewLoadPercent = progress), SnooStreamViewModel.UIContextCancellationToken);
                     if (bytes != null && bytes.Length > 6) //minimum to identify the image type
                     {
-                        Preview = new ImageSource(Url, bytes);
+                        Preview = new ImageSource(videoResult.PreviewUrl, bytes);
                     }
                 });
         }

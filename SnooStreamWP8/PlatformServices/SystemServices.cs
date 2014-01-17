@@ -1,4 +1,5 @@
 ﻿using Microsoft.Phone.Net.NetworkInformation;
+using Nokia.Graphics.Imaging;
 using Nokia.InteropServices.WindowsRuntime;
 using SnooStream.Services;
 using System;
@@ -184,14 +185,20 @@ namespace SnooStreamWP8.PlatformServices
 
         private static async Task<byte[]> CropPicture(byte[] data, Size desiredSize)
         {
-            using(var stream = new MemoryStream(data))
+            using (var source = new BufferImageSource(data.AsBuffer()))
             {
-                using(var dataWriter = new DataWriter(stream.AsOutputStream()))
+                var info = await source.GetInfoAsync();
+
+                if (info.ImageSize.Width * info.ImageSize.Height > (desiredSize.Height * desiredSize.Width))
                 {
-                    var buffer = await Nokia.Graphics.Imaging.JpegTools.AutoResizeAsync(dataWriter.DetachBuffer(),
-                        new Nokia.Graphics.Imaging.AutoResizeConfiguration(5 * 1024 * 1024, desiredSize, desiredSize, Nokia.Graphics.Imaging.AutoResizeMode.PrioritizeHighEncodingQuality, 1.0, Nokia.Graphics.Imaging.ColorSpace.Undefined));
-                    
-                    return buffer.ToArray();
+                    var resizeConfiguration = new AutoResizeConfiguration(5 * 1024 * 1024, desiredSize,
+                        new Size(0, 0), AutoResizeMode.Automatic, 0, ColorSpace.Yuv420);
+
+                    return (await Nokia.Graphics.Imaging.JpegTools.AutoResizeAsync(source.Buffer, resizeConfiguration)).ToArray();
+                }
+                else
+                {
+                    return data;
                 }
             }
             

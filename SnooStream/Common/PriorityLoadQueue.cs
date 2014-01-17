@@ -163,7 +163,12 @@ namespace SnooStream.Common
             {
                 nextItem = PopOneFromContext(null);
             }
-            return nextItem;
+
+            if (nextItem != null && nextItem.CompletionSource.Task.Status != TaskStatus.WaitingToRun &&
+                nextItem.CompletionSource.Task.Status != TaskStatus.WaitingForActivation)
+                return GetNextLoadItem();
+            else
+                return nextItem;
         }
 
         async void DrainQueue()

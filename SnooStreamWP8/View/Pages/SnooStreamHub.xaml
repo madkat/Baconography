@@ -18,6 +18,11 @@
     <!--LayoutRoot contains the root grid where all other page content is placed-->
     <Grid x:Name="LayoutRoot">
         <phone:Panorama Title="Snoo Stream">
+            <phone:Panorama.TitleTemplate>
+                <DataTemplate>
+                    <TextBlock Margin="12,40,0,0" FontSize="{StaticResource PhoneFontSizeExtraLarge}" Text="{Binding}"/>
+                </DataTemplate>
+            </phone:Panorama.TitleTemplate>
 
             <phone:PanoramaItem Header="Subreddits" DataContext="{Binding SubredditRiver}">
                 <local:SubredditRiver/>

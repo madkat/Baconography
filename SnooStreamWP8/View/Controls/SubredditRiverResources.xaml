@@ -11,7 +11,7 @@
     </DataTemplate>
 
     <DataTemplate x:Name="previewImageLinkTemplate">
-        <Image Source="{Binding Content.Preview, Converter={StaticResource asyncImageSourceConverter}}" />
+        <Image Stretch="UniformToFill" Source="{Binding Content.Preview, Converter={StaticResource asyncImageSourceConverter}}" />
     </DataTemplate>
     
     <DataTemplate x:Name="linkSelector">
@@ -24,6 +24,9 @@
     <DataTemplate x:Name="normalSubreddit">
         <telerikPrimitives:RadCycleHubTile ItemsSource="{Binding PreviewBinding.ContextBinding}"
                                            Title="{Binding Thing.DisplayName}"
+                                           HorizontalAlignment="Stretch"
+                                           Width="480"
+                                           HorizontalContentAlignment="Stretch"
                                            ItemTemplate="{StaticResource linkSelector}"
                                            CycleRandomly="True" />
 
