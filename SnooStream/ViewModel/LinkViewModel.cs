@@ -93,7 +93,7 @@ namespace SnooStream.ViewModel
                         var imageApiResults = await ImageAquisition.GetImagesFromUrl(Link.Title, Link.Url);
                         if (imageApiResults != null && imageApiResults.Count() > 1)
                             return new AlbumViewModel(this, Link.Url, imageApiResults, Link.Title);
-                        else if (imageApiResults != null)
+                        else if (imageApiResults != null && imageApiResults.Count() == 1)
                             return new ImageViewModel(this, imageApiResults.First().Item2, imageApiResults.First().Item1, null);
                     }
                     else if (fileName.EndsWith(".jpg") ||

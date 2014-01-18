@@ -39,16 +39,19 @@ namespace SnooStream.ViewModel
         protected override async Task LoadContent()
         {
             var videoResult = await VideoAquisition.GetPlayableStreams(Url, SnooStreamViewModel.SystemServices.SendGet);
-            AvailableStreams = new ObservableCollection<Tuple<string,string>>(videoResult.PlayableStreams);
-            await SnooStreamViewModel.NotificationService.ReportWithProgress("loading from youtube",
-                async (report) =>
-                {
-                    var bytes = await SnooStreamViewModel.SystemServices.DownloadWithProgress(videoResult.PreviewUrl, (progress) => report(PreviewLoadPercent = progress), SnooStreamViewModel.UIContextCancellationToken);
-                    if (bytes != null && bytes.Length > 6) //minimum to identify the image type
+            if (videoResult != null)
+            {
+                AvailableStreams = new ObservableCollection<Tuple<string, string>>(videoResult.PlayableStreams);
+                await SnooStreamViewModel.NotificationService.ReportWithProgress("loading from youtube",
+                    async (report) =>
                     {
-                        Preview = new ImageSource(videoResult.PreviewUrl, bytes);
-                    }
-                });
+                        var bytes = await SnooStreamViewModel.SystemServices.DownloadWithProgress(videoResult.PreviewUrl, (progress) => report(PreviewLoadPercent = progress), SnooStreamViewModel.UIContextCancellationToken);
+                        if (bytes != null && bytes.Length > 6) //minimum to identify the image type
+                        {
+                            Preview = new ImageSource(videoResult.PreviewUrl, bytes);
+                        }
+                    });
+            }
         }
     }
 }

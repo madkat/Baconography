@@ -20,9 +20,13 @@ namespace SnooStreamWP8.View.Selectors
         {
             base.OnContentChanged(oldContent, newContent);
             if (newContent == null)
+            {
                 ContentTemplate = null;
-
-            ContentTemplate = SelectTemplate(newContent, this);
+            }
+            else
+            {
+                ContentTemplate = SelectTemplate(newContent, this);
+            }
         }
 
         public DataTemplate SelectTemplate(object item, DependencyObject container)

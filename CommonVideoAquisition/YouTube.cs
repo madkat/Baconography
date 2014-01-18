@@ -85,6 +85,11 @@ namespace CommonVideoAquisition
         public static async Task<VideoResult> GetPlayableStreams(string originalUrl, Func<string, Task<string>> getter)
         {
             var streams = await GetPlayableStreamsImpl(originalUrl, getter);
+            
+            if (streams == null || string.IsNullOrWhiteSpace(streams.Item1) || streams.Item2 == null)
+                return null;
+
+
             var processedStreams = streams.Item2.Select(dict => Tuple.Create(MakeUsableUrl(dict), MakeQualityString(dict)));
             var previewImage = string.Format("http://img.youtube.com/vi/{0}/0.jpg", streams.Item1);
             return new VideoResult { PlayableStreams = processedStreams, PreviewUrl = previewImage };
