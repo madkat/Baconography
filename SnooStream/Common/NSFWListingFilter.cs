@@ -82,9 +82,10 @@ namespace SnooStream.Common
             Dictionary<string, bool> result = new Dictionary<string, bool>(_initialFilter);
             foreach (var element in _nsfwParentCache.Dump())
             {
-                if (element.Value.IsCompleted && !result.ContainsKey(element.Key))
+                var elementResult = element.Value.TryValueS();
+                if (elementResult != null && !result.ContainsKey(element.Key))
                 {
-                    result.Add(element.Key, element.Value.Result);
+                    result.Add(element.Key, elementResult.Value);
                 }
             }
             return result;

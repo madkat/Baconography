@@ -37,8 +37,9 @@ namespace SnooStream.ViewModel
                     previewTask.ContinueWith(tsk => RaisePropertyChanged("PreviewBinding"), SnooStreamViewModel.UIScheduler);
                     previewTask.ContinueWith(async tsk =>
                         {
-                            if (tsk.IsCompleted)
-                                await LinkStreamPreviewEnumerator.FillPreviewEnumerator(tsk.Result, 6, SnooStreamViewModel.UIContextCancellationToken);
+                            var tskResult = tsk.TryValue();
+                            if (tskResult != null)
+                                await LinkStreamPreviewEnumerator.FillPreviewEnumerator(tskResult, 6, SnooStreamViewModel.UIContextCancellationToken);
                         });
                     return previewTask;
                 });
@@ -48,12 +49,7 @@ namespace SnooStream.ViewModel
         {
             get
             {
-                if (_previewTask.Value.IsCompleted)
-                    return _previewTask.Value.Result;
-                else
-                {
-                    return null;
-                }
+                return _previewTask.Value.TryValue();
             }
         }
 

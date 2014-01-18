@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using SnooStream.Common;
 
 namespace SnooStream.ViewModel
 {
@@ -25,7 +26,8 @@ namespace SnooStream.ViewModel
                         Loading = true;
                         ContentLoadTask = LoadContent().ContinueWith((tsk) => 
                             {
-                                if (tsk.IsCompleted)
+                                var tskResult = tsk.WasSuccessfull();
+                                if (tskResult)
                                 {
                                     Loaded = true;
                                     Loading = false;

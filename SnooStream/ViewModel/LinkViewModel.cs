@@ -121,10 +121,7 @@ namespace SnooStream.ViewModel
         {
             get
             {
-                if (_content.Value.IsCompleted)
-                    return _content.Value.Result;
-                else
-                    return null;
+                return _content.Value.TryValue();
             }
         }
         public CommentsViewModel Comments { get; private set; }

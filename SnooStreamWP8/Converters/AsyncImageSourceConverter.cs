@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Data;
 using System.Windows.Media.Imaging;
+using SnooStream.Common;
 
 namespace SnooStreamWP8.Converters
 {
@@ -18,8 +19,9 @@ namespace SnooStreamWP8.Converters
             var imageSource = value as SnooStream.Common.ImageSource;
             imageSource.ImageData.ContinueWith(tsk =>
                 {
-                    if (tsk.IsCompleted)
-                        result.SetSource(new MemoryStream(tsk.Result));
+                    var tskResult = tsk.TryValue();
+                    if (tskResult != null)
+                        result.SetSource(new MemoryStream(tskResult));
                     else if(Uri.IsWellFormedUriString(imageSource.UrlSource, UriKind.Absolute))
                         result.UriSource = new Uri(imageSource.UrlSource);
                 }, SnooStreamViewModel.UIScheduler);

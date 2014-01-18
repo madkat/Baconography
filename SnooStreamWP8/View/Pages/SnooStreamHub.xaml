@@ -37,7 +37,7 @@
             </phone:PanoramaItem>
             
             <phone:PanoramaItem Header="Settings">
-                <Grid/>
+                <local:SettingsView />
             </phone:PanoramaItem>
 
             <phone:PanoramaItem Header="Moderator" DataContext="{Binding ModeratorHub}" Visibility="{Binding IsUserModerator, Converter={StaticResource booleanVisibilityConverter}}">
