@@ -17,15 +17,17 @@ namespace SnooStreamWP8.Converters
         {
             var result = new BitmapImage();
             var imageSource = value as SnooStream.Common.ImageSource;
-            imageSource.ImageData.ContinueWith(tsk =>
-                {
-                    var tskResult = tsk.TryValue();
-                    if (tskResult != null)
-                        result.SetSource(new MemoryStream(tskResult));
-                    else if(Uri.IsWellFormedUriString(imageSource.UrlSource, UriKind.Absolute))
-                        result.UriSource = new Uri(imageSource.UrlSource);
-                }, SnooStreamViewModel.UIScheduler);
-
+            if (imageSource != null)
+            {
+                imageSource.ImageData.ContinueWith(tsk =>
+                    {
+                        var tskResult = tsk.TryValue();
+                        if (tskResult != null)
+                            result.SetSource(new MemoryStream(tskResult));
+                        else if (Uri.IsWellFormedUriString(imageSource.UrlSource, UriKind.Absolute))
+                            result.UriSource = new Uri(imageSource.UrlSource);
+                    }, SnooStreamViewModel.UIScheduler);
+            }
             return result;
         }
 

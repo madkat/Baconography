@@ -20,7 +20,7 @@
         <phone:Panorama Title="Snoo Stream">
             <phone:Panorama.TitleTemplate>
                 <DataTemplate>
-                    <TextBlock Margin="12,40,0,0" FontSize="{StaticResource PhoneFontSizeExtraLarge}" Text="{Binding}"/>
+                    <TextBlock Margin="18,40,0,0" FontSize="{StaticResource PhoneFontSizeNormal}" Text="{Binding}"/>
                 </DataTemplate>
             </phone:Panorama.TitleTemplate>
 
