@@ -2,6 +2,7 @@
 using CommonVideoAquisition;
 using GalaSoft.MvvmLight;
 using SnooSharp;
+using SnooStream.Common;
 using SnooStream.Model;
 using System;
 using System.Collections.Generic;
@@ -17,7 +18,12 @@ namespace SnooStream.ViewModel
         {
             Context = context;
             Link = link;
-            _content = new Lazy<Task<ContentViewModel>>(LoadContent);
+            _content = new Lazy<Task<ContentViewModel>>(() =>
+                {
+                    var contentTask = LoadContent();
+                    contentTask.ContinueWith((tsk) => RaisePropertyChanged("Content"), SnooStreamViewModel.UIScheduler);
+                    return contentTask;
+                });
 
         }
 
@@ -87,9 +93,17 @@ namespace SnooStream.ViewModel
                         var imageApiResults = await ImageAquisition.GetImagesFromUrl(Link.Title, Link.Url);
                         if (imageApiResults != null && imageApiResults.Count() > 1)
                             return new AlbumViewModel(this, Link.Url, imageApiResults, Link.Title);
-                        else if (imageApiResults != null)
+                        else if (imageApiResults != null && imageApiResults.Count() == 1)
                             return new ImageViewModel(this, imageApiResults.First().Item2, imageApiResults.First().Item1, null);
                     }
+                    else if (fileName.EndsWith(".jpg") ||
+                        fileName.EndsWith(".png") ||
+                        fileName.EndsWith(".gif") ||
+                        fileName.EndsWith(".jpeg"))
+                    {
+                        return new ImageViewModel(this, Link.Url, Link.Title, null);
+                    }
+                    
                     return new WebViewModel(this, true, Link.Url);
                 }
                 else
@@ -107,10 +121,7 @@ namespace SnooStream.ViewModel
         {
             get
             {
-                if (_content.Value.IsCompleted)
-                    return _content.Value.Result;
-                else
-                    return null;
+                return _content.Value.TryValue();
             }
         }
         public CommentsViewModel Comments { get; private set; }
@@ -253,6 +264,14 @@ namespace SnooStream.ViewModel
             {
                 return Link.CreatedUTC;
             }
+        }
+
+        public LinkMeta Metadata { get; private set; }
+
+        internal void UpdateMetadata(LinkMeta linkMeta)
+        {
+            Metadata = linkMeta;
+            RaisePropertyChanged("Metadata");
         }
     }
 }

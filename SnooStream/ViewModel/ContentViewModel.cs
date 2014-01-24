@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using SnooStream.Common;
 
 namespace SnooStream.ViewModel
 {
@@ -14,7 +15,7 @@ namespace SnooStream.ViewModel
             Context = context;
         }
 
-        public Task BeginLoad()
+        public Task BeginLoad(bool highPriority)
         {
             if (ContentLoadTask == null)
             {
@@ -25,12 +26,16 @@ namespace SnooStream.ViewModel
                         Loading = true;
                         ContentLoadTask = LoadContent().ContinueWith((tsk) => 
                             {
-                                if (tsk.IsCompleted)
+                                var tskResult = tsk.WasSuccessfull();
+                                if (tskResult)
                                 {
                                     Loaded = true;
                                     Loading = false;
+
+                                    RaisePropertyChanged("Loaded");
+                                    RaisePropertyChanged("Loading");
                                 }
-                            });
+                            }, SnooStreamViewModel.UIScheduler);
                     }
                 }
             }

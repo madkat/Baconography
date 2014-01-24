@@ -96,6 +96,9 @@
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
     <Compile Include="Common\LinkViewLayoutManager.cs" />
+    <Compile Include="Common\NavigationStateUtility.cs" />
+    <Compile Include="Common\SnooApplicationPage.cs" />
+    <Compile Include="Converters\AsyncImageSourceConverter.cs" />
     <Compile Include="Converters\BoolToAccentBrushConverter.cs" />
     <Compile Include="Converters\CommentDepthColorConverter.cs" />
     <Compile Include="Converters\CommentDepthMarginConverter.cs" />
@@ -111,6 +114,7 @@
     <Compile Include="Converters\VoteIndicatorConverter.cs" />
     <Compile Include="LocalizedStrings.cs" />
     <Compile Include="PlatformServices\MarkdownProvider.cs" />
+    <Compile Include="PlatformServices\NavigationService.cs" />
     <Compile Include="PlatformServices\SystemServices.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Resources\AppResources.Designer.cs">
@@ -165,17 +169,25 @@
     <Compile Include="View\Controls\SelfActivityView.xaml.cs">
       <DependentUpon>SelfActivityView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="View\Controls\SettingsView.xaml.cs">
+      <DependentUpon>SettingsView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="View\Controls\SimpleLinkView.xaml.cs">
       <DependentUpon>SimpleLinkView.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\Controls\SubredditRiver.xaml.cs">
       <DependentUpon>SubredditRiver.xaml</DependentUpon>
     </Compile>
+    <Compile Include="View\Pages\LinkRiver.xaml.cs">
+      <DependentUpon>LinkRiver.xaml</DependentUpon>
+    </Compile>
     <Compile Include="View\Pages\SnooStreamHub.xaml.cs">
       <DependentUpon>SnooStreamHub.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\Selectors\CommentTemplateSelector.cs" />
     <Compile Include="View\Selectors\ContentTemplateSelector.cs" />
+    <Compile Include="View\Selectors\DataTemplateSelectorControl.cs" />
+    <Compile Include="View\Selectors\SubredditRiverTemplateSelector.cs" />
     <Compile Include="View\Selectors\TypedTemplateSelector.cs" />
     <Compile Include="View\Selectors\UserActivityTemplateSelector.cs" />
   </ItemGroup>
@@ -248,11 +260,23 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="View\Controls\SettingsView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="View\Controls\SimpleLinkView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="View\Controls\SubredditRiver.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\Controls\SubredditRiverResources.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\Pages\LinkRiver.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -354,9 +378,6 @@
     </Reference>
     <Reference Include="Nokia.Graphics.Imaging.Managed">
       <HintPath>..\packages\NokiaImagingSDK.1.0.272.0\lib\wp8\Nokia.Graphics.Imaging.Managed.dll</HintPath>
-    </Reference>
-    <Reference Include="SmartNavigation">
-      <HintPath>..\packages\SmartNavigation.1.0.0.0\lib\wp71\SmartNavigation.dll</HintPath>
     </Reference>
     <Reference Include="System.IO.Compression, Version=3.9.69.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>

@@ -33,7 +33,7 @@ namespace SnooStream.ViewModel
                 throw new ArgumentNullException();
 
             if (thing.Data is Link)
-                return ((Link)thing.Data).Id;
+                return ((Link)thing.Data).Name;
             else if (thing.Data is Comment)
             {
                 if(((Comment)thing.Data).LinkId != null)
@@ -48,8 +48,8 @@ namespace SnooStream.ViewModel
                 {
                     // "/r/{subreddit}/comments/{linkname}/{linktitleish}/{thingname}?context=3"
 
-                    var splitContext = messageThing.Context.Split('/');
-                    return "t3_" + splitContext[4];
+                    var splitContext = messageThing.Context.Split(new char[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
+                    return "t3_" + splitContext[3];
                 }
                 else
                 {

@@ -1,4 +1,5 @@
 ﻿using Microsoft.Phone.Net.NetworkInformation;
+using Nokia.Graphics.Imaging;
 using Nokia.InteropServices.WindowsRuntime;
 using SnooStream.Services;
 using System;
@@ -184,14 +185,20 @@ namespace SnooStreamWP8.PlatformServices
 
         private static async Task<byte[]> CropPicture(byte[] data, Size desiredSize)
         {
-            using(var stream = new MemoryStream(data))
+            using (var source = new BufferImageSource(data.AsBuffer()))
             {
-                using(var dataWriter = new DataWriter(stream.AsOutputStream()))
+                var info = await source.GetInfoAsync();
+
+                if (info.ImageSize.Width * info.ImageSize.Height > (desiredSize.Height * desiredSize.Width))
                 {
-                    var buffer = await Nokia.Graphics.Imaging.JpegTools.AutoResizeAsync(dataWriter.DetachBuffer(),
-                        new Nokia.Graphics.Imaging.AutoResizeConfiguration(5 * 1024 * 1024, desiredSize, desiredSize, Nokia.Graphics.Imaging.AutoResizeMode.PrioritizeHighEncodingQuality, 1.0, Nokia.Graphics.Imaging.ColorSpace.Undefined));
-                    
-                    return buffer.ToArray();
+                    var resizeConfiguration = new AutoResizeConfiguration(5 * 1024 * 1024, desiredSize,
+                        new Size(0, 0), AutoResizeMode.Automatic, 0, ColorSpace.Yuv420);
+
+                    return (await Nokia.Graphics.Imaging.JpegTools.AutoResizeAsync(source.Buffer, resizeConfiguration)).ToArray();
+                }
+                else
+                {
+                    return data;
                 }
             }
             
@@ -226,6 +233,113 @@ namespace SnooStreamWP8.PlatformServices
             return rect;
         }
 
+        public static Task<HttpWebResponse> GetResponseAsync(HttpWebRequest request)
+        {
+            var taskComplete = new TaskCompletionSource<HttpWebResponse>();
+            request.BeginGetResponse(asyncResponse =>
+            {
+                try
+                {
+                    HttpWebRequest responseRequest = (HttpWebRequest)asyncResponse.AsyncState;
+                    HttpWebResponse someResponse = (HttpWebResponse)responseRequest.EndGetResponse(asyncResponse);
+                    taskComplete.TrySetResult(someResponse);
+                }
+                catch (Exception ex)
+                {
+                    taskComplete.TrySetException(ex);
+                }
+            }, request);
+            return taskComplete.Task;
+        }
+
+        public static Task<Stream> GetRequestStreamAsync(HttpWebRequest request)
+        {
+            var taskComplete = new TaskCompletionSource<Stream>();
+            request.BeginGetRequestStream(asyncResponse =>
+            {
+                try
+                {
+                    HttpWebRequest responseRequest = (HttpWebRequest)asyncResponse.AsyncState;
+                    Stream someResponse = (Stream)responseRequest.EndGetRequestStream(asyncResponse);
+                    taskComplete.TrySetResult(someResponse);
+                }
+                catch (Exception ex)
+                {
+                    taskComplete.TrySetException(ex);
+                }
+            }, request);
+            return taskComplete.Task;
+        }
+
+        private async Task<string> SendGet(string uri, bool hasRetried)
+        {
+            HttpWebResponse getResult = null;
+            bool needsRetry = false;
+            try
+            {
+                HttpWebRequest request = HttpWebRequest.CreateHttp(uri);
+                request.AllowReadStreamBuffering = true;
+                request.Headers[HttpRequestHeader.IfModifiedSince] = DateTime.UtcNow.ToString();
+                request.Method = "GET";
+                request.UserAgent = "Baconography_Windows_Phone_8_Client/1.0";
+                var cookieContainer = new CookieContainer();
+                request.CookieContainer = cookieContainer;
+
+                getResult = await GetResponseAsync(request);
+            }
+            catch (WebException webException)
+            {
+                if (webException.Status == WebExceptionStatus.RequestCanceled)
+                {
+                    needsRetry = true;
+                }
+                else
+                    throw;
+            }
+
+            if (needsRetry)
+            {
+                return await SendGet(uri, true);
+            }
+
+            if (getResult != null && getResult.StatusCode == HttpStatusCode.OK)
+            {
+                try
+                {
+                    return await (new StreamReader(getResult.GetResponseStream()).ReadToEndAsync());
+                }
+                catch (Exception ex)
+                {
+                    if (!hasRetried)
+                        needsRetry = true;
+                    else
+                        throw ex;
+                }
+                if (needsRetry)
+                    return await SendGet(uri, true);
+                else
+                    return null;
+            }
+            else if (!hasRetried)
+            {
+                int networkDownRetries = 0;
+                while (!System.Net.NetworkInformation.NetworkInterface.GetIsNetworkAvailable() && networkDownRetries < 10)
+                {
+                    networkDownRetries++;
+                    await Task.Delay(1000);
+                }
+
+                return await SendGet(uri, true);
+            }
+            else
+            {
+                throw new Exception(getResult.StatusCode.ToString());
+            }
+        }
+        public Task<string> SendGet(string uri)
+        {
+            return SendGet(uri, false);
+        }
 
         public void ShowMessage(string title, string text)
         {
@@ -372,7 +486,7 @@ namespace SnooStreamWP8.PlatformServices
             public override void Write(byte[] buffer, int offset, int count)
             {
                 throw new NotImplementedException();
-            }
+            }   
         }
     }
 }

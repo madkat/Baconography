@@ -17,12 +17,14 @@ namespace SnooStream.ViewModel
 {
     public class SnooStreamViewModel : ViewModelBase
     {
+        public static string CWD { get; set; }
         public SnooStreamViewModel()
         {
+            UIScheduler = TaskScheduler.FromCurrentSynchronizationContext();
             _listingFilter = new NSFWListingFilter();
             if (IsInDesignMode)
             {
-                _initializationBlob = new InitializationBlob { Settings = new Dictionary<string, string>(), NSFWFilter = new Dictionary<string,bool>() };
+                _initializationBlob = new InitializationBlob { Settings = new Dictionary<string, string>(), NSFWFilter = new Dictionary<string, bool>() };
             }
             else
             {
@@ -34,7 +36,9 @@ namespace SnooStream.ViewModel
             NotificationService = new Common.NotificationService();
             CaptchaProvider = new CaptchaService();
             RedditService = new Reddit(_listingFilter, RedditUserState, OfflineService, CaptchaProvider);
-            
+            LoadQueue = new PriorityLoadQueue();
+
+
             _listingFilter.Initialize(Settings, OfflineService, RedditService, _initializationBlob.NSFWFilter);
             CommandDispatcher = new CommandDispatcher();
             UserHub = new UserHubViewModel(_initializationBlob.Self);
@@ -66,10 +70,11 @@ namespace SnooStream.ViewModel
 
         private async void LoadLargeImages()
         {
-            await Task.Delay(2000); //stay away from startup, we've got enough going on as it is
+            await Task.Delay(1000); //stay away from startup, we've got enough going on as it is
             if (SystemServices.IsLowPriorityNetworkOk)
             {
-                await NotificationService.Report("loading secondary images", async () =>
+                await NotificationService.Report("loading secondary images",
+                    PriorityLoadQueue.QueueHelper("main", LoadContextType.Major, async () =>
                 {
                     //check if there is a LinkRiver for the target subreddit, then cache things 
                     //into it directly so we arent making 2x the reddit calls
@@ -80,23 +85,23 @@ namespace SnooStream.ViewModel
                     }
 
 
-                    var loadedContent = await targetRiver.PreloadContent((link) => ImageAquisition.MightHaveImagesFromUrl(link.Link.Url) && !link.Link.Url.EndsWith(".gif"), 12, BackgroundCancellationToken);
-                    foreach (var content in loadedContent.OfType<ImageViewModel>())
-                    {
-                        if (content.ImageSource.Dimensions != null)
-                        {
+                    //var loadedContent = await targetRiver.PreloadContent((link) => ImageAquisition.MightHaveImagesFromUrl(link.Link.Url) && !link.Link.Url.EndsWith(".gif"), 12, BackgroundCancellationToken);
+                    //foreach (var content in loadedContent.OfType<ImageViewModel>())
+                    //{
+                    //    if (content.ImageSource.Dimensions != null)
+                    //    {
 
-                        }
-                    }
-                });
-                
+                    //    }
+                    //}
+                }));
+
             }
-            
+
         }
 
         private InitializationBlob _initializationBlob;
         private NSFWListingFilter _listingFilter;
-        public static CommandDispatcher CommandDispatcher {get; set;}
+        public static CommandDispatcher CommandDispatcher { get; set; }
         public static Settings Settings { get; set; }
         public static OfflineService OfflineService { get; private set; }
         public static UserState RedditUserState { get; private set; }
@@ -107,6 +112,7 @@ namespace SnooStream.ViewModel
         public static IUserCredentialService UserCredentialService { get; set; }
         public static INavigationService NavigationService { get; set; }
         public static ISystemServices SystemServices { get; set; }
+        public static PriorityLoadQueue LoadQueue { get; set; }
 
         public UserHubViewModel UserHub { get; private set; }
         public ModeratorHubViewModel ModeratorHub { get; private set; }
@@ -140,5 +146,7 @@ namespace SnooStream.ViewModel
             _initializationBlob.Self = UserHub.Self.Dump();
             OfflineService.StoreInitializationBlob(_initializationBlob);
         }
+
+        public static TaskScheduler UIScheduler { get; set; }
     }
 }

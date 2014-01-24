@@ -15,8 +15,8 @@ namespace CommonImageAquisition
     class Imgur
     {
         //Transliterated from Reddit Enhancement Suite https://github.com/honestbleeps/Reddit-Enhancement-Suite/blob/master/lib/reddit_enhancement_suite.user.js
-        private static Regex hashRe = new Regex(@"^https?:\/\/(?:[i.]|[edge.]|[www.])*imgur.com\/(?:gallery\/)?(?:r\/[\w]+\/)?([\w]{5,}(?:[&,][\w]{5,})*)(\.[\w]{3,4})?(?:#(\d*))?(?:\?(?:\d*))?$");
-        private static Regex albumHashRe = new Regex(@"^https?:\/\/(?:i\.)?imgur.com\/a\/([\w]+)(\..+)?(?:\/)?(?:#\w*)?$");
+        private static Regex hashRe = new Regex(@"^https?:\/\/(?:i\.|m\.|edge\.|www\.)*imgur\.com\/(?!gallery)(?!removalrequest)(?!random)(?!memegen)([A-Za-z0-9]{5}|[A-Za-z0-9]{7})[sbtmlh]?(\.(?:jpe?g|gif|png))?(\?.*)?$");
+        private static Regex albumHashRe = new Regex(@"https?:\/\/(?:i\.|m\.)?imgur\.com\/(?:a|gallery)\/([\w]+)(\..+)?(?:\/)?(?:#\w*)?$");
         private static string apiPrefix = "http://api.imgur.com/2/";
 
         internal static bool IsAPI(Uri uri)
@@ -28,7 +28,9 @@ namespace CommonImageAquisition
             if (groups.Count == 0 || (groups.Count > 0 && string.IsNullOrWhiteSpace(groups[0].Value)))
                 albumGroups = albumHashRe.Match(href).Groups;
 
-            return (albumGroups != null && albumGroups.Count > 2 && string.IsNullOrWhiteSpace(albumGroups[2].Value));
+            return ((albumGroups != null && albumGroups.Count > 2 && string.IsNullOrWhiteSpace(albumGroups[2].Value)) ||
+                groups.Count > 1 && !string.IsNullOrWhiteSpace(groups[1].Value));
+            
         }
 
         internal static async Task<IEnumerable<Tuple<string, string>>> GetImagesFromUri(string title, Uri uri)
@@ -66,7 +68,7 @@ namespace CommonImageAquisition
             else if (albumGroups.Count > 2 && string.IsNullOrWhiteSpace(albumGroups[2].Value))
             {
                 var apiURL = string.Format("{0}album/{1}.json", apiPrefix, albumGroups[1].Value);
-                var jsonResult = await HttpClientUtility.Get(apiURL);
+                var jsonResult = await HttpClientUtility.Get(apiURL, true);
                 if(string.IsNullOrWhiteSpace(jsonResult))
                     return Enumerable.Empty<Tuple<string, string>>();
 
@@ -76,7 +78,10 @@ namespace CommonImageAquisition
                     JToken errorToken;
                     if (result.TryGetValue("error", out errorToken))
                     {
-                        return Enumerable.Empty<Tuple<string, string>>();
+                        if(((JObject)errorToken)["message"].Value<string>() == "Album not found")
+                            return new Tuple<string, string>[] { Tuple.Create(title, string.Format("http://i.imgur.com/{0}.gif", albumGroups[1].Value)) };
+                        else
+                            return Enumerable.Empty<Tuple<string, string>>();
                     }
 
                     var albumTitleElement = (string)((JObject)result.GetValue("album")).GetValue("title");

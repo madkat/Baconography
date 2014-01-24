@@ -1,16 +1,14 @@
-﻿<phone:PhoneApplicationPage
+﻿<common:SnooApplicationPage
     x:Class="SnooStreamWP8.View.Pages.SnooStreamHub"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:phone="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone"
     xmlns:shell="clr-namespace:Microsoft.Phone.Shell;assembly=Microsoft.Phone"
     xmlns:local="clr-namespace:SnooStreamWP8.View.Controls"
+    xmlns:common="clr-namespace:SnooStreamWP8.Common"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
-    FontFamily="{StaticResource PhoneFontFamilyNormal}"
-    FontSize="{StaticResource PhoneFontSizeNormal}"
-    Foreground="{StaticResource PhoneForegroundBrush}"
     SupportedOrientations="Portrait"  Orientation="Portrait"
     shell:SystemTray.IsVisible="False"
     DataContext="{StaticResource SnooStream}">
@@ -18,6 +16,11 @@
     <!--LayoutRoot contains the root grid where all other page content is placed-->
     <Grid x:Name="LayoutRoot">
         <phone:Panorama Title="Snoo Stream">
+            <phone:Panorama.TitleTemplate>
+                <DataTemplate>
+                    <TextBlock Margin="18,40,0,0" FontSize="{StaticResource PhoneFontSizeNormal}" Text="{Binding}"/>
+                </DataTemplate>
+            </phone:Panorama.TitleTemplate>
 
             <phone:PanoramaItem Header="Subreddits" DataContext="{Binding SubredditRiver}">
                 <local:SubredditRiver/>
@@ -31,8 +34,8 @@
                 <local:LoginView DataContext="{Binding Login}"/>
             </phone:PanoramaItem>
             
-            <phone:PanoramaItem Header="Settings">
-                <Grid/>
+            <phone:PanoramaItem Header="Settings" DataContext="{Binding Settings}">
+                <local:SettingsView />
             </phone:PanoramaItem>
 
             <phone:PanoramaItem Header="Moderator" DataContext="{Binding ModeratorHub}" Visibility="{Binding IsUserModerator, Converter={StaticResource booleanVisibilityConverter}}">
@@ -41,4 +44,4 @@
         </phone:Panorama>
     </Grid>
 
-</phone:PhoneApplicationPage>
+</common:SnooApplicationPage>

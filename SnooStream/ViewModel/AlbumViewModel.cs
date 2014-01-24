@@ -17,7 +17,7 @@ namespace SnooStream.ViewModel
             Domain = new Uri(originalUrl).Host;
             AlbumTitle = albumTitle;
             Images = new ObservableCollection<ImageViewModel>();
-            ApiResults = apiResults.Where(tpl => Uri.IsWellFormedUriString(tpl.Item1, UriKind.Absolute)).ToList();
+            ApiResults = apiResults.Where(tpl => Uri.IsWellFormedUriString(tpl.Item2, UriKind.Absolute)).ToList();
             ApiImageCount = ApiResults.Count();
             if (ApiImageCount == 0)
                 throw new Exception(string.Format("Invalid Album {0}", originalUrl));
@@ -28,13 +28,13 @@ namespace SnooStream.ViewModel
             int i = 0;
             foreach (var tpl in ApiResults)
             {
-                if(Uri.IsWellFormedUriString(tpl.Item1, UriKind.RelativeOrAbsolute))
+                if(Uri.IsWellFormedUriString(tpl.Item2, UriKind.RelativeOrAbsolute))
                 {
-                    var imageUri = new Uri(tpl.Item1);
+                    var imageUri = new Uri(tpl.Item2);
                     //make sure we havent already loaded this image
                     if (Images.Count <= i)
                     {
-                        if (await LoadImageImpl(tpl.Item2, imageUri, false))
+                        if (await LoadImageImpl(tpl.Item1, imageUri, false))
                             i++;
                     }
                 }
@@ -70,7 +70,7 @@ namespace SnooStream.ViewModel
         protected override async Task LoadContent()
         {
             var firstImage = ApiResults.First();
-            var addResult = await LoadImageImpl(firstImage.Item2, new Uri(firstImage.Item1), true);
+            var addResult = await LoadImageImpl(firstImage.Item1, new Uri(firstImage.Item2), true);
             if (addResult)
             {
                 Preview = Images.First().Preview;

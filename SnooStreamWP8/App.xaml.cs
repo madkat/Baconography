@@ -12,6 +12,7 @@ using SnooStream.Common;
 using Telerik.Windows.Controls;
 using SnooStreamWP8.PlatformServices;
 using SnooStream.Services;
+using System.Threading.Tasks;
 
 namespace SnooStreamWP8
 {
@@ -30,6 +31,8 @@ namespace SnooStreamWP8
         {
             // Global handler for uncaught exceptions.
             UnhandledException += Application_UnhandledException;
+
+            SnooStreamViewModel.CWD = Windows.Storage.ApplicationData.Current.LocalFolder.Path;
 
             SnooStreamViewModel.UserCredentialService = new DefaultUserCredentialService();
             SnooStreamViewModel.MarkdownProcessor = new MarkdownProvider();
@@ -134,7 +137,7 @@ namespace SnooStreamWP8
 
             // Create the frame but don't set it as RootVisual yet; this allows the splash
             // screen to remain active until the application is ready to render.
-            RootFrame = new PhoneApplicationFrame();
+            RootFrame = new RadPhoneApplicationFrame();
             StaticResources = Resources;
             SnooStreamViewModel.SystemServices = new SystemServices(RootFrame.Dispatcher);
             RootFrame.Navigated += CompleteInitializePhoneApplication;
@@ -147,6 +150,7 @@ namespace SnooStreamWP8
 
             // Ensure we don't initialize again
             phoneApplicationInitialized = true;
+            SnooStreamViewModel.NavigationService = new SnooStreamWP8.PlatformServices.NavigationService(RootFrame, null);
         }
 
         // Do not add any additional code to this method

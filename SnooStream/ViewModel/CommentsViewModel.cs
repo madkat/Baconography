@@ -10,12 +10,22 @@ using System.Threading.Tasks;
 
 namespace SnooStream.ViewModel
 {
+    public enum CommentOriginType
+    {
+        PriorView,
+        Edited,
+        New,
+        Context
+    }
+    
     //this class needs to take care of storing off prior comment sets so we can point the user directly to
     //the comments that have been either edited, added, or deleted
     public class CommentsViewModel : ViewModelBase
     {
         private class CommentShell
         {
+            public CommentOriginType OriginType { get; set; }
+            public int InsertionWaveIndex { get; set; }
             public CommentViewModel Comment { get; set; }
             public string Id { get; set; }
             public string Parent { get; set; }
@@ -24,12 +34,59 @@ namespace SnooStream.ViewModel
             public string FirstChild { get; set; }
         }
 
+        //every time something gets merged in we push a new item on the end of the list
+        //every comment shell gets made with the index to its creation origin so the converter can
+        //come through later when we're displaying this stuff and determine how we need to show the changes
+        //to the user
+        List<CommentOriginType> _commentOriginStack = new List<CommentOriginType>();
+        
         private Dictionary<string, CommentShell> _comments = new Dictionary<string, CommentShell>();
         private Dictionary<string, List<string>> _knownUnloaded = new Dictionary<string, List<string>>();
         private string _firstChild;
         private LoadFullCommentsViewModel _loadFullSentinel;
         private ViewModelBase _context;
 
+        public CommentsViewModel(ViewModelBase context, Link linkData)
+        {
+            _context = context;
+            _loadFullSentinel = new LoadFullCommentsViewModel(this);
+            ProcessUrl(linkData.Url);
+            
+        }
+
+        public CommentsViewModel(ViewModelBase context, string url)
+        {
+            _context = context;
+            _loadFullSentinel = new LoadFullCommentsViewModel(this);
+            ProcessUrl(url);
+        }
+
+        private void ProcessUrl(string url)
+        {
+            Uri uri;
+            if (Uri.TryCreate(url, UriKind.RelativeOrAbsolute, out uri))
+            {
+                var queryParts = uri.Query.Split('&', '?')
+                    .Where(str => str != null && str.Contains("="))
+                    .Select(str => str.Split('='))
+                    .ToDictionary(arr => arr[0].ToLower() , arr => arr[1]);
+
+                if (queryParts.ContainsKey("context"))
+                {
+                    IsContext = true;
+                    ContextTargetID = queryParts["context"];
+                }
+                else
+                    IsContext = false;
+
+                if (queryParts.ContainsKey("sort"))
+                    Sort = queryParts["sort"];
+                else
+                    Sort = "hot";
+
+                BaseUrl = url.Substring(0, url.Length - uri.Query.Length);
+            }
+        }
 
         public bool IsContext {get; private set;}
         public string ContextTargetID { get; private set; }
@@ -128,9 +185,16 @@ namespace SnooStream.ViewModel
                         priorSibling.NextSibling = commentId;
                     }
 
-                    priorSibling = MakeCommentShell(child.Data as Comment, depth, priorSibling);
                     if (!_comments.ContainsKey(commentId))
+                    {
+                        priorSibling = MakeCommentShell(child.Data as Comment, depth, priorSibling);
                         _comments.Add(commentId, priorSibling);
+                    }
+                    else
+                    {
+                        priorSibling = _comments[commentId];
+                        MergeComment(priorSibling, child.Data as Comment);
+                    }
 
                     var replies = ((Comment)child.Data).Replies;
                     if (replies != null)
@@ -139,13 +203,22 @@ namespace SnooStream.ViewModel
             }
         }
 
+        private void MergeComment(CommentShell priorSibling, Comment thingData)
+        {
+            priorSibling.OriginType = CommentOriginType.Edited;
+            priorSibling.InsertionWaveIndex = _commentOriginStack.Count - 1;
+            priorSibling.Comment.Thing = thingData;
+        }
+
         private CommentShell MakeCommentShell(Comment comment, int depth, CommentShell priorSibling)
         {
             var result = new CommentShell
             {
                 Comment = new CommentViewModel(comment, comment.LinkId, depth),
                 Parent = comment.ParentId.StartsWith("t1_") ? comment.ParentId : null,
-                PriorSibling = priorSibling != null ? priorSibling.Id : null
+                PriorSibling = priorSibling != null ? priorSibling.Id : null,
+                InsertionWaveIndex = _commentOriginStack.Count - 1,
+                OriginType = _commentOriginStack.Last()
             };
             return result;
         }
@@ -202,10 +275,12 @@ namespace SnooStream.ViewModel
             }
         }
 
-        private void MergeDisplayReplacement(IEnumerable<ViewModelBase> replacements)
+        private void MergeDisplayReplacement(bool isFull, IEnumerable<ViewModelBase> replacements)
         {
             //need to find the above and do insertion of everything above
-            //then skip over the middle and insert the below
+            //then insert the below
+            //the middle needs to be merged and have the shells set to an edited 
+            //origin type so we can display the differences caused by the load
 
             var replacementsList = replacements.ToList();
             var firstExistingId = GetId(FlatComments.First());
@@ -216,8 +291,9 @@ namespace SnooStream.ViewModel
             var mergableComments = replacements.SkipWhile((vm) => GetId(vm) != firstExistingId).TakeWhile((vm) => GetId(vm) != lastExistingId).ToList();
             var belowComments = replacements.SkipWhile((vm) => GetId(vm) != lastExistingId).Skip(1).ToList();
 
-            //get rid of the load full sentinels since we're filling in the real versions
-            while (FlatComments.Remove(_loadFullSentinel)) { }
+            //get rid of the load full sentinels since we're filling in the real versions, only if this is actually a context change
+            if(isFull)
+                while (FlatComments.Remove(_loadFullSentinel)) { }
 
             if (mergableComments.Count != FlatComments.Count) //otherwise nothing to do, just add in the above and below
             {
@@ -229,7 +305,7 @@ namespace SnooStream.ViewModel
                         FlatComments.Insert(flatI++, mergableComments[mergableI]);
                     }
                 }
-            }
+            } 
 
             foreach (var comment in aboveComments)
             {
@@ -307,10 +383,19 @@ namespace SnooStream.ViewModel
                 MergeDisplayChildren(flatChilden, moreId);
         }
 
-        public async Task LoadFull()
+        public Task LoadFull()
         {
-            List<ViewModelBase> flatChilden = new List<ViewModelBase>();
+            return LoadAndMergeFull(false);
+        }
 
+        public Task Refresh()
+        {
+            return LoadAndMergeFull(IsContext);
+        }
+
+        public async Task<List<ViewModelBase>> LoadImpl(bool isContext)
+        {
+            List<ViewModelBase> flatChildren = new List<ViewModelBase>(); 
             await Task.Run<Task>(async () =>
             {
                 var listing = await SnooStreamViewModel.RedditService.GetCommentsOnPost(Link.Link.Subreddit, BaseUrl, null);
@@ -319,24 +404,88 @@ namespace SnooStream.ViewModel
                     var firstChild = listing.Data.Children.FirstOrDefault(thing => thing.Data is Comment);
                     if (firstChild == null)
                         return;
-
+                    _commentOriginStack.Add(CommentOriginType.New);
                     MergeComments(null, listing.Data.Children, 0);
-                    InsertIntoFlatList(((Comment)firstChild.Data).Id, flatChilden);
+                    InsertIntoFlatList(((Comment)firstChild.Data).Id, flatChildren);
                 }
             });
+            return flatChildren;
+        }
 
-            if (flatChilden.Count > 0)
+        public async Task<List<ViewModelBase>> LoadStoredImpl(bool isContext)
+        {
+            List<ViewModelBase> flatChildren = new List<ViewModelBase>();
+            await Task.Run<Task>(async () =>
+            {
+                var things = await SnooStreamViewModel.OfflineService.RetrieveOrderedThings("comments:" + BaseUrl + "?context=" + ContextTargetID + "&sort=" + Sort, TimeSpan.FromDays(1024));
+                lock (this)
+                {
+                    var firstChild = things.FirstOrDefault(thing => thing.Data is Comment);
+                    if (firstChild == null)
+                        return;
+                    _commentOriginStack.Add(CommentOriginType.New);
+                    MergeComments(null, things, 0);
+                    InsertIntoFlatList(((Comment)firstChild.Data).Id, flatChildren);
+                }
+            });
+            return flatChildren;
+        }
+
+        private Listing DumpListing(string firstChild)
+        {
+            var result = new Listing { Kind = "listing", Data = new ListingData { Children = new List<Thing>() } };
+            var currentShell = _comments[firstChild];
+            while (currentShell.NextSibling != null)
+            {
+                //this is the end as far as we're concerned
+                CommentShell tmpShell;
+                if (!_comments.TryGetValue(currentShell.NextSibling, out tmpShell))
+                {
+                    List<string> moreValues;
+                    if(_knownUnloaded.TryGetValue(currentShell.NextSibling, out moreValues))
+                    {
+                        result.Data.Children.Add(new Thing { Kind = "more", Data = new More { Children = moreValues } });
+                    }
+                    break;
+                }
+                else
+                {
+                    currentShell = tmpShell;
+                    var resultThing = new Thing { Kind = "t1", Data = currentShell.Comment.Thing };
+                    result.Data.Children.Add(resultThing);
+
+                    if (currentShell.FirstChild != null)
+                        ((Comment)resultThing.Data).Replies = DumpListing(currentShell.FirstChild);
+                }
+            }
+            return result;
+        }
+
+        public async Task StoreCurrent()
+        {
+            if(_firstChild != null)
+            {
+                var rootListing = DumpListing(_firstChild);
+                await SnooStreamViewModel.OfflineService.StoreOrderedThings("comments:" + BaseUrl + "?context=" + ContextTargetID + "&sort=" + Sort, rootListing.Data.Children);
+            }
+        }
+
+        public async Task LoadAndMergeFull(bool isContext)
+        {
+            var flatChildren = await LoadImpl(isContext);
+
+            if (flatChildren.Count > 0)
             {
                 if (FlatComments.Count == 0)
                 {
-                    foreach (var comment in flatChilden)
+                    foreach (var comment in flatChildren)
                     {
                         FlatComments.Add(comment);
                     }
                 }
                 else
                 {
-                    MergeDisplayReplacement(flatChilden);
+                    MergeDisplayReplacement(true, flatChildren);
                 }
             }
         }

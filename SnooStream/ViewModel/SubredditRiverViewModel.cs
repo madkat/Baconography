@@ -43,6 +43,7 @@ namespace SnooStream.ViewModel
                 LoadWithoutInitial();
                 EnsureFrontPage();
             }
+
             MessengerInstance.Register<UserLoggedInMessage>(this, OnUserLoggedIn);
         }
 

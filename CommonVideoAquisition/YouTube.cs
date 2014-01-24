@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -10,6 +11,7 @@ namespace CommonVideoAquisition
 {
     class YouTube
     {
+        private static bool _hasLoadedOnce;
         public static bool IsAPI(string url)
         {
             var youtubeRegex = new Regex("youtu(?:\\.be|be\\.com)/(?:.*v(?:/|=)|(?:.*/)?)([a-zA-Z0-9-_]+)");
@@ -80,15 +82,20 @@ namespace CommonVideoAquisition
             return "unknown";
         }
 
-        public static async Task<VideoResult> GetPlayableStreams(string originalUrl)
+        public static async Task<VideoResult> GetPlayableStreams(string originalUrl, Func<string, Task<string>> getter)
         {
-            var streams = await GetPlayableStreamsImpl(originalUrl);
+            var streams = await GetPlayableStreamsImpl(originalUrl, getter);
+            
+            if (streams == null || string.IsNullOrWhiteSpace(streams.Item1) || streams.Item2 == null)
+                return null;
+
+
             var processedStreams = streams.Item2.Select(dict => Tuple.Create(MakeUsableUrl(dict), MakeQualityString(dict)));
             var previewImage = string.Format("http://img.youtube.com/vi/{0}/0.jpg", streams.Item1);
             return new VideoResult { PlayableStreams = processedStreams, PreviewUrl = previewImage };
         }
 
-        private static async Task<Tuple<string, IEnumerable<Dictionary<string, string>>>> GetPlayableStreamsImpl(string originalUrl)
+        private static async Task<Tuple<string, IEnumerable<Dictionary<string, string>>>> GetPlayableStreamsImpl(string originalUrl, Func<string, Task<string>> getter)
         {
             //check which video provider we are
             var youtubeRegex = new Regex("youtu(?:\\.be|be\\.com)/(?:.*v(?:/|=)|(?:.*/)?)([a-zA-Z0-9-_]+)");
@@ -97,14 +104,9 @@ namespace CommonVideoAquisition
                 //need to sanitize the url since we're trying to get the html5 version if at all possible
                 string youtubeId = youtubeRegex.Match(originalUrl).Groups[1].Value;
                 var html5YoutubeUrl = string.Format("http://www.youtube.com/watch?v={0}&nomobile=1", youtubeId);
-                using(var clientHandler = new HttpClientHandler())
-                {
-                    using (var client = new HttpClient())
-                    {
-                        var html5PageContents = await client.GetStringAsync(html5YoutubeUrl);
-                        return Tuple.Create(youtubeId, GetUrls(html5PageContents));
-                    }
-                }
+
+                var html5PageContents = await getter(html5YoutubeUrl);
+                return Tuple.Create(youtubeId, GetUrls(html5PageContents));
                 
             }
             else
@@ -174,4 +176,49 @@ namespace CommonVideoAquisition
             return result;
         }
     }
+
+    //public class HttpClientUtility
+    //{
+    //    private static HttpClient _httpClient;
+    //    private static CookieContainer _cookieContainer = new CookieContainer();
+    //    public static Func<string, Task> InitYouTube;
+
+    //    static Task initTask;
+
+
+    //    static HttpClientUtility()
+    //    {
+    //        var handler = new HttpClientHandler { CookieContainer = _cookieContainer };
+    //        if (handler.SupportsAutomaticDecompression)
+    //        {
+    //            handler.AutomaticDecompression = DecompressionMethods.GZip |
+    //                                             DecompressionMethods.Deflate;
+    //        }
+    //        handler.AllowAutoRedirect = true;
+    //        _httpClient = new HttpClient(handler);
+    //        _httpClient.DefaultRequestHeaders.TryAddWithoutValidation("User-Agent", "Mozilla/5.0 (compatible; MSIE 10.0; Windows Phone 8.0; Trident/6.0; IEMobile/10.0; ARM; Touch;");
+    //    }
+
+    //    public static async Task<string> Get(string uri, bool ignoreErrors = false)
+    //    {
+    //        if (initTask == null)
+    //        {
+    //            lock (typeof(HttpClientUtility))
+    //            {
+    //                if (initTask == null)
+    //                    initTask = InitYouTube(uri);
+    //            }
+    //        }
+
+    //        await initTask;
+
+    //        if (ignoreErrors)
+    //        {
+    //            var httpRequest = await _httpClient.GetAsync(uri);
+    //            return await httpRequest.Content.ReadAsStringAsync();
+    //        }
+    //        else
+    //            return await _httpClient.GetStringAsync(uri);
+    //    }
+    //}
 }
