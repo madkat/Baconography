@@ -137,6 +137,7 @@ namespace SnooStream.ViewModel
         public void DumpInitBlob()
         {
             _initializationBlob.Settings = Settings.Dump();
+            _initializationBlob.Self = UserHub.Self.Dump();
             OfflineService.StoreInitializationBlob(_initializationBlob);
         }
     }

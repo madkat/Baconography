@@ -53,6 +53,16 @@ namespace SnooStream.ViewModel
             }
         }
 
+        public static IEnumerable<Thing> DumpThings(IEnumerable<ActivityGroupViewModel> activities)
+        {
+            List<Thing> things = new List<Thing>();
+            foreach(var group in activities)
+            {
+                group.DumpThings(things);
+            }
+            return things;
+        }
+
         private string OldestMessage { get; set; }
         private string OldestSentMessage { get; set; }
         private string OldestActivity { get; set; }
@@ -156,6 +166,17 @@ namespace SnooStream.ViewModel
 
                 OldestActivity = ProcessListing(inbox, OldestActivity);
             }
+        }
+
+        internal SelfInit Dump()
+        {
+            return new SelfInit
+            {
+                SelfThings = new List<Thing>(DumpThings(Activities)),
+                AfterSelfAction = OldestActivity,
+                AfterSelfMessage = OldestMessage,
+                AfterSelfSentMessage = OldestSentMessage
+            };
         }
     }
 }
