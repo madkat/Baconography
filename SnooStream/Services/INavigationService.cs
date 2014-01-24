@@ -21,5 +21,8 @@ namespace SnooStream.Services
         void NavigateToSettingsWithPreview(SettingsViewModel viewModel);
         Task<bool> ShowPopup(ViewModelBase viewModel);
         void GoBack();
+
+        object GetState(String guid);
+        void RemoveState(String guid);
     }
 }

@@ -31,6 +31,7 @@
             HorizontalAlignment="Stretch"
             HorizontalContentAlignment="Stretch"
             Margin="0,0,-12,0" ItemsSource="{Binding CombinedRivers}"
+            ItemTap="listBox_ItemTap"
             ItemTemplate="{StaticResource normalSubreddit}">
         </telerikData:RadJumpList>
     </Grid>

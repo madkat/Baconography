@@ -36,19 +36,6 @@ namespace SnooStreamWP8
 
             SnooStreamViewModel.UserCredentialService = new DefaultUserCredentialService();
             SnooStreamViewModel.MarkdownProcessor = new MarkdownProvider();
-            //CommonVideoAquisition.HttpClientUtility.InitYouTube = (str) =>
-            //{
-            //    return Task.Factory.StartNew(() => { }).ContinueWith(async (tsk) =>
-            //        {
-            //            TaskCompletionSource<bool> completionSource = new TaskCompletionSource<bool>();
-            //            var browser = new WebBrowser();
-            //            browser.LoadCompleted += delegate { completionSource.SetResult(true); };
-            //            browser.Navigate(new Uri(str));
-            //            await completionSource.Task;
-            //        }, SnooStreamViewModel.UIScheduler);
-            //};
-
-            
 
             // Standard XAML initialization
             InitializeComponent();
@@ -150,7 +137,7 @@ namespace SnooStreamWP8
 
             // Create the frame but don't set it as RootVisual yet; this allows the splash
             // screen to remain active until the application is ready to render.
-            RootFrame = new PhoneApplicationFrame();
+            RootFrame = new RadPhoneApplicationFrame();
             StaticResources = Resources;
             SnooStreamViewModel.SystemServices = new SystemServices(RootFrame.Dispatcher);
             RootFrame.Navigated += CompleteInitializePhoneApplication;
@@ -163,6 +150,7 @@ namespace SnooStreamWP8
 
             // Ensure we don't initialize again
             phoneApplicationInitialized = true;
+            SnooStreamViewModel.NavigationService = new SnooStreamWP8.PlatformServices.NavigationService(RootFrame, null);
         }
 
         // Do not add any additional code to this method

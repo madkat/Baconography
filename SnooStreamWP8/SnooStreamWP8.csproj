@@ -96,6 +96,8 @@
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
     <Compile Include="Common\LinkViewLayoutManager.cs" />
+    <Compile Include="Common\NavigationStateUtility.cs" />
+    <Compile Include="Common\SnooApplicationPage.cs" />
     <Compile Include="Converters\AsyncImageSourceConverter.cs" />
     <Compile Include="Converters\BoolToAccentBrushConverter.cs" />
     <Compile Include="Converters\CommentDepthColorConverter.cs" />
@@ -112,6 +114,7 @@
     <Compile Include="Converters\VoteIndicatorConverter.cs" />
     <Compile Include="LocalizedStrings.cs" />
     <Compile Include="PlatformServices\MarkdownProvider.cs" />
+    <Compile Include="PlatformServices\NavigationService.cs" />
     <Compile Include="PlatformServices\SystemServices.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Resources\AppResources.Designer.cs">
@@ -375,9 +378,6 @@
     </Reference>
     <Reference Include="Nokia.Graphics.Imaging.Managed">
       <HintPath>..\packages\NokiaImagingSDK.1.0.272.0\lib\wp8\Nokia.Graphics.Imaging.Managed.dll</HintPath>
-    </Reference>
-    <Reference Include="SmartNavigation">
-      <HintPath>..\packages\SmartNavigation.1.0.0.0\lib\wp71\SmartNavigation.dll</HintPath>
     </Reference>
     <Reference Include="System.IO.Compression, Version=3.9.69.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>

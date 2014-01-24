@@ -7,10 +7,11 @@ using System.Windows.Controls;
 using System.Windows.Navigation;
 using Microsoft.Phone.Controls;
 using Microsoft.Phone.Shell;
+using SnooStreamWP8.Common;
 
 namespace SnooStreamWP8.View.Pages
 {
-    public partial class SnooStreamHub : PhoneApplicationPage
+    public partial class SnooStreamHub : SnooApplicationPage
     {
         public SnooStreamHub()
         {
