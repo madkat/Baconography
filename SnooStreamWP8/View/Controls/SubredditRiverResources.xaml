@@ -7,7 +7,15 @@
     xmlns:converters="clr-namespace:SnooStreamWP8.Converters">
 
     <DataTemplate x:Name="previewLinkTemplate">
-        <TextBlock TextWrapping="Wrap" Text="{Binding Content.PreviewText}" FontSize="{StaticResource PhoneFontSizeLarge}" MaxHeight="70"/>
+        <Grid HorizontalAlignment="Stretch">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="70" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Image Grid.Column ="0" Height="70" Width="70" Source="{Binding Content.PreviewImage}" VerticalAlignment="Top" />
+            <TextBlock TextWrapping="Wrap" Text="{Binding Content.PreviewText}" VerticalAlignment="Top"
+                    FontSize="{StaticResource PhoneFontSizeLarge}" MaxHeight="70" />
+        </Grid>
     </DataTemplate>
 
     <DataTemplate x:Name="previewImageLinkTemplate">
