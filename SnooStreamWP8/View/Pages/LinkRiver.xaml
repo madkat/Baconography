@@ -32,7 +32,7 @@
                 DataRequested="RadDataBoundListBox_DataRequested">
                 <telerikPrimitives:RadDataBoundListBox.ItemTemplate>
                     <DataTemplate>
-                        <local:SimpleLinkView/>
+                        <local:SimpleLinkView HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch"/>
                     </DataTemplate>
                 </telerikPrimitives:RadDataBoundListBox.ItemTemplate>
             </telerikPrimitives:RadDataBoundListBox>

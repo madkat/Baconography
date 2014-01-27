@@ -12,7 +12,7 @@
             <RowDefinition />
             <RowDefinition />
         </Grid.RowDefinitions>
-        <StackPanel Grid.Row="0" Grid.Column="{Binding Source={StaticResource linkViewLayoutManager}, Path=TextColumn}">
+        <StackPanel Grid.Row="0" Grid.Column="{Binding Source={StaticResource linkViewLayoutManager}, Path=TextColumn}">   
             <Button 
                 BorderThickness="0" Margin="0" Padding="0" HorizontalContentAlignment="Left"
                 FontFamily="Segoe WP" Tap="Button_Tap">
@@ -30,7 +30,7 @@
                 BorderThickness="0" Margin="0,-18,0,0" Padding="0" HorizontalContentAlignment="Left"
                 Visibility="{Binding FromMultiReddit, Converter={StaticResource booleanVisibilityConverter}}"
                 FontFamily="Segoe WP"
-                Command="{Binding GotoSubreddit}" CommandParameter="{Binding}">
+                Command="{Binding GotoSubreddit}">
                 <StackPanel  Orientation="Horizontal">
                     <TextBlock Foreground="Gray" VerticalAlignment="Center" Text="in " />
                     <TextBlock Foreground="Gray" VerticalAlignment="Center" Text="{Binding Subreddit}" />
@@ -52,7 +52,7 @@
             <Button Grid.Column="0"
                 BorderThickness="0" Margin="0,-16,0,0" Padding="0" HorizontalContentAlignment="Left"
                 FontFamily="Segoe WP"
-                Command="{Binding GotoUserDetails}" CommandParameter="{Binding}">
+                Command="{Binding GotoUserDetails}">
                 <StackPanel  Orientation="Horizontal">
                     <TextBlock Foreground="Gray" VerticalAlignment="Center" Text="by " />
                     <TextBlock Foreground="{StaticResource PhoneAccentBrush}" Text="{Binding Author}" />
@@ -65,7 +65,7 @@
             <Button Grid.Column="1"
                     BorderThickness="0" Margin="0,-16,0,0" Padding="0" HorizontalContentAlignment="Left"
                     FontFamily="Segoe WP" HorizontalAlignment="Center"
-                    Command="{Binding Votable.ToggleVote}" CommandParameter="{Binding Votable}">
+                    Command="{Binding Votable.ToggleVote}">
                 <StackPanel Orientation="Horizontal">
                     <TextBlock Margin="0,0,0,0" Foreground="{Binding Votable, Converter={StaticResource voteColorConverter}, ConverterParameter=1, Mode=TwoWay}" FontSize="18" Text="&#xE110;" FontFamily="Segoe UI Symbol"/>
                     <TextBlock Margin="-6,4,0,0" Foreground="{Binding Votable, Converter={StaticResource voteColorConverter}, ConverterParameter=0, Mode=TwoWay}" FontSize="18" Text="&#xE110;" FontFamily="Segoe UI Symbol">
@@ -81,7 +81,7 @@
             <Button Grid.Column="2"
                     BorderThickness="0" Margin="-5,-16,0,0" Padding="0" HorizontalContentAlignment="Left"
                     FontFamily="Segoe UI Symbol" HorizontalAlignment="Center"
-                    Command="{Binding NavigateToComments}" CommandParameter="{Binding}">
+                    Command="{Binding NavigateToComments}">
                 <Grid>
                     <TextBlock Margin="0,0,0,0" Foreground="{StaticResource PhoneContrastBackgroundBrush}" FontSize="45" Text="&#xE200;" />
                     <TextBlock FontSize="{StaticResource PhoneFontSizeNormal}"  Margin="2,17,0,0" Foreground="{StaticResource PhoneContrastForegroundBrush}" Text="{Binding Path=CommentCount}"

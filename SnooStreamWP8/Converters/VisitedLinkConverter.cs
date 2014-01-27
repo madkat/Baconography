@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Data;
 using System.Windows.Media;
 
@@ -36,8 +37,7 @@ namespace SnooStreamWP8.Converters
 
         public VisitedMainLinkConverter()
         {
-            if (App.StaticResources != null)
-                noHistory = App.StaticResources["PhoneForegroundBrush"] as Brush;
+            noHistory = Application.Current.Resources["PhoneForegroundBrush"] as Brush;
         }
 
         public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)

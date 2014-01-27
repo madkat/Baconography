@@ -17,7 +17,7 @@ namespace SnooStreamWP8.Common
 
         public LinkViewLayoutManager()
         {
-            FirstColumnWidth = new GridLength(0, GridUnitType.Auto);
+            FirstColumnWidth = new GridLength(1, GridUnitType.Star);
             SecondColumnWidth = new GridLength(PictureColumnWidth, GridUnitType.Pixel);
             PictureColumn = 1;
             TextColumn = 0;
@@ -43,13 +43,13 @@ namespace SnooStreamWP8.Common
                 if (value)
                 {
                     FirstColumnWidth = new GridLength(PictureColumnWidth, GridUnitType.Pixel);
-                    SecondColumnWidth = new GridLength(0, GridUnitType.Auto);
+                    SecondColumnWidth = new GridLength(1, GridUnitType.Star);
                     PictureColumn = 0;
                     TextColumn = 1;
                 }
                 else
                 {
-                    FirstColumnWidth = new GridLength(0, GridUnitType.Auto);
+                    FirstColumnWidth = new GridLength(1, GridUnitType.Star);
                     SecondColumnWidth = new GridLength(PictureColumnWidth, GridUnitType.Pixel);
                     PictureColumn = 1;
                     TextColumn = 0;
