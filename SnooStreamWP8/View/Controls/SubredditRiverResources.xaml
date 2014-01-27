@@ -6,27 +6,34 @@
     xmlns:telerikPrimitives="clr-namespace:Telerik.Windows.Controls;assembly=Telerik.Windows.Controls.Primitives"
     xmlns:converters="clr-namespace:SnooStreamWP8.Converters">
 
-    <DataTemplate x:Name="previewLinkTemplate">
-        <Grid HorizontalAlignment="Stretch">
+    <DataTemplate x:Name="mixedTypeTemplate">
+        <Grid HorizontalAlignment="Left">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="70" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
-            <Image Grid.Column ="0" Height="70" Width="70" Source="{Binding Content.PreviewImage}" VerticalAlignment="Top" />
-            <TextBlock TextWrapping="Wrap" Text="{Binding Content.PreviewText}" VerticalAlignment="Top"
-                    FontSize="{StaticResource PhoneFontSizeLarge}" MaxHeight="70" />
+            <Image Grid.Column ="0" Height="70" Width="70" Source="{Binding Content.PreviewImage}" VerticalAlignment="Center" />
+            <TextBlock Grid.Column="1" TextWrapping="Wrap" Text="{Binding Content.PreviewText}" VerticalAlignment="Center"
+                    TextTrimming="WordEllipsis" FontSize="{StaticResource PhoneFontSizeMediumLarge}" MaxHeight="110" />
         </Grid>
     </DataTemplate>
 
-    <DataTemplate x:Name="previewImageLinkTemplate">
-        <Image Stretch="UniformToFill" HorizontalAlignment="Stretch" Source="{Binding Content.Preview, Converter={StaticResource asyncImageSourceConverter}}" />
+    <DataTemplate x:Name="previewImageTemplate">
+        <Image Stretch="UniformToFill" HorizontalAlignment="Stretch"
+                Source="{Binding Content.PreviewImage, Converter={StaticResource asyncImageSourceConverter}}" />
     </DataTemplate>
-    
+
+    <DataTemplate x:Name="previewTextTemplate">
+        <TextBlock TextWrapping="Wrap" Text="{Binding Content.PreviewText}" VerticalAlignment="Center" HorizontalAlignment="Left"
+                FontSize="{StaticResource PhoneFontSizeMediumLarge}" MaxHeight="110" TextTrimming="WordEllipsis"/>
+    </DataTemplate>
+
     <DataTemplate x:Name="linkSelector">
-        <selectors:SubredditRiverTemplateSelector
-            Content="{Binding}"
-            ImagesTemplate="{StaticResource previewImageLinkTemplate}"
-            NormalTemplate="{StaticResource previewLinkTemplate}"/>
+        <selectors:SubredditRiverTemplateSelector HorizontalAlignment="Left" VerticalAlignment="Center"
+                HorizontalContentAlignment="Left" VerticalContentAlignment="Center" Content="{Binding}"
+                MixedTemplate="{StaticResource mixedTypeTemplate}"
+                ImagesTemplate="{StaticResource previewImageTemplate}"
+                TextTemplate="{StaticResource previewTextTemplate}" />
     </DataTemplate>
 
     <DataTemplate x:Name="normalSubreddit">

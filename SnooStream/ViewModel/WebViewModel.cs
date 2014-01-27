@@ -29,18 +29,6 @@ namespace SnooStream.ViewModel
             WebParts = new ObservableCollection<object>();
         }
 
-        //preview could look for a large image in the content or it could grab the first paragraph
-        //public override void LoadContent()
-        //{
-            //if nboilerpipe is turned off dont do anything here
-            //otherwise load everything
-        //}
-
-        //public override void LoadPreview()
-        //{
-            //useing nboilerpipe grab the article and get either the first paragraph or the first big image near the top
-        //}
-
         protected override async Task LoadContent()
         {
             using(var handler = new HttpClientHandler { CookieContainer = new System.Net.CookieContainer() })
@@ -56,9 +44,6 @@ namespace SnooStream.ViewModel
                     await LoadFully(client, Url, linkContext != null ? linkContext.Link.Name : null);
                 }
             }
-            
-            
-            
         }
 
         private async Task LoadFully(HttpClient httpService, string url, string linkId)
@@ -109,6 +94,12 @@ namespace SnooStream.ViewModel
                                 RaisePropertyChanged("TextPreview");
                                 RaisePropertyChanged("ImagePreview");
                                 RaisePropertyChanged("NotText");
+
+                                if (hasText)
+                                    PreviewText = (WebParts.FirstOrDefault(part => part is ReadableArticleParagraph) as ReadableArticleParagraph).Text;
+                                
+                                if (hasImage)
+                                    PreviewImage = (WebParts.FirstOrDefault(part => part is ReadableArticleImage) as ReadableArticleImage).Url;
                             }
 
                             report(i * 10);

@@ -13,6 +13,8 @@ namespace SnooStream.ViewModel
         public SelfContentViewModel(ViewModelBase context, Link link) : base(context)
         {
             Link = link;
+            PreviewText = NBoilerpipePortable.Util.HttpUtility.HtmlDecode(link.Selftext).Replace("\t", "").Replace("\n", "");
+            PreviewImage = null;
         }
 
         public Link Link { get; private set; }

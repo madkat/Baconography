@@ -48,7 +48,7 @@ namespace SnooStream.Common
                 if (stream._linkStream.Current.Content != null)
                 {
                     i++;
-                    await stream._linkStream.Current.Content.BeginLoad(false).ContinueWith((tsk) => stream.AddContent(stream._linkStream.Current), SnooStreamViewModel.UIScheduler);
+                    await stream._linkStream.Current.Content.BeginPreviewLoad().ContinueWith((tsk) => stream.AddContent(stream._linkStream.Current), SnooStreamViewModel.UIScheduler);
                 }   
             }        
         }

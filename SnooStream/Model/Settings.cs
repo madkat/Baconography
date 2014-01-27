@@ -91,6 +91,7 @@ namespace SnooStream.Model
             ScreenHeight = init.DefaultGet("ScreenHeight", 800);
             LastUpdatedImages = init.DefaultGet("LastUpdatedImages", new DateTime());
             LastCleanedCache = init.DefaultGet("LastCleanedCache", new DateTime());
+            HeavyPreview = init.DefaultGet("HeavyPreview", false);
         }
 
         public bool AllowOver18 { get; set; }
@@ -103,6 +104,7 @@ namespace SnooStream.Model
         public string Orientation { get; set; }
         public bool AllowPrefetchOnMeteredConnection { get; set; }
         public bool AllowPrefetch { get; set; }
+        public bool HeavyPreview { get; set; }
         public bool PromptForCaptcha { get; set; }
         public bool EnableUpdates { get; set; }
         public bool EnableOvernightUpdates { get; set; }
@@ -170,6 +172,7 @@ namespace SnooStream.Model
             result.Add("ScreenHeight", ScreenHeight.ToString());
             result.Add("LastUpdatedImages", LastUpdatedImages.ToString());
             result.Add("LastCleanedCache", LastCleanedCache.ToString());
+            result.Add("HeavyPreview", HeavyPreview.ToString());
             return result;
 
         }
