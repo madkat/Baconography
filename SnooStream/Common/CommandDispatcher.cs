@@ -65,5 +65,10 @@ namespace SnooStream.Common
             throw new NotImplementedException();
         }
 
+
+        internal object GotoSubreddit(string subreddit)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

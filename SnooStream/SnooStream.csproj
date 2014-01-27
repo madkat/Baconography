@@ -63,6 +63,7 @@
     <Compile Include="Services\INavigationService.cs" />
     <Compile Include="Services\ISystemServices.cs" />
     <Compile Include="Services\IUserCredentialService.cs" />
+    <Compile Include="ViewModel\AboutUserViewModel.cs" />
     <Compile Include="ViewModel\CaptchaViewModel.cs" />
     <Compile Include="ViewModel\LoadFullCommentsViewModel.cs" />
     <Compile Include="ViewModel\MoreViewModel.cs" />

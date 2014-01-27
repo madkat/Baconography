@@ -18,11 +18,15 @@ namespace SnooStream.Services
         void NavigateToUpload(UploadViewModel viewModel);
         void NavigateToSearch(SearchViewModel viewModel);
         void NavigateToAboutReddit(AboutRedditViewModel viewModel);
+        void NavigateToAboutUser(AboutUserViewModel viewModel);
         void NavigateToSettingsWithPreview(SettingsViewModel viewModel);
+        void NavigateToLink(LinkViewModel linkViewModel);
         Task<bool> ShowPopup(ViewModelBase viewModel);
         void GoBack();
 
         object GetState(String guid);
         void RemoveState(String guid);
+
+        
     }
 }

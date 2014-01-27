@@ -1,6 +1,7 @@
 ﻿using CommonImageAquisition;
 using CommonVideoAquisition;
 using GalaSoft.MvvmLight;
+using GalaSoft.MvvmLight.Command;
 using SnooSharp;
 using SnooStream.Common;
 using SnooStream.Model;
@@ -273,5 +274,10 @@ namespace SnooStream.ViewModel
             Metadata = linkMeta;
             RaisePropertyChanged("Metadata");
         }
+
+        public RelayCommand NavigateToComments { get { return new RelayCommand(() => SnooStreamViewModel.NavigationService.NavigateToComments(Comments)); } }
+        public RelayCommand GotoLink { get { return new RelayCommand(() => SnooStreamViewModel.CommandDispatcher.GotoLink(this, Link.Url)); } }
+        public RelayCommand GotoSubreddit { get { return new RelayCommand(() => SnooStreamViewModel.CommandDispatcher.GotoSubreddit(Subreddit)); } }
+        public RelayCommand GotoUserDetails { get { return new RelayCommand(() => SnooStreamViewModel.CommandDispatcher.GotoUserDetails(Author)); } }
     }
 }

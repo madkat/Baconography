@@ -100,5 +100,16 @@ namespace SnooStreamWP8.PlatformServices
         {
             return _navState.DumpState();
         }
+
+
+        public void NavigateToAboutUser(AboutUserViewModel viewModel)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void NavigateToLink(LinkViewModel linkViewModel)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
