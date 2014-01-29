@@ -12,25 +12,40 @@ namespace SnooStream.ViewModel
     //provides load more behavior
     public class LinkStreamViewModel : ViewModelBase
     {
-        private LinkRiverViewModel _context;
-        private NeverEndingRedditEnumerator _enumerator;
-        public LinkStreamViewModel(LinkRiverViewModel context, string linkId)
+        private ViewModelBase _context;
+        private NeverEndingRedditEnumerator _linkRiverEnumerator;
+        public LinkStreamViewModel(ViewModelBase context, string targetIdent)
         {
             _context = context;
-            int linkIndex = -1;
-            if(linkId != null)
+            
+            var linkRiver = context as LinkRiverViewModel;
+            if (linkRiver != null)
             {
-                for (int i = 0; i < _context.Links.Count; i++)
+                int linkIndex = -1;
+                if (targetIdent != null)
                 {
-                    if (_context.Links[i].Link.Id == linkId)
+                    for (int i = 0; i < linkRiver.Links.Count; i++)
                     {
-                        linkIndex = i;
-                        break;
+                        if (linkRiver.Links[i].Link.Id == targetIdent)
+                        {
+                            //need to be -1 because movenext does ++ before it gets current
+                            linkIndex = i - 1;
+                            break;
+                        }
                     }
                 }
+
+                _linkRiverEnumerator = NeverEndingRedditEnumerator.MakeEnumerator(_context, linkIndex, true);
             }
-            _enumerator = new NeverEndingRedditEnumerator(_context, linkIndex, true);
+            else if (context is CommentsViewModel)
+            {
+                _linkRiverEnumerator = NeverEndingRedditEnumerator.MakeEnumerator(_context, targetIdent, true);
+            }
+            else
+                throw new ArgumentException("invalid link stream context");
+            
         }
+
 
         public LinkViewModel Current { get; private set; }
 
@@ -38,7 +53,7 @@ namespace SnooStream.ViewModel
         {
             try
             {
-                var result = await _enumerator.Next();
+                var result = await _linkRiverEnumerator.Next();
                 if (result is LinkViewModel)
                 {
                     Current = result as LinkViewModel;

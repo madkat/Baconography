@@ -15,7 +15,7 @@
         <StackPanel Grid.Row="0" Grid.Column="{Binding Source={StaticResource linkViewLayoutManager}, Path=TextColumn}">   
             <Button 
                 BorderThickness="0" Margin="0" Padding="0" HorizontalContentAlignment="Left"
-                FontFamily="Segoe WP" Tap="Button_Tap">
+                FontFamily="Segoe WP" Command="{Binding GotoLink}">
                 <Button.Content>
                     <StackPanel>
                         <TextBlock HorizontalAlignment="Left" Text="{Binding Title}" TextWrapping="Wrap">

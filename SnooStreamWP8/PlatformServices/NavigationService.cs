@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Controls;
+using Windows.System;
 
 namespace SnooStreamWP8.PlatformServices
 {
@@ -23,7 +24,8 @@ namespace SnooStreamWP8.PlatformServices
 
         public void NavigateToComments(CommentsViewModel viewModel)
         {
-            throw new NotImplementedException();
+            var url = string.Format("/View/Pages/Comments.xaml?state={0}", _navState.AddState(viewModel));
+            _frame.Navigate(new Uri(url, UriKind.Relative));
         }
 
         public void NavigateToLinkRiver(LinkRiverViewModel viewModel)
@@ -34,7 +36,8 @@ namespace SnooStreamWP8.PlatformServices
 
         public void NavigateToLinkStream(LinkStreamViewModel viewModel)
         {
-            throw new NotImplementedException();
+            var url = string.Format("/View/Pages/LinkStream.xaml?state={0}", _navState.AddState(viewModel));
+            _frame.Navigate(new Uri(url, UriKind.Relative));
         }
 
         public void NavigateToMessageReply(CreateMessageViewModel viewModel)
@@ -104,12 +107,25 @@ namespace SnooStreamWP8.PlatformServices
 
         public void NavigateToAboutUser(AboutUserViewModel viewModel)
         {
-            throw new NotImplementedException();
+            var url = string.Format("/View/Pages/User.xaml?state={0}", _navState.AddState(viewModel));
+            _frame.Navigate(new Uri(url, UriKind.Relative));
         }
 
-        public void NavigateToLink(LinkViewModel linkViewModel)
+
+        public async void NavigateToWeb(string url)
         {
-            throw new NotImplementedException();
+            try
+            {
+                await Launcher.LaunchUriAsync(new Uri(url));
+            }
+            catch (AccessViolationException)
+            {
+                //this is platform sillyness when somehow someone triggers this twice it crashes the app
+            }
+            catch(UriFormatException)
+            { 
+                //TODO message box this?
+            }
         }
     }
 }

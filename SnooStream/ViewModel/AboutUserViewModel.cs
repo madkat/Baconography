@@ -9,5 +9,12 @@ namespace SnooStream.ViewModel
 {
     public class AboutUserViewModel : ViewModelBase
     {
+        private SnooSharp.TypedThing<SnooSharp.Account> account;
+
+        public AboutUserViewModel(SnooSharp.TypedThing<SnooSharp.Account> account)
+        {
+            // TODO: Complete member initialization
+            this.account = account;
+        }
     }
 }

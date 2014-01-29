@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace SnooStream.Common
@@ -96,6 +97,41 @@ namespace SnooStream.Common
                             ReprocessForProgress();
                         });
                     })();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex);
+                SnooStream.ViewModel.SnooStreamViewModel.SystemServices.ShowMessage("error", ex.ToString());
+            }
+            finally
+            {
+                FinishNotificationInfo(notificationInfo);
+            }
+        }
+
+        public async Task ModalReportWithCancelation(string message, Func<CancellationToken, Task> operation)
+        {
+            var notificationInfo = new NotificationInfo { Text = message, Progress = -1 };
+            try
+            {
+                AddNotificationInfo(notificationInfo);
+                CancellationTokenSource cancelationTokenSource = new CancellationTokenSource();
+                var opTask = operation(cancelationTokenSource.Token);
+                if (await Task.WhenAny(opTask, Task.Delay(1500, cancelationTokenSource.Token)) == opTask)
+                {
+                    // task completed within timeout
+                    cancelationTokenSource.Cancel();
+                }
+                else
+                {
+                    // timeout logic
+                    //show cancel dialog
+                    await opTask;
+                }
+            }
+            catch (TaskCanceledException)
+            {
+                Debug.WriteLine("task canceled");
             }
             catch (Exception ex)
             {

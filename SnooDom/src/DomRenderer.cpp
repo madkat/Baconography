@@ -668,5 +668,88 @@ namespace SnooDom
 			UpgradeCategory(MarkdownCategory::Full);
 		}
 	};
+
+	public ref class SnooDomLinkVisitor sealed : IDomVisitor
+	{
+
+	public:
+		SnooDomLinkVisitor()
+		{
+			Links = ref new Platform::Collections::Vector<Link^>();
+		}
+
+		property Windows::Foundation::Collections::IVector<Link^>^ Links;
+
+		virtual void Visit(Text^ text)
+		{
+		}
+		virtual void Visit(Code^ code)
+		{
+		}
+		virtual void Visit(Quote^ quote)
+		{
+		}
+		virtual void Visit(OrderedList^ orderedList)
+		{
+			for (auto elem : orderedList)
+			{
+				elem->Accept(this);
+			}
+		}
+		virtual void Visit(UnorderedList^ unorderedList)
+		{
+			for (auto elem : unorderedList)
+			{
+				elem->Accept(this);
+			}
+		}
+		virtual void Visit(HorizontalRule^ horizontalRule)
+		{
+
+		}
+		virtual void Visit(Table^ table)
+		{
+			for (auto elem : table->Rows)
+			{
+				elem->Accept(this);
+			}
+		}
+		virtual void Visit(Link^ link)
+		{
+			Links->Append(link);
+		}
+		virtual void Visit(Paragraph^ paragraph)
+		{
+			for (auto elem : paragraph)
+			{
+				elem->Accept(this);
+			}
+		}
+		virtual void Visit(Document^ document)
+		{
+			for (auto elem : document)
+			{
+				elem->Accept(this);
+			}
+		}
+		virtual void Visit(TableRow^ tableRow)
+		{
+			for (auto elem : tableRow->Columns)
+			{
+				elem->Accept(this);
+			}
+		}
+		virtual void Visit(TableColumn^ tableColumn)
+		{
+			for (auto elem : tableColumn->Contents)
+			{
+				elem->Accept(this);
+			}
+		}
+		virtual void Visit(LineBreak^ lineBreak)
+		{
+			
+		}
+	};
 	
 }
