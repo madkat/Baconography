@@ -35,7 +35,7 @@ namespace SnooStream.ViewModel
                 string targetHost = null;
                 string fileName = null;
 
-                if(Uri.IsWellFormedUriString(Link.Url, UriKind.RelativeOrAbsolute))
+                if(Uri.IsWellFormedUriString(Link.Url, UriKind.Absolute))
                 {
                     var uri = new Uri(Link.Url);
                     targetHost = uri.DnsSafeHost.ToLower();
@@ -276,7 +276,7 @@ namespace SnooStream.ViewModel
         }
 
         public RelayCommand NavigateToComments { get { return new RelayCommand(() => SnooStreamViewModel.NavigationService.NavigateToComments(Comments)); } }
-        public RelayCommand GotoLink { get { return new RelayCommand(() => SnooStreamViewModel.CommandDispatcher.GotoLink(this, Link.Url)); } }
+        public RelayCommand GotoLink { get { return new RelayCommand(() => SnooStreamViewModel.CommandDispatcher.GotoLink(Context, Link.Url)); } }
         public RelayCommand GotoSubreddit { get { return new RelayCommand(() => SnooStreamViewModel.CommandDispatcher.GotoSubreddit(Subreddit)); } }
         public RelayCommand GotoUserDetails { get { return new RelayCommand(() => SnooStreamViewModel.CommandDispatcher.GotoUserDetails(Author)); } }
     }

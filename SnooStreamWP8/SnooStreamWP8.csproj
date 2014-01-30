@@ -181,6 +181,9 @@
     <Compile Include="View\Pages\LinkRiver.xaml.cs">
       <DependentUpon>LinkRiver.xaml</DependentUpon>
     </Compile>
+    <Compile Include="View\Pages\LinkStream.xaml.cs">
+      <DependentUpon>LinkStream.xaml</DependentUpon>
+    </Compile>
     <Compile Include="View\Pages\SnooStreamHub.xaml.cs">
       <DependentUpon>SnooStreamHub.xaml</DependentUpon>
     </Compile>
@@ -277,6 +280,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="View\Pages\LinkRiver.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\Pages\LinkStream.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

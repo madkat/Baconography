@@ -9,7 +9,7 @@ using Telerik.Windows.Controls;
 
 namespace SnooStreamWP8.View.Selectors
 {
-    public class ContentTemplateSelector : DataTemplateSelector
+    public class ContentTemplateSelector : DataTemplateSelectorControl
     {
         public DataTemplate SelfContentTemplate
         {
@@ -41,6 +41,16 @@ namespace SnooStreamWP8.View.Selectors
         // Using a DependencyProperty as the backing store for SelfContentTemplate.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty ImageContentTemplateProperty =
             DependencyProperty.Register("ImageContentTemplate", typeof(DataTemplate), typeof(ContentTemplateSelector), new PropertyMetadata(null));
+
+        public DataTemplate GifContentTemplate
+        {
+            get { return (DataTemplate)GetValue(GifContentTemplateProperty); }
+            set { SetValue(GifContentTemplateProperty, value); }
+        }
+
+        // Using a DependencyProperty as the backing store for SelfContentTemplate.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty GifContentTemplateProperty =
+            DependencyProperty.Register("GifContentTemplate", typeof(DataTemplate), typeof(ContentTemplateSelector), new PropertyMetadata(null));
 
         public DataTemplate ErrorContentTemplate
         {
@@ -83,16 +93,6 @@ namespace SnooStreamWP8.View.Selectors
         public static readonly DependencyProperty WebContentTemplateProperty =
             DependencyProperty.Register("WebContentTemplate", typeof(DataTemplate), typeof(ContentTemplateSelector), new PropertyMetadata(null));
 
-        public DataTemplate LinkContentTemplate
-        {
-            get { return (DataTemplate)GetValue(LinkContentTemplateProperty); }
-            set { SetValue(LinkContentTemplateProperty, value); }
-        }
-
-        // Using a DependencyProperty as the backing store for SelfContentTemplate.  This enables animation, styling, binding, etc...
-        public static readonly DependencyProperty LinkContentTemplateProperty =
-            DependencyProperty.Register("LinkContentTemplate", typeof(DataTemplate), typeof(ContentTemplateSelector), new PropertyMetadata(null));
-
         public DataTemplate InternalRedditContentTemplate
         {
             get { return (DataTemplate)GetValue(InternalRedditContentTemplateProperty); }
@@ -103,11 +103,9 @@ namespace SnooStreamWP8.View.Selectors
         public static readonly DependencyProperty InternalRedditContentTemplateProperty =
             DependencyProperty.Register("InternalRedditContentTemplate", typeof(DataTemplate), typeof(ContentTemplateSelector), new PropertyMetadata(null));
 
-        public override System.Windows.DataTemplate SelectTemplate(object item, System.Windows.DependencyObject container)
+        protected override DataTemplate SelectTemplateCore(object item, DependencyObject container)
         {
-            if (item is LinkViewModel)
-                return LinkContentTemplate;
-            else if (item is InternalRedditContentViewModel)
+            if (item is InternalRedditContentViewModel)
                 return InternalRedditContentTemplate;
             else if (item is SelfContentViewModel)
                 return SelfContentTemplate;

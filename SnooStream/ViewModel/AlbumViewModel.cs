@@ -28,7 +28,7 @@ namespace SnooStream.ViewModel
             int i = 0;
             foreach (var tpl in ApiResults)
             {
-                if(Uri.IsWellFormedUriString(tpl.Item2, UriKind.RelativeOrAbsolute))
+                if(Uri.IsWellFormedUriString(tpl.Item2, UriKind.Absolute))
                 {
                     var imageUri = new Uri(tpl.Item2);
                     //make sure we havent already loaded this image

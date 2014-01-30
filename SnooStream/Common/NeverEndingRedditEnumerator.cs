@@ -49,7 +49,7 @@ namespace SnooStream.Common
             else
                 _currentLinkPos--;
 
-            if (_context.Links.Count > _currentLinkPos && _currentLinkPos > 0)
+            if (_context.Links.Count > _currentLinkPos && _currentLinkPos > -1)
                 return _context.Links[_currentLinkPos];
             else
                 return null;

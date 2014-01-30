@@ -17,7 +17,7 @@ namespace SnooStream.ViewModel
         public LinkStreamViewModel(ViewModelBase context, string targetIdent)
         {
             _context = context;
-            
+            object targetIndex = targetIdent;
             var linkRiver = context as LinkRiverViewModel;
             if (linkRiver != null)
             {
@@ -34,18 +34,34 @@ namespace SnooStream.ViewModel
                         }
                     }
                 }
-
-                _linkRiverEnumerator = NeverEndingRedditEnumerator.MakeEnumerator(_context, linkIndex, true);
+                targetIndex = linkIndex;
+                
+                
             }
-            else if (context is CommentsViewModel)
-            {
-                _linkRiverEnumerator = NeverEndingRedditEnumerator.MakeEnumerator(_context, targetIdent, true);
-            }
-            else
+            else if(context is CommentsViewModel)
                 throw new ArgumentException("invalid link stream context");
-            
+
+            _linkRiverEnumerator = NeverEndingRedditEnumerator.MakeEnumerator(_context, targetIndex, true);
+            LoadPrior = new Lazy<Task<List<LinkViewModel>>>(() => LoadPriorImpl(targetIndex != null ? NeverEndingRedditEnumerator.MakeEnumerator(_context, targetIndex, false) : null));
         }
 
+        public Lazy<Task<List<LinkViewModel>>> LoadPrior { get; private set; }
+
+        private async Task<List<LinkViewModel>> LoadPriorImpl(NeverEndingRedditEnumerator backwardsEnumerator)
+        {
+            var links = new List<LinkViewModel>();
+            if (backwardsEnumerator != null)
+            {
+                LinkViewModel targetLink;
+                while((targetLink = await backwardsEnumerator.Next() as LinkViewModel) != null)
+                {
+                    links.Add(targetLink);
+                }
+                links.Reverse();
+            }
+            
+            return links;
+        }
 
         public LinkViewModel Current { get; private set; }
 

@@ -7,6 +7,7 @@ using System.Windows.Controls;
 using System.Windows.Navigation;
 using Microsoft.Phone.Controls;
 using Microsoft.Phone.Shell;
+using SnooStream.ViewModel;
 
 namespace SnooStreamWP8.View.Controls
 {
@@ -19,7 +20,7 @@ namespace SnooStreamWP8.View.Controls
 
         private void Button_Tap(object sender, System.Windows.Input.GestureEventArgs e)
         {
-
+            ((LinkViewModel)DataContext).GotoLink.Execute(null);
         }
     }
 }
