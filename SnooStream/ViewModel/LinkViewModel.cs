@@ -125,6 +125,15 @@ namespace SnooStream.ViewModel
                 return _content.Value.TryValue();
             }
         }
+
+        public Task<ContentViewModel> AsyncContent
+        {
+            get
+            {
+                return _content.Value;
+            }
+        }
+
         public CommentsViewModel Comments { get; private set; }
         public Link Link { get; private set; }
         public int CommentsLastViewed { get; private set; }
@@ -276,7 +285,7 @@ namespace SnooStream.ViewModel
         }
 
         public RelayCommand NavigateToComments { get { return new RelayCommand(() => SnooStreamViewModel.NavigationService.NavigateToComments(Comments)); } }
-        public RelayCommand GotoLink { get { return new RelayCommand(() => SnooStreamViewModel.CommandDispatcher.GotoLink(Context, Link.Url)); } }
+        public RelayCommand GotoLink { get { return new RelayCommand(() => SnooStreamViewModel.CommandDispatcher.GotoLink(this, Link.Url)); } }
         public RelayCommand GotoSubreddit { get { return new RelayCommand(() => SnooStreamViewModel.CommandDispatcher.GotoSubreddit(Subreddit)); } }
         public RelayCommand GotoUserDetails { get { return new RelayCommand(() => SnooStreamViewModel.CommandDispatcher.GotoUserDetails(Author)); } }
     }

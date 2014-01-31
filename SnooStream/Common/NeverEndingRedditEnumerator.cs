@@ -33,7 +33,7 @@ namespace SnooStream.Common
         public NeverEndingRedditLinkEnumerator(LinkRiverViewModel context, int currentLinkPos, bool forward)
         {
             _context = context;
-            _currentLinkPos = currentLinkPos;
+            _currentLinkPos = currentLinkPos + (forward ? 0 : 1);
             _forward = forward;
         }
         public override async Task<ViewModelBase> Next()

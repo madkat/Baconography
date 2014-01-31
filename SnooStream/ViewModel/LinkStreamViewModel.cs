@@ -57,7 +57,6 @@ namespace SnooStream.ViewModel
                 {
                     links.Add(targetLink);
                 }
-                links.Reverse();
             }
             
             return links;

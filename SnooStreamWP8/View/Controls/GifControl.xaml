@@ -1,0 +1,16 @@
+﻿<UserControl x:Class="SnooStreamWP8.View.Controls.GifControl"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    d:DesignHeight="480" d:DesignWidth="480">
+
+    <Grid x:Name="LayoutRoot" Margin="0,0,0,0">
+        <ViewportControl x:Name="viewport">
+            <DrawingSurface
+                x:Name="image">
+            </DrawingSurface>
+        </ViewportControl>
+    </Grid>
+</UserControl>

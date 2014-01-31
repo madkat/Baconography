@@ -42,16 +42,6 @@ namespace SnooStreamWP8.View.Selectors
         public static readonly DependencyProperty ImageContentTemplateProperty =
             DependencyProperty.Register("ImageContentTemplate", typeof(DataTemplate), typeof(ContentTemplateSelector), new PropertyMetadata(null));
 
-        public DataTemplate GifContentTemplate
-        {
-            get { return (DataTemplate)GetValue(GifContentTemplateProperty); }
-            set { SetValue(GifContentTemplateProperty, value); }
-        }
-
-        // Using a DependencyProperty as the backing store for SelfContentTemplate.  This enables animation, styling, binding, etc...
-        public static readonly DependencyProperty GifContentTemplateProperty =
-            DependencyProperty.Register("GifContentTemplate", typeof(DataTemplate), typeof(ContentTemplateSelector), new PropertyMetadata(null));
-
         public DataTemplate ErrorContentTemplate
         {
             get { return (DataTemplate)GetValue(ErrorContentTemplateProperty); }
@@ -105,6 +95,11 @@ namespace SnooStreamWP8.View.Selectors
 
         protected override DataTemplate SelectTemplateCore(object item, DependencyObject container)
         {
+            if (item is ContentViewModel)
+            {
+                ((ContentViewModel)item).BeginLoad(true);
+            }
+
             if (item is InternalRedditContentViewModel)
                 return InternalRedditContentTemplate;
             else if (item is SelfContentViewModel)

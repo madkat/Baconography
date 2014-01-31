@@ -137,6 +137,9 @@
     <Compile Include="View\Controls\ComposePostView.xaml.cs">
       <DependentUpon>ComposePostView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="View\Controls\GifControl.xaml.cs">
+      <DependentUpon>GifControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="View\Controls\LargeTextEditor.xaml.cs">
       <DependentUpon>LargeTextEditor.xaml</DependentUpon>
     </Compile>
@@ -190,6 +193,7 @@
     <Compile Include="View\Selectors\CommentTemplateSelector.cs" />
     <Compile Include="View\Selectors\ContentTemplateSelector.cs" />
     <Compile Include="View\Selectors\DataTemplateSelectorControl.cs" />
+    <Compile Include="View\Selectors\ImageTemplateSelector.cs" />
     <Compile Include="View\Selectors\SubredditRiverTemplateSelector.cs" />
     <Compile Include="View\Selectors\TypedTemplateSelector.cs" />
     <Compile Include="View\Selectors\UserActivityTemplateSelector.cs" />
@@ -220,6 +224,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="View\Controls\ComposePostView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\Controls\GifControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

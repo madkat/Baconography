@@ -86,6 +86,8 @@ namespace SnooStream.Common
             var task = SnooStreamViewModel.NotificationService.ModalReportWithCancelation(string.Format("navigating to {0}", url), async (token) =>
             {
                 var sourceLink = context is LinkViewModel ? ((LinkViewModel)context).Link : null;
+                var linkContext = context as LinkViewModel;
+                var riverContext = linkContext != null ? linkContext.Context : null;
 
                 if (CommentRegex.IsMatch(url))
                 {
@@ -242,7 +244,7 @@ namespace SnooStream.Common
                 }
                 else
                 {
-                    SnooStreamViewModel.NavigationService.NavigateToLinkStream(new LinkStreamViewModel(context, sourceLink == null ? url : sourceLink.Id));
+                    SnooStreamViewModel.NavigationService.NavigateToLinkStream(new LinkStreamViewModel(riverContext, sourceLink == null ? url : sourceLink.Id));
                 }
             });
             await task;

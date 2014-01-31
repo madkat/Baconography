@@ -38,40 +38,59 @@ namespace SnooStreamWP8.View.Pages
             }
         }
 
+        bool _loading = false;
+
         public async void LoadInitialLinks(ObservableCollection<LinkViewModel> links)
         {
-            var linkStream = DataContext as LinkStreamViewModel;
-            if (linkStream != null && await linkStream.MoveNext())
+            try
             {
-                links.Add(linkStream.Current);
-
-                for (int i = 0; i < 5 && await linkStream.MoveNext(); i++)
+                _loading = true;
+                var linkStream = DataContext as LinkStreamViewModel;
+                if (linkStream != null && await linkStream.MoveNext())
                 {
+                    await (await linkStream.Current.AsyncContent).BeginLoad(true);
                     links.Add(linkStream.Current);
+
+                    for (int i = 0; i < 5 && await linkStream.MoveNext(); i++)
+                    {
+                        await (await linkStream.Current.AsyncContent).BeginLoad(true);
+                        links.Add(linkStream.Current);
+                    }
+
+                    await Task.Yield();
+
+                    var priorLinks = await linkStream.LoadPrior.Value;
+                    foreach (var link in priorLinks)
+                        links.Insert(0, link);
                 }
-
-                await Task.Yield();
-
-                var priorLinks = await linkStream.LoadPrior.Value;
-                foreach (var link in priorLinks)
-                    links.Insert(0, link);
-
-                ((IPageProvider)radSlideView).CurrentIndex = priorLinks.Count;
+            }
+            finally
+            {
+                _loading = false;
             }
         }
 
         private async void radSlideViewIndexChanged(object sender, EventArgs e)
         {
-            if(Links.Count > 0 && !_noMoreLoad)
+            if(Links.Count > 0 && !_noMoreLoad && !_loading)
             {
-                //preload distance
-                if (((IPageProvider)radSlideView).CurrentIndex > (Links.Count - 5))
+                try
                 {
-                    _noMoreLoad = !(await ((LinkStreamViewModel)DataContext).MoveNext());
-                    if (!_noMoreLoad)
+                    _loading = true;
+                    //preload distance
+                    if (((IPageProvider)radSlideView).CurrentIndex > (Links.Count - 5))
                     {
-                        Links.Add(((LinkStreamViewModel)DataContext).Current);
+                        _noMoreLoad = !(await ((LinkStreamViewModel)DataContext).MoveNext());
+                        if (!_noMoreLoad)
+                        {
+                            await (await ((LinkStreamViewModel)DataContext).Current.AsyncContent).BeginLoad(true);
+                            Links.Add(((LinkStreamViewModel)DataContext).Current);
+                        }
                     }
+                }
+                finally
+                {
+                    _loading = false;
                 }
             }
         }
