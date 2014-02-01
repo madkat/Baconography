@@ -18,7 +18,7 @@ namespace SnooStreamWP8.View.Selectors
 
         // Using a DependencyProperty as the backing store for SelfContentTemplate.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty CommentTemplateProperty =
-            DependencyProperty.Register("CommentTemplate", typeof(DataTemplate), typeof(ContentTemplateSelector), new PropertyMetadata(null));
+            DependencyProperty.Register("CommentTemplate", typeof(DataTemplate), typeof(CommentTemplateSelector), new PropertyMetadata(null));
 
 
         public DataTemplate MoreTemplate
@@ -29,7 +29,7 @@ namespace SnooStreamWP8.View.Selectors
 
         // Using a DependencyProperty as the backing store for SelfContentTemplate.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty MoreTemplateProperty =
-            DependencyProperty.Register("MoreTemplate", typeof(DataTemplate), typeof(ContentTemplateSelector), new PropertyMetadata(null));
+            DependencyProperty.Register("MoreTemplate", typeof(DataTemplate), typeof(CommentTemplateSelector), new PropertyMetadata(null));
 
         public DataTemplate LoadFullyTemplate
         {
@@ -39,7 +39,7 @@ namespace SnooStreamWP8.View.Selectors
 
         // Using a DependencyProperty as the backing store for SelfContentTemplate.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty LoadFullyTemplateProperty =
-            DependencyProperty.Register("LoadFullyTemplate", typeof(DataTemplate), typeof(ContentTemplateSelector), new PropertyMetadata(null));
+            DependencyProperty.Register("LoadFullyTemplate", typeof(DataTemplate), typeof(CommentTemplateSelector), new PropertyMetadata(null));
 
     }
 }

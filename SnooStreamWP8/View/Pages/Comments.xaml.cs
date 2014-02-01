@@ -7,26 +7,27 @@ using System.Windows.Controls;
 using System.Windows.Navigation;
 using Microsoft.Phone.Controls;
 using Microsoft.Phone.Shell;
+using SnooStreamWP8.Common;
 using SnooStream.ViewModel;
-using SnooStream.Common;
+using SnooStreamWP8.View.Controls;
 
-namespace SnooStreamWP8.View.Controls
+namespace SnooStreamWP8.View.Pages
 {
-    public partial class CommentsView : UserControl
+    public partial class Comments : SnooApplicationPage
     {
-        public CommentsView()
+        public Comments()
         {
             InitializeComponent();
         }
 
-        private void RadDataBoundListBox_DataRequested(object sender, EventArgs e)
+        private async void RadDataBoundListBox_DataRequested(object sender, EventArgs e)
         {
 
         }
 
-        private void RadDataBoundListBox_RefreshRequested(object sender, EventArgs e)
+        private async void RadDataBoundListBox_RefreshRequested(object sender, EventArgs e)
         {
-
+            await ((CommentsViewModel)DataContext).Refresh();
         }
 
         private void Link_Tap(object sender, System.Windows.Input.GestureEventArgs e)

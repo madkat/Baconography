@@ -49,14 +49,15 @@ namespace SnooStream.ViewModel
         public CommentsViewModel(ViewModelBase context, Link linkData)
         {
             _context = context;
+            Link = _context as LinkViewModel;
             _loadFullSentinel = new LoadFullCommentsViewModel(this);
-            ProcessUrl(linkData.Url);
-            
+            ProcessUrl("http://www.reddit.com" + linkData.Permalink);
         }
 
         public CommentsViewModel(ViewModelBase context, string url)
         {
             _context = context;
+            Link = _context as LinkViewModel;
             _loadFullSentinel = new LoadFullCommentsViewModel(this);
             ProcessUrl(url);
         }
@@ -85,6 +86,8 @@ namespace SnooStream.ViewModel
                     Sort = "hot";
 
                 BaseUrl = url.Substring(0, url.Length - uri.Query.Length);
+
+                _loadFullTask = new Lazy<Task>(() => LoadAndMergeFull(IsContext));
             }
         }
 
@@ -259,18 +262,21 @@ namespace SnooStream.ViewModel
                 if (_comments.TryGetValue(targetChild, out childShell))
                 {
                     list.Add(childShell.Comment);
-                    if (childShell.NextSibling != null)
+                    if (childShell.FirstChild != null)
                     {
-                        InsertIntoFlatList(childShell.NextSibling, list);
+                        InsertIntoFlatList(childShell.FirstChild, list);
                     }
+                    targetChild = childShell.NextSibling;
                 }
                 else if(_knownUnloaded.ContainsKey(targetChild)) //if its not in the list check the known unloaded list (more)
                 {
                     list.Add(new MoreViewModel(this, _knownUnloaded[targetChild]));
+                    targetChild = null;
                 }
                 else //we must be looking at something missing because on context so we need to put out a 'loadfull' viewmodel
                 {
                     list.Add(new LoadFullCommentsViewModel(this));
+                    targetChild = null;
                 }
             }
         }
@@ -383,9 +389,11 @@ namespace SnooStream.ViewModel
                 MergeDisplayChildren(flatChilden, moreId);
         }
 
+        Lazy<Task> _loadFullTask;
+
         public Task LoadFull()
         {
-            return LoadAndMergeFull(false);
+            return _loadFullTask.Value;
         }
 
         public Task Refresh()

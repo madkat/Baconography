@@ -125,9 +125,6 @@
     <Compile Include="View\Controls\CaptchaControl.xaml.cs">
       <DependentUpon>CaptchaControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="View\Controls\CommentsView.xaml.cs">
-      <DependentUpon>CommentsView.xaml</DependentUpon>
-    </Compile>
     <Compile Include="View\Controls\CommentView.xaml.cs">
       <DependentUpon>CommentView.xaml</DependentUpon>
     </Compile>
@@ -181,6 +178,9 @@
     <Compile Include="View\Controls\SubredditRiver.xaml.cs">
       <DependentUpon>SubredditRiver.xaml</DependentUpon>
     </Compile>
+    <Compile Include="View\Pages\Comments.xaml.cs">
+      <DependentUpon>Comments.xaml</DependentUpon>
+    </Compile>
     <Compile Include="View\Pages\LinkRiver.xaml.cs">
       <DependentUpon>LinkRiver.xaml</DependentUpon>
     </Compile>
@@ -208,10 +208,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="View\Controls\CaptchaControl.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="View\Controls\CommentsView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -284,6 +280,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="View\Controls\SubredditRiverResources.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\Pages\Comments.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

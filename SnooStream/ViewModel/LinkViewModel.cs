@@ -26,6 +26,8 @@ namespace SnooStream.ViewModel
                     return contentTask;
                 });
 
+            Comments = new CommentsViewModel(this, link);
+
         }
 
         private async Task<ContentViewModel> LoadContent()
@@ -284,7 +286,17 @@ namespace SnooStream.ViewModel
             RaisePropertyChanged("Metadata");
         }
 
-        public RelayCommand NavigateToComments { get { return new RelayCommand(() => SnooStreamViewModel.NavigationService.NavigateToComments(Comments)); } }
+        public RelayCommand NavigateToComments 
+        { 
+            get 
+            { 
+                return new RelayCommand(() => 
+                {
+                    Comments.LoadFull();
+                    SnooStreamViewModel.NavigationService.NavigateToComments(Comments); 
+                });
+            }
+        }
         public RelayCommand GotoLink { get { return new RelayCommand(() => SnooStreamViewModel.CommandDispatcher.GotoLink(this, Link.Url)); } }
         public RelayCommand GotoSubreddit { get { return new RelayCommand(() => SnooStreamViewModel.CommandDispatcher.GotoSubreddit(Subreddit)); } }
         public RelayCommand GotoUserDetails { get { return new RelayCommand(() => SnooStreamViewModel.CommandDispatcher.GotoUserDetails(Author)); } }

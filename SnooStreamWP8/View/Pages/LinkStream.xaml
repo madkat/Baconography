@@ -19,14 +19,14 @@
         <Grid.Resources>
             <DataTemplate x:Name="imageTemplate">
                 <telerikSlideView:PanAndZoomImage 
+                    ZoomMode="Free"
                     HorizontalAlignment="Stretch" VerticalAlignment="Stretch" 
                     Source="{Binding Url}" />
             </DataTemplate>
 
             <DataTemplate x:Name="loadingTemplate">
-                <telerikSlideView:PanAndZoomImage 
-                    HorizontalAlignment="Stretch" VerticalAlignment="Stretch" 
-                    Source="{Binding Url}" />
+                <telerikPrimitives:RadBusyIndicator
+                    IsRunning="True"/>
             </DataTemplate>
 
             <DataTemplate x:Name="gifTemplate">
@@ -45,12 +45,9 @@
             </DataTemplate>
 
             <DataTemplate x:Name="contentSelector" >
-                <selectors:ContentTemplateSelector Content="{Binding Content}" ImageContentTemplate="{StaticResource imageSelector}"/>
+                <selectors:ContentTemplateSelector Content="{Binding Content}" 
+                                                   ImageContentTemplate="{StaticResource imageSelector}"/>
             </DataTemplate>
-            
-            
-            
-            
             
             <DataTemplate x:Name="overlayTemplate">
                 

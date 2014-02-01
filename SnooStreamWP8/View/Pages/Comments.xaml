@@ -1,13 +1,16 @@
-﻿<UserControl x:Class="SnooStreamWP8.View.Controls.CommentsView"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:SnooStreamWP8.View.Controls"
-        xmlns:telerik="clr-namespace:Telerik.Windows.Controls;assembly=Telerik.Windows.Controls.Primitives"
-        xmlns:selectors="clr-namespace:SnooStreamWP8.View.Selectors" mc:Ignorable="d"
-        FontFamily="{StaticResource PhoneFontFamilyNormal}" FontSize="{StaticResource PhoneFontSizeNormal}"
-        Foreground="{StaticResource PhoneForegroundBrush}" d:DesignHeight="480" d:DesignWidth="480">
+﻿<common:SnooApplicationPage
+    x:Class="SnooStreamWP8.View.Pages.Comments"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="clr-namespace:SnooStreamWP8.View.Controls"
+    xmlns:common="clr-namespace:SnooStreamWP8.Common"
+    xmlns:phone="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone"
+    xmlns:shell="clr-namespace:Microsoft.Phone.Shell;assembly=Microsoft.Phone"
+    xmlns:telerikPrimitives="clr-namespace:Telerik.Windows.Controls;assembly=Telerik.Windows.Controls.Primitives"
+    xmlns:selectors="clr-namespace:SnooStreamWP8.View.Selectors"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
 
     <Grid x:Name="LayoutRoot">
         <Grid.Resources>
@@ -342,7 +345,7 @@
                     MoreTemplate="{StaticResource MoreViewTemplate}" />
         </Grid.Resources>
 
-        <telerik:RadDataBoundListBox ListHeaderTemplate="{StaticResource HeaderTemplate}"
+        <telerikPrimitives:RadDataBoundListBox ListHeaderTemplate="{StaticResource HeaderTemplate}"
                 ItemTemplateSelector="{StaticResource commentTemplateSelector}"
                 DataVirtualizationMode="OnDemandAutomatic" DataRequested="RadDataBoundListBox_DataRequested"
                 ListHeaderDisplayMode="WithDataItems" RefreshRequested="RadDataBoundListBox_RefreshRequested"
@@ -350,4 +353,4 @@
                 ItemsSource="{Binding FlatComments}" />
         <Popup x:Name="sortPopup" HorizontalAlignment="Center" VerticalAlignment="Center" />
     </Grid>
-</UserControl>
+    </common:SnooApplicationPage>
