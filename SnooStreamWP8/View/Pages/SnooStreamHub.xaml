@@ -15,33 +15,23 @@
 
     <!--LayoutRoot contains the root grid where all other page content is placed-->
     <Grid x:Name="LayoutRoot">
-        <phone:Panorama Title="Snoo Stream">
-            <phone:Panorama.TitleTemplate>
-                <DataTemplate>
-                    <TextBlock Margin="18,40,0,0" FontSize="{StaticResource PhoneFontSizeNormal}" Text="{Binding}"/>
-                </DataTemplate>
-            </phone:Panorama.TitleTemplate>
-
-            <phone:PanoramaItem Header="Subreddits" DataContext="{Binding SubredditRiver}">
+        <phone:Pivot>
+            <phone:PivotItem Header="Subreddits" DataContext="{Binding SubredditRiver}">
                 <local:SubredditRiver/>
-            </phone:PanoramaItem>
-
-            <phone:PanoramaItem Header="Self" DataContext="{Binding UserHub.Self}" Visibility="{Binding IsLoggedIn, Converter={StaticResource booleanVisibilityConverter}}">
+            </phone:PivotItem>
+            <phone:PivotItem Header="Self" DataContext="{Binding UserHub.Self}" Visibility="{Binding IsLoggedIn, Converter={StaticResource booleanVisibilityConverter}}">
                 <local:SelfActivityView/>
-            </phone:PanoramaItem>
-
-            <phone:PanoramaItem Header="Login" DataContext="{Binding UserHub}" Visibility="{Binding Self.IsLoggedIn, Converter={StaticResource invertedBooleanVisibilityConverter}}">
+            </phone:PivotItem>
+            <phone:PivotItem Header="Login" DataContext="{Binding UserHub}" Visibility="{Binding Self.IsLoggedIn, Converter={StaticResource invertedBooleanVisibilityConverter}}">
                 <local:LoginView DataContext="{Binding Login}"/>
-            </phone:PanoramaItem>
-            
-            <phone:PanoramaItem Header="Settings" DataContext="{Binding Settings}">
+            </phone:PivotItem>
+            <phone:PivotItem Header="Settings" DataContext="{Binding Settings}">
                 <local:SettingsView />
-            </phone:PanoramaItem>
-
-            <phone:PanoramaItem Header="Moderator" DataContext="{Binding ModeratorHub}" Visibility="{Binding IsUserModerator, Converter={StaticResource booleanVisibilityConverter}}">
+            </phone:PivotItem>
+            <phone:PivotItem Header="Moderator" DataContext="{Binding ModeratorHub}" Visibility="{Binding IsUserModerator, Converter={StaticResource booleanVisibilityConverter}}">
                 <Grid/>
-            </phone:PanoramaItem>
-        </phone:Panorama>
+            </phone:PivotItem>
+        </phone:Pivot>
     </Grid>
 
 </common:SnooApplicationPage>

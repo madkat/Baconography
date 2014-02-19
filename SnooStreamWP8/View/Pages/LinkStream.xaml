@@ -35,6 +35,7 @@
                     ImageSource="{Binding ImageSource.ImageData}" />
             </DataTemplate>
 
+           
 
             <DataTemplate x:Name="imageSelector" >
                 <selectors:ImageTemplateSelector 
@@ -44,13 +45,21 @@
                     LoadingTemplate="{StaticResource loadingTemplate}"/>
             </DataTemplate>
 
+            <DataTemplate x:Name="albumTemplate">
+                <telerikPrimitives:RadSlideView ItemsSource="{Binding Images}" Orientation="Vertical" IsLoopingEnabled="False" AdjacentItemsPreviewMode="None" 
+                                                IsPullToRefreshEnabled="False" ItemRealizationMode="ViewportItem" ItemTemplate="{StaticResource imageSelector}"/>
+            </DataTemplate>
+
             <DataTemplate x:Name="contentSelector" >
                 <selectors:ContentTemplateSelector Content="{Binding Content}" 
-                                                   ImageContentTemplate="{StaticResource imageSelector}"/>
+                                                   ImageContentTemplate="{StaticResource imageSelector}"
+                                                   AlbumContentTemplate="{StaticResource albumTemplate}"/>
             </DataTemplate>
+
             
+
             <DataTemplate x:Name="overlayTemplate">
-                
+                <local:ExtendedAppBarControl Name="appBar" DataContext="{Binding Content}" LastButtonSymbol="&#xE118;" LastButtonText="Save" LastButtonCommand="{Binding SaveCommand, ElementName=pageRoot}" Text="{Binding Title}"/>
             </DataTemplate>
         </Grid.Resources>
         
@@ -60,10 +69,11 @@
 
         <!--ContentPanel - place additional content here-->
         <Grid x:Name="ContentPanel" Margin="12,0,12,0">
-            <telerikPrimitives:RadSlideView x:Name="radSlideView" ItemsSource="{Binding Links, ElementName=linkStream}" AdjacentItemsPreviewMode="None" IsPullToRefreshEnabled="false" 
+            <telerikPrimitives:RadSlideView x:Name="radSlideView" ItemsSource="{Binding Links, ElementName=linkStream}" AdjacentItemsPreviewMode="None" IsPullToRefreshEnabled="False" 
                                             Orientation="Horizontal" IsLoopingEnabled="False" OverlayContentTemplate="{StaticResource overlayTemplate}" IsShowOverlayContentOnTapEnabled="True"
                                             ItemRealizationMode="ViewportItem" ItemTemplate="{StaticResource contentSelector}">
             </telerikPrimitives:RadSlideView>
+            
         </Grid>
     </Grid>
 

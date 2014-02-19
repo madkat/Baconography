@@ -15,8 +15,8 @@ namespace SnooStream.ViewModel
         {
             Url = originalUrl;
             Domain = new Uri(originalUrl).Host;
-            AlbumTitle = albumTitle;
-            Images = new ObservableCollection<ImageViewModel>();
+            Title = albumTitle;
+            Images = new ObservableCollection<ContentViewModel>();
             ApiResults = apiResults.Where(tpl => Uri.IsWellFormedUriString(tpl.Item2, UriKind.Absolute)).ToList();
             ApiImageCount = ApiResults.Count();
             if (ApiImageCount == 0)
@@ -63,8 +63,8 @@ namespace SnooStream.ViewModel
         public string Url { get; private set; }
         public string Domain { get; private set; }
         public int ApiImageCount { get; private set; }
-        public ObservableCollection<ImageViewModel> Images { get; private set; }
-        public string AlbumTitle { get; private set; }
+        public ObservableCollection<ContentViewModel> Images { get; private set; }
+        public string Title { get; private set; }
         public PreviewImageSource Preview { get; private set; }
 
         protected override async Task LoadContent()
@@ -73,7 +73,7 @@ namespace SnooStream.ViewModel
             var addResult = await LoadImageImpl(firstImage.Item1, new Uri(firstImage.Item2), true);
             if (addResult)
             {
-                Preview = Images.First().Preview;
+                //Preview = Images.First().Preview;
             }
             LoadAlbumImpl();
         }
