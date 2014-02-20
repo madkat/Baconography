@@ -206,16 +206,11 @@
     </UserControl.Resources>
 
     <Grid>
-        <Grid x:Name="overlay" VerticalAlignment="Top" Opacity="{Binding Opacity, ElementName=theControl}" Background="{StaticResource PhoneChromeBrush}">
-            <TextBlock HorizontalAlignment="Right"  Margin="12,36,12,6" FontSize="22" Foreground="{StaticResource PhoneForegroundBrush}" 
-                        Text="{Binding Text, ElementName=theControl}" TextWrapping="Wrap"
-                        x:Name="caption"/>
-        </Grid>
-        <Rectangle VerticalAlignment="Bottom" HorizontalAlignment="Stretch" Height="90" Fill="{StaticResource PhoneChromeBrush}"/>
-        <!--="{Binding Source={StaticResource ShowAppBarVertical}, Converter={StaticResource invertedBooleanVisibilityConverter}}"/>-->
-        <Grid Height="80" VerticalAlignment="Bottom" HorizontalAlignment="Center">
-        <!--Visibility="{Binding Source={StaticResource ShowAppBarVertical}, Converter={StaticResource invertedBooleanVisibilityConverter}}">-->
-        <Grid.ColumnDefinitions>
+        <Rectangle VerticalAlignment="Bottom" HorizontalAlignment="Stretch" Height="90" Fill="{StaticResource PhoneChromeBrush}"
+                   Visibility="{Binding Source={StaticResource orientationManager}, Path=IsLandscape, Converter={StaticResource invertedBooleanVisibilityConverter}}"/>
+        <Grid Height="80" VerticalAlignment="Bottom" HorizontalAlignment="Center"
+              Visibility="{Binding Source={StaticResource orientationManager}, Path=IsLandscape, Converter={StaticResource invertedBooleanVisibilityConverter}}">
+            <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="80"/>
                 <ColumnDefinition Width="80"/>
                 <ColumnDefinition Width="80"/>
@@ -265,9 +260,9 @@
             <TextBlock Grid.Row="2" Grid.Column="3" Margin="0,4,0,0" Text="{Binding LastButtonText, ElementName=theControl}" FontSize="14" HorizontalAlignment="Center" Foreground="{StaticResource PhoneForegroundBrush}" />
         </Grid>
 
-        <!--<Rectangle VerticalAlignment="Stretch" HorizontalAlignment="Right" Width="60" 
-                   Visibility="{Binding Source={StaticResource ShowAppBarVertical}, Converter={StaticResource booleanVisibilityConverter}}" Fill="{StaticResource PhoneChromeBrush}"/>
-        <Grid Width="55" HorizontalAlignment="Right" VerticalAlignment="Center" Visibility="{Binding Source={StaticResource ShowAppBarVertical}, Converter={StaticResource booleanVisibilityConverter}}">
+        <Rectangle VerticalAlignment="Stretch" HorizontalAlignment="Right" Width="60" 
+                   Visibility="{Binding Source={StaticResource orientationManager}, Path=IsLandscape, Converter={StaticResource booleanVisibilityConverter}}" Fill="{StaticResource PhoneChromeBrush}"/>
+        <Grid Width="55" HorizontalAlignment="Right" VerticalAlignment="Center" Visibility="{Binding Source={StaticResource orientationManager}, Path=IsLandscape, Converter={StaticResource booleanVisibilityConverter}}">
             <Grid.RowDefinitions>
                 <RowDefinition Height="80" />
                 <RowDefinition Height="80" />
@@ -306,7 +301,7 @@
                     Width="50" Height="50" Content="{Binding LastButtonSymbol, ElementName=theControl}"
                     Style="{StaticResource HeavyRoundButtonStyle}"
                     Command="{Binding LastButtonCommand, ElementName=theControl}"/>
-        </Grid>-->
+        </Grid>
 
     </Grid>
 </UserControl>

@@ -15,12 +15,13 @@ namespace SnooStreamWP8.Common
 {
     public class SnooApplicationPage : PhoneApplicationPage
     {
+        OrientationManager _orientationManager;
         public SnooApplicationPage()
         {
-            Resources.Add("ShowAppBarVertical", false);
             FontSize = (double)Application.Current.Resources["PhoneFontSizeNormal"];
             FontFamily = Application.Current.Resources["PhoneFontFamilyNormal"] as FontFamily;
             Foreground = Application.Current.Resources["PhoneForegroundBrush"] as Brush;
+            _orientationManager = Application.Current.Resources["orientationManager"] as OrientationManager;
             Messenger.Default.Register<SettingsChangedMessage>(this, OnSettingsChanged);
         }
 
@@ -34,8 +35,7 @@ namespace SnooStreamWP8.Common
                 case PageOrientation.LandscapeLeft:
                 case PageOrientation.LandscapeRight:
                     Microsoft.Phone.Shell.SystemTray.IsVisible = false;
-                    Resources.Remove("ShowAppBarVertical");
-                    Resources.Add("ShowAppBarVertical", true);
+                    _orientationManager.IsLandscape = true;
                     break;
                 case PageOrientation.None:
                 case PageOrientation.Portrait:
@@ -43,8 +43,7 @@ namespace SnooStreamWP8.Common
                 case PageOrientation.PortraitUp:
                 default:
                     Microsoft.Phone.Shell.SystemTray.IsVisible = DefaultSystray;
-                    Resources.Remove("ShowAppBarVertical");
-                    Resources.Add("ShowAppBarVertical", false);
+                    _orientationManager.IsLandscape = false;
                     break;
             }
             SnooStreamViewModel.Settings.ScreenHeight = 800;

@@ -59,22 +59,26 @@
             
 
             <DataTemplate x:Name="overlayTemplate">
-                <local:ExtendedAppBarControl Name="appBar" DataContext="{Binding Content}" LastButtonSymbol="&#xE118;" LastButtonText="Save" LastButtonCommand="{Binding SaveCommand, ElementName=pageRoot}" Text="{Binding Title}"/>
+                <Border HorizontalAlignment="Stretch" Margin="0,0,0,15" VerticalAlignment="Top" Height="Auto" Opacity=".75" Background="{StaticResource PhoneChromeBrush}">
+                    <TextBlock Text="{Binding Content.Title}" TextWrapping="Wrap" MaxHeight="300"/>
+                </Border>
             </DataTemplate>
         </Grid.Resources>
         
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
+            <RowDefinition Height="90"/>
         </Grid.RowDefinitions>
 
         <!--ContentPanel - place additional content here-->
-        <Grid x:Name="ContentPanel" Margin="12,0,12,0">
+        <Grid x:Name="ContentPanel" Margin="0,0,0,0" Grid.Row="0">
             <telerikPrimitives:RadSlideView x:Name="radSlideView" ItemsSource="{Binding Links, ElementName=linkStream}" AdjacentItemsPreviewMode="None" IsPullToRefreshEnabled="False" 
                                             Orientation="Horizontal" IsLoopingEnabled="False" OverlayContentTemplate="{StaticResource overlayTemplate}" IsShowOverlayContentOnTapEnabled="True"
                                             ItemRealizationMode="ViewportItem" ItemTemplate="{StaticResource contentSelector}">
             </telerikPrimitives:RadSlideView>
             
         </Grid>
+        <local:ExtendedAppBarControl Name="appBar" Grid.Row="1" DataContext="{Binding SelectedItem.Content.Context, ElementName=radSlideView}" LastButtonSymbol="&#xE118;" LastButtonText="Save"/>
     </Grid>
 
 </common:SnooApplicationPage>

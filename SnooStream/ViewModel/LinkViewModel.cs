@@ -30,6 +30,8 @@ namespace SnooStream.ViewModel
 
         }
 
+        public bool HasContext { get { return true; } }
+
         private async Task<ContentViewModel> LoadContent()
         {
             try

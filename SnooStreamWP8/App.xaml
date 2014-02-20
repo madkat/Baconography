@@ -27,6 +27,7 @@
         <converters:BoolToAccentBrushConverter x:Key="boolToAccentBrushConverter" />
         <converters:UnixTimeConverter x:Key="unixTimeConverter" />
         <common:LinkViewLayoutManager x:Key="linkViewLayoutManager" />
+        <common:OrientationManager x:Key="orientationManager" />
         <converters:AsyncImageSourceConverter x:Key="asyncImageSourceConverter" />
     </Application.Resources>
 
