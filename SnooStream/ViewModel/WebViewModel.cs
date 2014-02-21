@@ -29,7 +29,7 @@ namespace SnooStream.ViewModel
             WebParts = new ObservableCollection<object>();
         }
 
-        protected override async Task LoadContent()
+        internal override async Task LoadContent()
         {
             using(var handler = new HttpClientHandler { CookieContainer = new System.Net.CookieContainer() })
             {

@@ -13,6 +13,8 @@ using Telerik.Windows.Controls;
 using SnooStreamWP8.PlatformServices;
 using SnooStream.Services;
 using System.Threading.Tasks;
+using System.Threading;
+using Microsoft.Phone.Info;
 
 namespace SnooStreamWP8
 {
@@ -63,8 +65,48 @@ namespace SnooStreamWP8
                 // Caution:- Use this under debug mode only. Application that disables user idle detection will continue to run
                 // and consume battery power when the user is not using the phone.
                 PhoneApplicationService.Current.UserIdleDetectionMode = IdleDetectionMode.Disabled;
+                LowMemoryHelper.BeginRecording();
             }
 
+        }
+
+        public static class LowMemoryHelper
+        {
+            private static Timer timer = null;
+
+            public static void BeginRecording()
+            {
+                // before we start recording we can clean up the previous session.
+                // e.g. Get a logging file from IsoStore and upload to the server 
+
+                // start a timer to report memory conditions every 2 seconds
+                timer = new Timer(state =>
+                {
+                    // every 2 seconds do something 
+                    string report =
+                        DateTime.Now.ToLongTimeString() + " memory conditions: " +
+                        Environment.NewLine +
+                        "\tApplicationCurrentMemoryUsage: " +
+                            DeviceStatus.ApplicationCurrentMemoryUsage +
+                            Environment.NewLine +
+                        "\tApplicationPeakMemoryUsage: " +
+                            DeviceStatus.ApplicationPeakMemoryUsage +
+                            Environment.NewLine +
+                        "\tApplicationMemoryUsageLimit: " +
+                            DeviceStatus.ApplicationMemoryUsageLimit +
+                            Environment.NewLine +
+                        "\tDeviceTotalMemory: " + DeviceStatus.DeviceTotalMemory + Environment.NewLine +
+                        "\tApplicationWorkingSetLimit: " +
+                            DeviceExtendedProperties.GetValue("ApplicationWorkingSetLimit") +
+                            Environment.NewLine;
+
+                    // write to IsoStore or debug conolse
+                    Debug.WriteLine(report);
+                },
+                    null,
+                    TimeSpan.FromSeconds(2),
+                    TimeSpan.FromSeconds(2));
+            }
         }
 
         // Code to execute when the application is launching (eg, from Start)

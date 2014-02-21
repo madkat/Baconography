@@ -44,6 +44,13 @@ namespace SnooStream.ViewModel
                                     RaisePropertyChanged("Loading");
                                     RaisePropertyChanged("Content");
                                 }
+                                else
+                                {
+                                    Errored = true;
+                                    Error = tsk.Exception.ToString();
+                                    RaisePropertyChanged("Errored");
+                                    RaisePropertyChanged("Error");
+                                }
                             }, SnooStreamViewModel.UIScheduler);
                     }
                 }
@@ -64,12 +71,15 @@ namespace SnooStream.ViewModel
         }
 
         Task ContentLoadTask { get; set; }
-        protected abstract Task LoadContent();
+        internal abstract Task LoadContent();
         public ViewModelBase Context { get; private set; }
         public bool Loaded { get; set; }
         public bool Loading { get; set; }
         public int PreviewLoadPercent { get; set; }
         public string PreviewText { get; set; }
         public object PreviewImage { get; set; } //might be a url, or might be a previewImageSource
+        public string Error { get; set; }
+        public bool Errored { get; set; }
+
     }
 }

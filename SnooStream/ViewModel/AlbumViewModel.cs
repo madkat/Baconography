@@ -67,7 +67,7 @@ namespace SnooStream.ViewModel
         public string Title { get; private set; }
         public PreviewImageSource Preview { get; private set; }
 
-        protected override async Task LoadContent()
+        internal override async Task LoadContent()
         {
             var firstImage = ApiResults.First();
             var addResult = await LoadImageImpl(firstImage.Item1, new Uri(firstImage.Item2), true);

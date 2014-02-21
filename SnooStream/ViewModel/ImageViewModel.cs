@@ -54,7 +54,7 @@ namespace SnooStream.ViewModel
             return bytes;
         }
 
-        protected override async Task LoadContent()
+        internal override async Task LoadContent()
         {
             ImageSource = new ImageSource(Url, await LoadImage());
             Preview = new PreviewImageSource(ImageSource);

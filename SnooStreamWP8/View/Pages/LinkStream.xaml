@@ -20,7 +20,7 @@
             <DataTemplate x:Name="imageTemplate">
                 <telerikSlideView:PanAndZoomImage 
                     ZoomMode="Free"
-                    HorizontalAlignment="Stretch" VerticalAlignment="Stretch" 
+                    HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Unloaded="PanAndZoomImage_Unloaded"
                     Source="{Binding Url}" />
             </DataTemplate>
 
@@ -31,7 +31,7 @@
 
             <DataTemplate x:Name="gifTemplate">
                 <local:GifControl
-                    HorizontalAlignment="Center" VerticalAlignment="Center"
+                    HorizontalAlignment="Center" VerticalAlignment="Center" Unloaded="GifControl_Unloaded"
                     ImageSource="{Binding ImageSource.ImageData}" />
             </DataTemplate>
 
@@ -41,8 +41,7 @@
                 <selectors:ImageTemplateSelector 
                     Content="{Binding}"
                     StaticTemplate="{StaticResource imageTemplate}"
-                    GifTemplate="{StaticResource gifTemplate}"
-                    LoadingTemplate="{StaticResource loadingTemplate}"/>
+                    GifTemplate="{StaticResource gifTemplate}"/>
             </DataTemplate>
 
             <DataTemplate x:Name="albumTemplate">
@@ -51,16 +50,17 @@
             </DataTemplate>
 
             <DataTemplate x:Name="contentSelector" >
-                <selectors:ContentTemplateSelector Content="{Binding Content}" 
+                <selectors:ContentTemplateSelector Content="{Binding}" 
                                                    ImageContentTemplate="{StaticResource imageSelector}"
-                                                   AlbumContentTemplate="{StaticResource albumTemplate}"/>
+                                                   AlbumContentTemplate="{StaticResource albumTemplate}"
+                                                   LoadingContentTemplate="{StaticResource loadingTemplate}"/>
             </DataTemplate>
 
             
 
             <DataTemplate x:Name="overlayTemplate">
                 <Border HorizontalAlignment="Stretch" Margin="0,0,0,15" VerticalAlignment="Top" Height="Auto" Opacity=".75" Background="{StaticResource PhoneChromeBrush}">
-                    <TextBlock Text="{Binding Content.Title}" TextWrapping="Wrap" MaxHeight="300"/>
+                    <TextBlock Text="{Binding Title}" TextWrapping="Wrap" MaxHeight="300"/>
                 </Border>
             </DataTemplate>
         </Grid.Resources>
@@ -78,7 +78,7 @@
             </telerikPrimitives:RadSlideView>
             
         </Grid>
-        <local:ExtendedAppBarControl Name="appBar" Grid.Row="1" DataContext="{Binding SelectedItem.Content.Context, ElementName=radSlideView}" LastButtonSymbol="&#xE118;" LastButtonText="Save"/>
+        <local:ExtendedAppBarControl Name="appBar" Grid.Row="1" DataContext="{Binding SelectedItem.Context, ElementName=radSlideView}" LastButtonSymbol="&#xE118;" LastButtonText="Save"/>
     </Grid>
 
 </common:SnooApplicationPage>

@@ -14,7 +14,7 @@ namespace SnooStream.ViewModel
 
         }
 
-        protected override async Task LoadContent()
+        internal override async Task LoadContent()
         {
             //nothing to load here
         }

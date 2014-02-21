@@ -36,7 +36,7 @@ namespace SnooStream.ViewModel
             }
         }
 
-        protected override async Task LoadContent()
+        internal override async Task LoadContent()
         {
             var videoResult = await VideoAquisition.GetPlayableStreams(Url, SnooStreamViewModel.SystemServices.SendGet);
             if (videoResult != null)

@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace SnooStream.Common
 {
-    abstract class NeverEndingRedditEnumerator
+    public abstract class NeverEndingRedditEnumerator
     {
         public static NeverEndingRedditEnumerator MakeEnumerator(ViewModelBase context, object currentPosition, bool forward)
         {

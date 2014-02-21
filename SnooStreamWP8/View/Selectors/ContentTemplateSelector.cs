@@ -52,6 +52,16 @@ namespace SnooStreamWP8.View.Selectors
         public static readonly DependencyProperty ErrorContentTemplateProperty =
             DependencyProperty.Register("ErrorContentTemplate", typeof(DataTemplate), typeof(ContentTemplateSelector), new PropertyMetadata(null));
 
+        public DataTemplate LoadingContentTemplate
+        {
+            get { return (DataTemplate)GetValue(LoadingContentTemplateProperty); }
+            set { SetValue(LoadingContentTemplateProperty, value); }
+        }
+
+        // Using a DependencyProperty as the backing store for SelfContentTemplate.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty LoadingContentTemplateProperty =
+            DependencyProperty.Register("LoadingContentTemplate", typeof(DataTemplate), typeof(ContentTemplateSelector), new PropertyMetadata(null));
+
 
         public DataTemplate VideoContentTemplate
         {
@@ -100,7 +110,9 @@ namespace SnooStreamWP8.View.Selectors
                 ((ContentViewModel)item).BeginLoad(true);
             }
 
-            if (item is InternalRedditContentViewModel)
+            if (item is LoadingContentViewModel)
+                return LoadingContentTemplate;
+            else if (item is InternalRedditContentViewModel)
                 return InternalRedditContentTemplate;
             else if (item is SelfContentViewModel)
                 return SelfContentTemplate;

@@ -31,26 +31,13 @@ namespace SnooStreamWP8.View.Selectors
         public static readonly DependencyProperty StaticTemplateProperty =
             DependencyProperty.Register("StaticTemplate", typeof(DataTemplate), typeof(ImageTemplateSelector), new PropertyMetadata(null));
 
-        public DataTemplate LoadingTemplate
-        {
-            get { return (DataTemplate)GetValue(LoadingTemplateProperty); }
-            set { SetValue(LoadingTemplateProperty, value); }
-        }
-
-        // Using a DependencyProperty as the backing store for SelfContentTemplate.  This enables animation, styling, binding, etc...
-        public static readonly DependencyProperty LoadingTemplateProperty =
-            DependencyProperty.Register("LoadingTemplate", typeof(DataTemplate), typeof(ImageTemplateSelector), new PropertyMetadata(null));
-
 
         protected override DataTemplate SelectTemplateCore(object item, DependencyObject container)
         {
             var image = item as ImageViewModel;
             if (image != null)
             {
-                if (image.Loaded)
-                    return image.IsGif ? GifTemplate : StaticTemplate;
-                else
-                    return LoadingTemplate;
+               return image.IsGif ? GifTemplate : StaticTemplate;
             }
             else
                 return null;

@@ -18,7 +18,7 @@ namespace SnooStream.ViewModel
         
         public string Error { get; private set; }
         public RelayCommand Retry { get { return ((dynamic)Context).ReloadContent; } }
-        protected override async Task LoadContent()
+        internal override async Task LoadContent()
         {
             //nothing to load here
         }

@@ -19,7 +19,7 @@ namespace SnooStream.ViewModel
 
         public Link Link { get; private set; }
 
-        protected override async Task LoadContent()
+        internal override async Task LoadContent()
         {
             //load the comments
         }
