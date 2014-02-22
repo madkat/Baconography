@@ -185,5 +185,10 @@ namespace SnooStreamWP8.View.Pages
             var gControl = sender as GifControl;
             gControl.ImageSource = null;
         }
+
+        private void radSlideView_DoubleTap(object sender, System.Windows.Input.GestureEventArgs e)
+        {
+
+        }
     }
 }

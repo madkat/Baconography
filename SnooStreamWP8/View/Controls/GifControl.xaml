@@ -7,10 +7,24 @@
     d:DesignHeight="480" d:DesignWidth="480">
 
     <Grid x:Name="LayoutRoot" Margin="0,0,0,0">
-        <ViewportControl x:Name="viewport">
-            <DrawingSurface
-                x:Name="image">
-            </DrawingSurface>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <ViewportControl x:Name="viewport" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                ManipulationStarted="OnManipulationStarted" ManipulationDelta="OnManipulationDelta" 
+                             ManipulationCompleted="OnManipulationCompleted" ViewportChanged="viewport_ViewportChanged">
+            <Canvas x:Name="canvas">
+                <DrawingSurface RenderTransformOrigin="0,0"
+                x:Name="image" DoubleTap="viewport_DoubleTap">
+                    <DrawingSurface.RenderTransform>
+                        <ScaleTransform x:Name="xform"/>
+                    </DrawingSurface.RenderTransform>
+                </DrawingSurface>
+            </Canvas>
         </ViewportControl>
     </Grid>
 </UserControl>

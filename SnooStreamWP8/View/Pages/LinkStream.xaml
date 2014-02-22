@@ -74,7 +74,7 @@
         <Grid x:Name="ContentPanel" Margin="0,0,0,0" Grid.Row="0">
             <telerikPrimitives:RadSlideView x:Name="radSlideView" ItemsSource="{Binding Links, ElementName=linkStream}" AdjacentItemsPreviewMode="None" IsPullToRefreshEnabled="False" 
                                             Orientation="Horizontal" IsLoopingEnabled="False" OverlayContentTemplate="{StaticResource overlayTemplate}" IsShowOverlayContentOnTapEnabled="True"
-                                            ItemRealizationMode="ViewportItem" ItemTemplate="{StaticResource contentSelector}">
+                                            ItemRealizationMode="ViewportItem" ItemTemplate="{StaticResource contentSelector}" DoubleTap="radSlideView_DoubleTap">
             </telerikPrimitives:RadSlideView>
             
         </Grid>
