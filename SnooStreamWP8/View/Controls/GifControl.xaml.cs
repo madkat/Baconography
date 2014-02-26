@@ -12,6 +12,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Media;
 using System.Windows.Input;
+using SnooStreamWP8.Common;
 
 namespace SnooStreamWP8.View.Controls
 {
@@ -23,6 +24,7 @@ namespace SnooStreamWP8.View.Controls
         }
 
         Direct3DInterop _interop;
+        //this needs to be set to null when you detach it fron the visual hierachy or you will leak memory very rapidly
         public static readonly DependencyProperty ImageSourceProperty =
             DependencyProperty.Register(
                 "ImageSource",
@@ -30,6 +32,46 @@ namespace SnooStreamWP8.View.Controls
                 typeof(GifControl),
                 new PropertyMetadata(null, onImageSourceSet)
             );
+
+
+        //this exists because DrawingSurface totally screws up the gesture events for itself and most containing controls
+        //this can be safely hosted in something like a RadSlideView if you pass in a ManipulationController and remember to clear it
+        //when the control is removed otherwise you will leak like crazy
+        public ManipulationController ManipulationController
+        {
+            get { return (ManipulationController)GetValue(ManipulationControllerProperty); }
+            set { SetValue(ManipulationControllerProperty, value); }
+        }
+
+        // Using a DependencyProperty as the backing store for ManipulationController.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty ManipulationControllerProperty =
+            DependencyProperty.Register("ManipulationController", typeof(ManipulationController), typeof(GifControl), new PropertyMetadata(null, onControllerSet));
+
+        private static void onControllerSet(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var value = e.NewValue as ManipulationController;
+            var thisp = d as GifControl;
+            var oldValue = e.OldValue as ManipulationController;
+
+            if (thisp == null)
+                return;
+
+            if (oldValue != null)
+            {
+                oldValue.DoubleTap -= thisp.viewport_DoubleTap;
+                oldValue.ManipulationDelta -= thisp.OnManipulationDelta;
+                oldValue.ManipulationCompleted -= thisp.OnManipulationCompleted;
+                oldValue.ManipulationStarted -= thisp.OnManipulationStarted;
+            }
+
+            if (value != null)
+            {
+                value.DoubleTap += thisp.viewport_DoubleTap;
+                value.ManipulationDelta += thisp.OnManipulationDelta;
+                value.ManipulationCompleted += thisp.OnManipulationCompleted;
+                value.ManipulationStarted += thisp.OnManipulationStarted;
+            }
+        }
 
         private static void onImageSourceSet(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
@@ -201,8 +243,8 @@ namespace SnooStreamWP8.View.Controls
             if (recompute && _interop != null && viewport != null)
             {
                 // Calculate the minimum scale to fit the viewport 
-                double minX = 480 / _interop.Width;
-                double minY = 800 / _interop.Height;
+                double minX = 480.0 / (double)_interop.Width;
+                double minY = 800.0 / (double)_interop.Height;
 
                 _minScale = Math.Min(minX, minY);
             }
@@ -223,6 +265,8 @@ namespace SnooStreamWP8.View.Controls
                 _coercedScale = _minScale;
             else
                 _coercedScale *= 1.75;
+
+            _scale = _coercedScale;
 
             ResizeImage(false);
         }

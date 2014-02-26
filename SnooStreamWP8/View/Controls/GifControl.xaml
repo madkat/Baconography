@@ -14,12 +14,10 @@
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
-        <ViewportControl x:Name="viewport" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
-                ManipulationStarted="OnManipulationStarted" ManipulationDelta="OnManipulationDelta" 
-                             ManipulationCompleted="OnManipulationCompleted" ViewportChanged="viewport_ViewportChanged">
+        <ViewportControl x:Name="viewport" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" ViewportChanged="viewport_ViewportChanged">
             <Canvas x:Name="canvas">
                 <DrawingSurface RenderTransformOrigin="0,0"
-                x:Name="image" DoubleTap="viewport_DoubleTap">
+                x:Name="image">
                     <DrawingSurface.RenderTransform>
                         <ScaleTransform x:Name="xform"/>
                     </DrawingSurface.RenderTransform>

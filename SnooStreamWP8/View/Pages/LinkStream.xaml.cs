@@ -23,12 +23,14 @@ namespace SnooStreamWP8.View.Pages
     {
         public LinkStream()
         {
+            ManipulationController = new ManipulationController();
             InitializeComponent();
         }
 
         bool _noMoreLoad = false;
         bool _noMoreLoadBack = false;
         ObservableCollection<ContentViewModel> _links;
+        public ManipulationController ManipulationController { get; set; }
         public ObservableCollection<ContentViewModel> Links
         {
             get
@@ -172,6 +174,7 @@ namespace SnooStreamWP8.View.Pages
 
         private void PanAndZoomImage_Unloaded(object sender, RoutedEventArgs e)
         {
+            //image controls leak 100% of their memory if you dont explicitly clear the UriSource on them when they are detached from the visual hierarchy
             var pZoom = sender as PanAndZoomImage;
             if (pZoom.Source is BitmapImage)
             {
@@ -182,13 +185,30 @@ namespace SnooStreamWP8.View.Pages
 
         private void GifControl_Unloaded(object sender, RoutedEventArgs e)
         {
+            //gif control also leaks if you dont clear its imagesource and manipulationController
             var gControl = sender as GifControl;
             gControl.ImageSource = null;
+            gControl.ManipulationController = null;
         }
 
         private void radSlideView_DoubleTap(object sender, System.Windows.Input.GestureEventArgs e)
         {
+            ManipulationController.FireDoubleTap(sender, e);
+        }
 
+        private void radSlideView_ManipulationStarted(object sender, System.Windows.Input.ManipulationStartedEventArgs e)
+        {
+            ManipulationController.FireManipulationStarted(sender, e);
+        }
+
+        private void radSlideView_ManipulationCompleted(object sender, System.Windows.Input.ManipulationCompletedEventArgs e)
+        {
+            ManipulationController.FireManipulationCompleted(sender, e);
+        }
+
+        private void radSlideView_ManipulationDelta(object sender, System.Windows.Input.ManipulationDeltaEventArgs e)
+        {
+            ManipulationController.FireManipulationDelta(sender, e);
         }
     }
 }
