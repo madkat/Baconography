@@ -22,7 +22,7 @@ namespace SnooStreamWP8.View.Pages
 
         private async void RadDataBoundListBox_DataRequested(object sender, EventArgs e)
         {
-
+            await ((CommentsViewModel)DataContext).LoadFull();
         }
 
         private async void RadDataBoundListBox_RefreshRequested(object sender, EventArgs e)

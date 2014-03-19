@@ -27,6 +27,8 @@
         <converters:BoolToAccentBrushConverter x:Key="boolToAccentBrushConverter" />
         <converters:UnixTimeConverter x:Key="unixTimeConverter" />
         <common:LinkViewLayoutManager x:Key="linkViewLayoutManager" />
+        <converters:AuthorFlairKindConverter x:Key="authorFlairKindConverter"/>
+        <converters:ForegroundAuthorFlairKindConverter x:Key="fgAuthorFlairKindConverter"/>
         <common:OrientationManager x:Key="orientationManager" />
         <converters:AsyncImageSourceConverter x:Key="asyncImageSourceConverter" />
     </Application.Resources>

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SnooStream.ViewModel;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -41,5 +42,16 @@ namespace SnooStreamWP8.View.Selectors
         public static readonly DependencyProperty LoadFullyTemplateProperty =
             DependencyProperty.Register("LoadFullyTemplate", typeof(DataTemplate), typeof(CommentTemplateSelector), new PropertyMetadata(null));
 
+
+        public override DataTemplate SelectTemplate(object item, DependencyObject container)
+        {
+            if (item is CommentViewModel)
+                return CommentTemplate;
+            else if (item is MoreViewModel)
+                return MoreTemplate;
+            else if (item is LoadFullCommentsViewModel)
+                return LoadFullyTemplate;
+            else throw new NotImplementedException();
+        }
     }
 }

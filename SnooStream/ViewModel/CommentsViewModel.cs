@@ -51,6 +51,7 @@ namespace SnooStream.ViewModel
             _context = context;
             Link = _context as LinkViewModel;
             _loadFullSentinel = new LoadFullCommentsViewModel(this);
+            FlatComments = new ObservableCollection<ViewModelBase>();
             ProcessUrl("http://www.reddit.com" + linkData.Permalink);
         }
 
@@ -59,6 +60,7 @@ namespace SnooStream.ViewModel
             _context = context;
             Link = _context as LinkViewModel;
             _loadFullSentinel = new LoadFullCommentsViewModel(this);
+            FlatComments = new ObservableCollection<ViewModelBase>();
             ProcessUrl(url);
         }
 
@@ -404,7 +406,7 @@ namespace SnooStream.ViewModel
         public async Task<List<ViewModelBase>> LoadImpl(bool isContext)
         {
             List<ViewModelBase> flatChildren = new List<ViewModelBase>(); 
-            await Task.Run<Task>(async () =>
+            await await Task.Run<Task>(async () =>
             {
                 var listing = await SnooStreamViewModel.RedditService.GetCommentsOnPost(Link.Link.Subreddit, BaseUrl, null);
                 lock (this)
