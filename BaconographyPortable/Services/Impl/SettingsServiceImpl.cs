@@ -97,6 +97,7 @@ namespace BaconographyPortable.Services.Impl
         public bool OneTouchVoteMode { get; set; }
 
         public bool DisableBackground { get; set; }
+        public bool UseCycleTile { get; set; }
 
         public void ShowSettings()
         {
@@ -365,6 +366,12 @@ namespace BaconographyPortable.Services.Impl
                 DisableBackground = bool.Parse(disableBackground);
             else
                 DisableBackground = false;
+
+            var useCycleTile = initBlob.Settings.TryNullGet("UseCycleTile");
+            if (!string.IsNullOrWhiteSpace(useCycleTile))
+                UseCycleTile = bool.Parse(useCycleTile);
+            else
+                UseCycleTile = true;
         }
 
         public async Task Persist()
@@ -413,6 +420,7 @@ namespace BaconographyPortable.Services.Impl
                 initBlob.Settings["SimpleLayoutMode"] = SimpleLayoutMode.ToString();
                 initBlob.Settings["DisableBackground"] = DisableBackground.ToString();
                 initBlob.Settings["OneTouchVoteMode2"] = OneTouchVoteMode.ToString();
+                initBlob.Settings["UseCycleTile"] = UseCycleTile.ToString();
 
             });
         }

@@ -144,7 +144,7 @@ namespace BaconographyWP8.Common
 
                 liveTileService.StoreTaskSettings((unused) =>
                     {
-                        return new TaskSettings { rounded = settingsService.RoundedLockScreen, cookie = loginCookie ?? "", opacity = settingsService.OverlayOpacity.ToString(), number_of_items = settingsService.OverlayItemCount.ToString(), link_reddit = CleanRedditLink(settingsService.LockScreenReddit, user), live_reddit = CleanRedditLink(settingsService.LiveTileReddit, user), lock_images = lockScreenImages.ToArray(), tile_images = tileImages.ToArray() };
+                        return new TaskSettings { rounded = settingsService.RoundedLockScreen, cycleTile = settingsService.UseCycleTile, cookie = loginCookie ?? "", opacity = settingsService.OverlayOpacity.ToString(), number_of_items = settingsService.OverlayItemCount.ToString(), link_reddit = CleanRedditLink(settingsService.LockScreenReddit, user), live_reddit = CleanRedditLink(settingsService.LiveTileReddit, user), lock_images = lockScreenImages.ToArray(), tile_images = tileImages.ToArray() };
                     }, false);
                 
 

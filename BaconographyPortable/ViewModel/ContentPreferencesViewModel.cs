@@ -453,6 +453,19 @@ namespace BaconographyPortable.ViewModel
             }
         }
 
+        public bool UseCycleTile
+        {
+            get
+            {
+                return _settingsService.UseCycleTile;
+            }
+            set
+            {
+                _settingsService.UseCycleTile = value;
+                RaisePropertyChanged("UseCycleTile");
+            }
+        }
+
         public RelayCommand ClearOffline
         {
             get

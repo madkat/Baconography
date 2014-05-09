@@ -9,6 +9,7 @@ namespace BaconographyPortable.Model
     public struct TaskSettings
     {
         public bool rounded;
+        public bool cycleTile;
         public string cookie;
         public string opacity;
         public string number_of_items;

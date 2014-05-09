@@ -179,6 +179,7 @@
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
+    <Content Include="Assets\ApplicationIcon.png" />
     <Content Include="Assets\ApplicationIconSmall.png" />
     <Content Include="Assets\BaconographyKitaroPlug.png" />
     <Content Include="Assets\BaconographyPhoneIconWide.png" />

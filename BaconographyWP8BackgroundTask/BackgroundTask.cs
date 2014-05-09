@@ -85,6 +85,7 @@ namespace BaconographyWP8
             TinyRedditService redditService = null;
             bool hasMail = false;
             bool roundedCorners = false;
+            bool useCycleTile = true;
             int messageCount = 0;
             try
             {
@@ -99,6 +100,7 @@ namespace BaconographyWP8
                         var decodedJson = JSON.JsonDecode(json);
 
                         var rounded = JSON.GetValue(decodedJson, "rounded") as bool?;
+                        var cycleTile = JSON.GetValue(decodedJson, "cycle_tile") as bool?;
                         var cookie = JSON.GetValue(decodedJson, "cookie") as string;
                         var opacityStr = JSON.GetValue(decodedJson, "opacity") as string;
                         var numOfItemsStr = JSON.GetValue(decodedJson, "number_of_items") as string;
@@ -113,6 +115,7 @@ namespace BaconographyWP8
                         if (!Int32.TryParse(opacityStr, out opacity)) opacity = 35;
                         if (!Int32.TryParse(numOfItemsStr, out numberOfItems)) numberOfItems = 6;
                         if (rounded != null) roundedCorners = rounded.Value;
+                        if (cycleTile != null) useCycleTile = cycleTile.Value;
 
                         if (!string.IsNullOrWhiteSpace(cookie))
                         {
@@ -257,7 +260,7 @@ namespace BaconographyWP8
 
                     try
                     {
-                        UpdateLiveTile(tileImages, messageCount, liveTileCounter, startTileCounter);
+                        UpdateLiveTile(tileImages, messageCount, liveTileCounter, startTileCounter, useCycleTile);
                     }
                     catch { }
 
@@ -344,39 +347,56 @@ namespace BaconographyWP8
             }
         }
 
-        public static void UpdateLiveTile(List<object> tileImages, int messageCount, int liveTileCounter, int startTileCounter)
+        public static void UpdateLiveTile(List<object> tileImages, int messageCount, int liveTileCounter, int startTileCounter, bool useCycleTile)
         {
             var activeTiles = ShellTile.ActiveTiles;
             var activeTile = activeTiles.FirstOrDefault();
             if (activeTile != null)
             {
-                var uris = new List<Uri>();
-
-                Shuffle(tileImages);
-
-                if (startTileCounter != liveTileCounter)
+                if (useCycleTile)
                 {
-                    uris.Add(new Uri(string.Format("isostore:/Shared/ShellContent/tileCache{0}.jpg", startTileCounter), UriKind.Absolute));
+                    var uris = new List<Uri>();
+
+                    Shuffle(tileImages);
+
+                    if (startTileCounter != liveTileCounter)
+                    {
+                        uris.Add(new Uri(string.Format("isostore:/Shared/ShellContent/tileCache{0}.jpg", startTileCounter), UriKind.Absolute));
+                    }
+
+                    foreach (var image in tileImages.Take(startTileCounter != liveTileCounter ? 8 : 9))
+                    {
+                        uris.Add(new Uri("isostore:/Shared/ShellContent/" + ((string)image), UriKind.Absolute));
+                    }
+
+                    if (uris.Count == 0)
+                    {
+                        uris.Add(new Uri("/Assets/BaconographyPhoneIconWide.png", UriKind.Relative));
+                    }
+
+                    CycleTileData cycleTile = new CycleTileData()
+                    {
+                        Title = "Baconography",
+                        Count = messageCount,
+                        SmallBackgroundImage = new Uri("/Assets/ApplicationIconSmall.png", UriKind.Relative),
+                        CycleImages = uris
+                    };
+
+                    activeTile.Update(cycleTile);
                 }
-
-                foreach (var image in tileImages.Take(startTileCounter != liveTileCounter ? 8 : 9))
+                else
                 {
-                    uris.Add(new Uri("isostore:/Shared/ShellContent/" + ((string)image), UriKind.Absolute));
+                    FlipTileData flipTile = new FlipTileData()
+                    {
+                        Title = "SnooStream",
+                        Count = messageCount,
+                        BackgroundImage = new Uri("/Assets/ApplicationIconSmall.png", UriKind.Relative),
+                        SmallBackgroundImage = new Uri("/Assets/ApplicationIconSmall.png", UriKind.Relative),
+                        BackBackgroundImage = new Uri("/Assets/ApplicationIconSmall.png", UriKind.Relative)
+                    };
+
+                    activeTile.Update(flipTile);
                 }
-
-                if (uris.Count == 0)
-                {
-                    uris.Add(new Uri("/Assets/BaconographyPhoneIconWide.png", UriKind.Relative));
-                }
-
-                CycleTileData cycleTile = new CycleTileData()
-                {
-                    Title = "Baconography",
-                    Count = messageCount,
-                    SmallBackgroundImage = new Uri("/Assets/ApplicationIconSmall.png", UriKind.Relative),
-                    CycleImages = uris
-                };
-                activeTile.Update(cycleTile);
             }
         }
 

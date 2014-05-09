@@ -152,6 +152,8 @@
             <phone:PivotItem Header="tile">
                 <ScrollViewer>
                     <StackPanel>
+                        <toolkit:ToggleSwitch Header="Show images in Live Tile"
+                                IsChecked="{Binding UseCycleTile, Mode=TwoWay}" />
                         <Button Margin="12,0,0,0" Content="Pick subreddit for live tile" Click="SelectLiveTileSubreddit"/>
                     </StackPanel>
                 </ScrollViewer>

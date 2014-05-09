@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Deployment xmlns="http://schemas.microsoft.com/windowsphone/2012/deployment" AppPlatformVersion="8.0">
   <DefaultLanguage xmlns="" code="en-US" />
-  <App xmlns="" ProductID="{0fe36153-24f5-429e-a5a3-b95da0367cab}" Title="Baconography" RuntimeType="Silverlight" Version="1.2.0.0" Genre="apps.normal" Author="Jeff Greene &amp; Marty Lewis" Description="Browse Reddit in a format designed for your phone." Publisher="Synergex International Corporation" PublisherID="{d217a270-9e09-4cfb-ace4-97ff87457170}">
+  <App xmlns="" ProductID="{0fe36153-24f5-429e-a5a3-b95da0367cab}" Title="SnooStream" RuntimeType="Silverlight" Version="1.2.0.0" Genre="apps.normal" Author="Jeff Greene &amp; Marty Lewis" Description="Browse Reddit in a format designed for your phone." Publisher="Synergex International Corporation" PublisherID="{d217a270-9e09-4cfb-ace4-97ff87457170}">
     <IconPath IsRelative="true" IsResource="false">Assets\ApplicationIconSmall.png</IconPath>
     <Capabilities>
       <Capability Name="ID_CAP_NETWORKING" />
@@ -18,29 +18,25 @@
     </Tasks>
     <Tokens>
       <PrimaryToken TokenID="BaconographyWP8Token" TaskName="_default">
-        <TemplateCycle>
+        <TemplateFlip>
           <SmallImageURI IsRelative="true" IsResource="false">Assets\ApplicationIconSmall.png</SmallImageURI>
-          <Title>Baconography</Title>
-          <Photo01ImageURI IsRelative="true" IsResource="false">Assets\BaconographyPhoneIconWide.png</Photo01ImageURI>
-          <Photo02ImageURI IsRelative="true" IsResource="false">Assets\ApplicationIcon.png</Photo02ImageURI>
-          <Photo03ImageURI IsRelative="true" IsResource="false">
-          </Photo03ImageURI>
-          <Photo04ImageURI IsRelative="true" IsResource="false">
-          </Photo04ImageURI>
-          <Photo05ImageURI IsRelative="true" IsResource="false">
-          </Photo05ImageURI>
-          <Photo06ImageURI IsRelative="true" IsResource="false">
-          </Photo06ImageURI>
-          <Photo07ImageURI IsRelative="true" IsResource="false">
-          </Photo07ImageURI>
-          <Photo08ImageURI IsRelative="true" IsResource="false">
-          </Photo08ImageURI>
-          <Photo09ImageURI IsRelative="true" IsResource="false">
-          </Photo09ImageURI>
           <Count>0</Count>
+          <BackgroundImageURI IsRelative="true" IsResource="false">Assets\ApplicationIcon.png</BackgroundImageURI>
+          <Title>Snoo Stream</Title>
+          <BackContent>
+          </BackContent>
+          <BackBackgroundImageURI IsRelative="true" IsResource="false">
+          </BackBackgroundImageURI>
+          <BackTitle>
+          </BackTitle>
+          <LargeBackgroundImageURI IsRelative="true" IsResource="false">Assets\BaconographyPhoneIconWide.png</LargeBackgroundImageURI>
+          <LargeBackContent />
+          <LargeBackBackgroundImageURI IsRelative="true" IsResource="false">
+          </LargeBackBackgroundImageURI>
+          <DeviceLockImageURI IsRelative="true" IsResource="false">
+          </DeviceLockImageURI>
           <HasLarge>True</HasLarge>
-          <DeviceLockImageURI IsRelative="true" IsResource="false">Assets\DefaultLockScreen.png</DeviceLockImageURI>
-        </TemplateCycle>
+        </TemplateFlip>
       </PrimaryToken>
     </Tokens>
     <Extensions>

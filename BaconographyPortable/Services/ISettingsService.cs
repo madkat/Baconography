@@ -53,6 +53,7 @@ namespace BaconographyPortable.Services
         bool OneTouchVoteMode { get; set; }
 
         bool DisableBackground { get; set; }
+        bool UseCycleTile { get; set; }
 
         int ScreenWidth { get; set; }
         int ScreenHeight { get; set; }
