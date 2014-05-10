@@ -1,4 +1,5 @@
-﻿using BaconographyPortable.Model;
+﻿using Baconography.TaskSettings;
+using BaconographyPortable.Model;
 using BaconographyPortable.Model.Reddit;
 using System;
 using System.Collections.Generic;
@@ -17,7 +18,7 @@ namespace BaconographyPortable.Services
         void SetCount(int count);
         void SetMessageRead(string id);
         IEnumerable<string> GetMessagesMarkedRead();
-        TaskSettings? LoadTaskSettings();
-        void StoreTaskSettings(Func<TaskSettings?, TaskSettings> getSettings, bool atomic);
+        TaskSettings LoadTaskSettings();
+        void StoreTaskSettings(Func<TaskSettings, TaskSettings> getSettings, bool atomic);
     }
 }

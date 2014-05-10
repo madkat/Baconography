@@ -1,4 +1,5 @@
-﻿using BaconographyWP8.ViewModel;
+﻿using Baconography.TaskSettings;
+using BaconographyWP8.ViewModel;
 using BaconographyWP8BackgroundControls.View;
 using BaconographyWP8BackgroundTask;
 using BaconographyWP8BackgroundTask.Hacks;
@@ -71,21 +72,16 @@ namespace BaconographyWP8
         public static readonly string periodicTaskName = "LockScreen_Updater";
         public static readonly string intensiveTaskName = "Intensive_Baconography_Updater";
 
+		private TaskSettings settings;
+
         private string userInfoDbPath = Windows.Storage.ApplicationData.Current.LocalFolder.Path + "\\userinfodb.ism";
         //we must be very carefull how much memory is used during this, we are limited to 10 megs or we get shutdown
         //dont fully initialize things, just the bare minimum to get the job done
         protected override async void OnInvoke(ScheduledTask task)
         {
             string lockScreenImage = "lockScreenCache1.jpg";
-            List<object> tileImages = new List<object>();
-            string linkReddit = "/";
-            string liveReddit = "/";
-            int opacity = 35;
-            int numberOfItems = 6;
             TinyRedditService redditService = null;
             bool hasMail = false;
-            bool roundedCorners = false;
-            bool useCycleTile = true;
             int messageCount = 0;
             try
             {
@@ -93,33 +89,14 @@ namespace BaconographyWP8
                 {
                     using (var cookieFile = File.OpenRead(Windows.Storage.ApplicationData.Current.LocalFolder.Path + "taskSettings.json"))
                     {
-                        byte[] taskCookieBytes = new byte[4096];
-                        int readBytes = cookieFile.Read(taskCookieBytes, 0, 4096);
+						settings = TaskSettingsLoader.LoadTaskSettings();
 
-                        var json = Encoding.UTF8.GetString(taskCookieBytes, 0, readBytes);
-                        var decodedJson = JSON.JsonDecode(json);
+                        Shuffle(settings.LockScreenImageURIs);
+						lockScreenImage = (settings.LockScreenImageURIs.FirstOrDefault() as string) ?? "lockScreenCache1.jpg";
 
-                        var rounded = JSON.GetValue(decodedJson, "rounded") as bool?;
-                        var cycleTile = JSON.GetValue(decodedJson, "cycle_tile") as bool?;
-                        var cookie = JSON.GetValue(decodedJson, "cookie") as string;
-                        var opacityStr = JSON.GetValue(decodedJson, "opacity") as string;
-                        var numOfItemsStr = JSON.GetValue(decodedJson, "number_of_items") as string;
-                        linkReddit = (JSON.GetValue(decodedJson, "link_reddit") as string) ?? "/";
-                        liveReddit = (JSON.GetValue(decodedJson, "live_reddit") as string) ?? "/";
-                        var lockScreenImages = JSON.GetValue(decodedJson, "lock_images") as List<object>;
-                        tileImages = JSON.GetValue(decodedJson, "tile_images") as List<object>;
-
-                        Shuffle(lockScreenImages);
-                        lockScreenImage = (lockScreenImages.FirstOrDefault() as string) ?? "lockScreenCache1.jpg";
-
-                        if (!Int32.TryParse(opacityStr, out opacity)) opacity = 35;
-                        if (!Int32.TryParse(numOfItemsStr, out numberOfItems)) numberOfItems = 6;
-                        if (rounded != null) roundedCorners = rounded.Value;
-                        if (cycleTile != null) useCycleTile = cycleTile.Value;
-
-                        if (!string.IsNullOrWhiteSpace(cookie))
+                        if (!string.IsNullOrWhiteSpace(settings.RedditCookie))
                         {
-                            redditService = new TinyRedditService(null, null, cookie);
+							redditService = new TinyRedditService(null, null, settings.RedditCookie);
                             hasMail = true;// dont make two calls when we can just ask for unread messages once
                         }
                     }
@@ -131,6 +108,9 @@ namespace BaconographyWP8
                     File.Delete(Windows.Storage.ApplicationData.Current.LocalFolder.Path + "taskSettings.json");
             }
 
+			if (settings == null)
+				settings = new TaskSettings();
+
             if (redditService == null)
                 redditService = new TinyRedditService(null, null, null);
 
@@ -138,9 +118,9 @@ namespace BaconographyWP8
             LockScreenViewModel lockScreenViewModel = new LockScreenViewModel();
 
             lockScreenViewModel.ImageSource = lockScreenImage;
-            lockScreenViewModel.OverlayOpacity = opacity / 100.0f;
-            lockScreenViewModel.NumberOfItems = numberOfItems;
-            lockScreenViewModel.RoundedCorners = roundedCorners;
+            lockScreenViewModel.OverlayOpacity = settings.LockScreenOverlayOpacity / 100.0f;
+            lockScreenViewModel.NumberOfItems = settings.LockScreenOverlayItemsCount;
+            lockScreenViewModel.RoundedCorners = settings.LockScreenOverlayRoundedEdges;
 
             if (task.Name == periodicTaskName)
             {
@@ -172,13 +152,13 @@ namespace BaconographyWP8
                     messages = null;
                 }
 
-                var links = await redditService.GetPostsBySubreddit(linkReddit, null);
+                var links = await redditService.GetPostsBySubreddit(settings.LockScreenOverlayItemsReddit, null);
                 if (links != null)
                 {
                     //the goal is 6 items in the list, if thats not filled with messages then fill it with links
                     foreach (var link in links)
                     {
-                        if (lockScreenViewModel.OverlayItems.Count > (numberOfItems - 1))
+                        if (lockScreenViewModel.OverlayItems.Count > (settings.LockScreenOverlayItemsCount - 1))
                             break;
 
                         lockScreenViewModel.OverlayItems.Add(new LockScreenMessage { DisplayText = link.Item1, Glyph = GetGlyph(link.Item2) });
@@ -186,7 +166,7 @@ namespace BaconographyWP8
                 }
 
                 List<Tuple<string, string>> liveTileImageUrls = new List<Tuple<string, string>>();
-                var liveTileLinks = await redditService.GetPostsBySubreddit(liveReddit, 100);
+                var liveTileLinks = await redditService.GetPostsBySubreddit(settings.LiveTileItemsReddit, 100);
                 foreach (var link in liveTileLinks)
                 {
                     if (link.Item2.EndsWith(".jpg") || link.Item2.EndsWith(".jpeg") || link.Item2.EndsWith(".png"))
@@ -217,7 +197,7 @@ namespace BaconographyWP8
                         GC.Collect(GC.MaxGeneration, GCCollectionMode.Forced, true);
                         GC.WaitForPendingFinalizers();
                     }
-                    BuildLockScreen(tileImages, messageCount, lockScreenViewModel);
+                    BuildLockScreen(settings.LiveTileImageURIs, messageCount, lockScreenViewModel);
                     //it appears to take a few runs to knock down the memory, probably a native reference counting issue
                     //thats why we also have to wait for pending finalizers
                     for (int i = 0; i < 2; i++)
@@ -227,7 +207,7 @@ namespace BaconographyWP8
                     }
                     int liveTileCounter = 0;
 
-                    foreach (var existingLiveTileImage in tileImages)
+					foreach (var existingLiveTileImage in settings.LiveTileImageURIs)
                     {
                         try
                         {
@@ -260,7 +240,7 @@ namespace BaconographyWP8
 
                     try
                     {
-                        UpdateLiveTile(tileImages, messageCount, liveTileCounter, startTileCounter, useCycleTile);
+						UpdateLiveTile(settings.LiveTileImageURIs, messageCount, liveTileCounter, startTileCounter, settings.LiveTileStyle == LiveTileStyle.Cycle);
                     }
                     catch { }
 
@@ -276,7 +256,7 @@ namespace BaconographyWP8
                     //cache as many images as we can for later
                     //try to make new live tile images, we might OOM though so catch and quit
 
-                    var links = await redditService.GetPostsBySubreddit(linkReddit, 100);
+                    var links = await redditService.GetPostsBySubreddit(settings.LockScreenOverlayItemsReddit, 100);
                     if (links != null)
                     {
                         var cacheBuffer = new byte[1024];
@@ -298,9 +278,9 @@ namespace BaconographyWP8
                     }
 
                     var liveTileLinks = links;
-                    if (linkReddit != liveReddit)
+					if (settings.LockScreenOverlayItemsReddit != settings.LiveTileItemsReddit)
                     {
-                        liveTileLinks = await redditService.GetPostsBySubreddit(liveReddit, 100);
+						liveTileLinks = await redditService.GetPostsBySubreddit(settings.LiveTileItemsReddit, 100);
                     }
 
                     Deployment.Current.Dispatcher.BeginInvoke(async () =>
@@ -312,7 +292,7 @@ namespace BaconographyWP8
                             {
                                 //we dont rewrite settings because we dont have enough ram to load the neccisary dlls
                                 //so there is no point in downloading more live tile images then we started with
-                                if (liveTileCounter >= tileImages.Count)
+                                if (liveTileCounter >= settings.LiveTileImageURIs.Count)
                                     break;
 
                                 if (link.Item2.EndsWith(".jpg") || link.Item2.EndsWith(".jpeg") || link.Item2.EndsWith(".png"))
@@ -347,7 +327,7 @@ namespace BaconographyWP8
             }
         }
 
-        public static void UpdateLiveTile(List<object> tileImages, int messageCount, int liveTileCounter, int startTileCounter, bool useCycleTile)
+        public static void UpdateLiveTile(List<string> tileImages, int messageCount, int liveTileCounter, int startTileCounter, bool useCycleTile)
         {
             var activeTiles = ShellTile.ActiveTiles;
             var activeTile = activeTiles.FirstOrDefault();
@@ -400,7 +380,7 @@ namespace BaconographyWP8
             }
         }
 
-        private static void BuildLockScreen(List<object> tileImages, int messageCount, LockScreenViewModel lockScreenViewModel)
+        private static void BuildLockScreen(List<string> tileImages, int messageCount, LockScreenViewModel lockScreenViewModel)
         {
             try
             {

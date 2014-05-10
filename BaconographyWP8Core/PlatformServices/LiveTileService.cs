@@ -1,4 +1,5 @@
-﻿using BaconographyPortable.Model;
+﻿using Baconography.TaskSettings;
+using BaconographyPortable.Model;
 using BaconographyPortable.Model.Reddit;
 using BaconographyPortable.Services;
 using BaconographyWP8.Common;
@@ -24,20 +25,12 @@ namespace BaconographyWP8.PlatformServices
             _imagesService = baconProvider.GetService<IImagesService>();
         }
 
-        private TaskSettings? LoadTaskSettingsImpl()
+        private TaskSettings LoadTaskSettingsImpl()
         {
             try
             {
-                using (var settingsFile = File.OpenRead(Windows.Storage.ApplicationData.Current.LocalFolder.Path + "taskSettings.json"))
-                {
-                    byte[] taskCookieBytes = new byte[4096];
-                    var readBytes = settingsFile.Read(taskCookieBytes, 0, 4096);
-                    var json = Encoding.UTF8.GetString(taskCookieBytes, 0, readBytes);
-                    var taskSettings = JsonConvert.DeserializeObject<TaskSettings>(json);
-
-                    useCycleTile = taskSettings.cycleTile;
-                    return taskSettings;
-                }
+				var taskSettings = TaskSettingsLoader.LoadTaskSettings();
+				return taskSettings;
             }
             catch
             {
@@ -50,7 +43,7 @@ namespace BaconographyWP8.PlatformServices
             }
         }
 
-        public TaskSettings? LoadTaskSettings()
+        public TaskSettings LoadTaskSettings()
         {
             lock (this)
             {
@@ -58,20 +51,15 @@ namespace BaconographyWP8.PlatformServices
             }
         }
 
-        public void StoreTaskSettings(Func<TaskSettings?, TaskSettings> getSettings, bool atomic)
+        public void StoreTaskSettings(Func<TaskSettings, TaskSettings> getSettings, bool atomic)
         {
             lock (this)
             {
                 var currentSettings = atomic ? LoadTaskSettingsImpl() : null;
                 var newSettings = getSettings(currentSettings);
-                useCycleTile = newSettings.cycleTile;
+                useCycleTile = newSettings.LiveTileStyle == LiveTileStyle.Cycle;
 
-                using (var taskCookieFile = File.Create(Windows.Storage.ApplicationData.Current.LocalFolder.Path + "taskSettings.json"))
-                {
-                    var settingsBlob = JsonConvert.SerializeObject(newSettings);
-                    var settingsBytes = Encoding.UTF8.GetBytes(settingsBlob);
-                    taskCookieFile.Write(settingsBytes, 0, settingsBytes.Length);
-                }
+				newSettings.SaveTaskSettings();
             }
         }
 
@@ -368,7 +356,7 @@ namespace BaconographyWP8.PlatformServices
                 var settings = LoadTaskSettingsImpl();
                 if (settings != null)
                 {
-                    liveTileImages.AddRange(settings.Value.tile_images);
+                    liveTileImages.AddRange(settings.LiveTileImageURIs);
                 }
 
                 UpdateLiveTile(liveTileImages, count, 0, 0, useCycleTile);

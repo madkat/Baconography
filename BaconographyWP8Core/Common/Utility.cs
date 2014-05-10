@@ -1,4 +1,5 @@
-﻿using BaconographyPortable.Messages;
+﻿using Baconography.TaskSettings;
+using BaconographyPortable.Messages;
 using BaconographyPortable.Model;
 using BaconographyPortable.Model.Reddit;
 using BaconographyPortable.Services;
@@ -125,15 +126,15 @@ namespace BaconographyWP8.Common
                     {
 						if (!settingsService.UseImagePickerForLockScreen)
 						{
-							if (taskSettings.Value.lock_images.Length == 0
+							if (taskSettings.LockScreenImageURIs.Count == 0
 								&& connectionCostType == NetworkCostType.Unrestricted)
 							{
 								lockScreenImages = await MakeLockScreenImages(settingsService, redditService, userService, imagesService, liveTileService, 1);
 							}
 							else
-								lockScreenImages = taskSettings.Value.lock_images;
+								lockScreenImages = taskSettings.LockScreenImageURIs;
 						}
-                        tileImages = taskSettings.Value.tile_images;
+                        tileImages = taskSettings.LiveTileImageURIs;
                     }
                 }
 
@@ -144,7 +145,18 @@ namespace BaconographyWP8.Common
 
                 liveTileService.StoreTaskSettings((unused) =>
                     {
-                        return new TaskSettings { rounded = settingsService.RoundedLockScreen, cycleTile = settingsService.UseCycleTile, cookie = loginCookie ?? "", opacity = settingsService.OverlayOpacity.ToString(), number_of_items = settingsService.OverlayItemCount.ToString(), link_reddit = CleanRedditLink(settingsService.LockScreenReddit, user), live_reddit = CleanRedditLink(settingsService.LiveTileReddit, user), lock_images = lockScreenImages.ToArray(), tile_images = tileImages.ToArray() };
+                        return new TaskSettings
+							{
+								LockScreenOverlayRoundedEdges = settingsService.RoundedLockScreen,
+								LiveTileStyle = settingsService.UseCycleTile ? LiveTileStyle.Cycle : LiveTileStyle.Default,
+								RedditCookie = loginCookie ?? "",
+								LockScreenOverlayOpacity = settingsService.OverlayOpacity,
+								LockScreenOverlayItemsCount = settingsService.OverlayItemCount,
+								LockScreenOverlayItemsReddit = CleanRedditLink(settingsService.LockScreenReddit, user),
+								LiveTileItemsReddit = CleanRedditLink(settingsService.LiveTileReddit, user),
+								LockScreenImageURIs = lockScreenImages.ToList(),
+								LiveTileImageURIs = tileImages.ToList()
+							};
                     }, false);
                 
 
@@ -334,12 +346,13 @@ namespace BaconographyWP8.Common
                 //find the images we used last time
                 var lockScreenSettings = liveTileService.LoadTaskSettings();
 
+				/*
                 if (lockScreenSettings != null && lockScreenSettings.Value.lock_images != null && lockScreenSettings.Value.lock_images.Length > 0)
                 {
                     var dateTime = File.GetLastWriteTime(Windows.Storage.ApplicationData.Current.LocalFolder.Path + "\\lockScreenCache0.jpg");
                     if ((DateTime.Now - dateTime).TotalDays < 3)
                         return lockScreenSettings.Value.lock_images;
-                }
+                }*/
             }
             catch (Exception ex)
             {

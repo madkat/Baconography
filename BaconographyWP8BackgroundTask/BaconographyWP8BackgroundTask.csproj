@@ -86,6 +86,15 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="..\BaconographyPortable\Model\TaskSettings.cs">
+      <Link>Hacks\TaskSettings.cs</Link>
+    </Compile>
+    <Compile Include="..\BaconographyWP8Core\Common\LightJSON.cs">
+      <Link>Hacks\LightJSON.cs</Link>
+    </Compile>
+    <Compile Include="..\BaconographyWP8Core\Common\TaskSettingsLoader.cs">
+      <Link>Hacks\TaskSettingsLoader.cs</Link>
+    </Compile>
     <Compile Include="BackgroundTask.cs" />
     <Compile Include="Hacks\Thing.cs" />
     <Compile Include="Hacks\TinyRedditService.cs" />

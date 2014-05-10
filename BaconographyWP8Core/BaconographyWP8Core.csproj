@@ -110,11 +110,14 @@
     <Compile Include="..\NeutralServices\AgnosticFile.cs">
       <Link>NeutralServices\AgnosticFile.cs</Link>
     </Compile>
+    <Compile Include="Common\LightJSON.cs" />
     <Compile Include="Common\LinkTypeTemplateSelector.cs" />
     <Compile Include="Common\RichMarkdownButton.xaml.cs">
       <DependentUpon>RichMarkdownButton.xaml</DependentUpon>
     </Compile>
     <Compile Include="Common\FlipViewUtility.cs" />
+    <Compile Include="Common\TaskSettingsExtensions.cs" />
+    <Compile Include="Common\TaskSettingsLoader.cs" />
     <Compile Include="Converters\BoolToAccentBrushConverter.cs" />
     <Compile Include="Converters\LinkViewContextMenuConverter.cs" />
     <Compile Include="Converters\ReifiedAlbumItemConverter.cs" />
